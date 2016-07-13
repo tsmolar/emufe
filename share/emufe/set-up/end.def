@@ -1,0 +1,12 @@
++------------------------------------------+
+|            Setup Complete!               |
+|                                          |
+| Setup has been Completed.  To save your  |
+| changes, click SAVE.  Or click CANCEL to |
+| abandon your changes.                    |
+|                                          |
+|  %<_BACK       %_SAVE_   %CANCEL         |
++------------------------------------------+
+=VARIABLE MAP
+Desc|genesis_desc
+=END VARIABLE MAP

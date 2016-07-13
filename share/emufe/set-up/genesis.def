@@ -1,0 +1,12 @@
++-------------------------------------------------+
+|              $Desc                              |
+|                                                 |
+| gens:  ^gens_bin____________        %Advanced   |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|genesis_desc
+gens bin            |gens_bin|findbin|gens_dir
+=END VARIABLE MAP

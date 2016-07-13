@@ -1,0 +1,14 @@
++-------------------------------------------------+
+|              $Desc                              |
+|                                                 |
+| uae:  ^uae_bin_____________         %Advanced   |
+| euae: ^euae_bin____________                     |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|Amiga_desc
+uae bin             |uae_bin|findbin|uae_dir
+euae bin            |euae_bin|findbin|euae_dir
+=END VARIABLE MAP

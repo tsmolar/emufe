@@ -1,0 +1,13 @@
++---------------------------------+
+|            Setup                |
+|                                 |
+| Welcome to setup, please select |
+| installation type.              |
+|                                 |
+|   ^INSTALLATION______________   |
+|                                 |
+|    %CANCEL             %NEXT->  |
++---------------------------------+
+=VARIABLE MAP
+INSTALLATION              |int_insttype|fixedlist|(Re)Install Configuration,Update Configuration
+=END VARIABLE MAP

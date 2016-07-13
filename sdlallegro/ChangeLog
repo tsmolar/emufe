@@ -1,0 +1,39 @@
+0.6.3 - 2008
+   * For GFX_TEXT, close and reinit gfx mode
+   * fix rest() so that passing a 0 sends a NULL to SDL_waitevent()
+   * Made simulate_keypress work.
+
+0.6.2 - 2007-12-14
+   * install_int attempts to remove already installed timers before
+     reinstalling
+
+0.6.1 - 2007-12-04
+   * sa_sdl_info - prints info about SDL hardware capabilities
+   * sa_surface_info - prints info about given surface
+
+0.6.0 - 2007-10-05, 2007-11-27
+   * Adding timer routines
+   * rest()
+   * install, remove_timer
+   * set_keyboard_rate()
+   * remove_keyboard()
+
+   * Created -config script
+
+0.5.14 - 2007-05-25
+   * Fixes for Zaurus
+   * Added Driver Check
+
+0.5.13 - 2007-05-21
+   * allegro_init was not returning a status, causing problems suddenly
+     for Zaurus
+
+0.5.12 - 2007-05-08
+   * SDL_Init was being called twice, once in allegro_init and once in
+     gfx_set_mode.  Removed the one in gfx_set_mode.   This seems
+     to speed up initialization and exitting!
+
+0.5.11 - 2007-05-04
+   * Added makeacol* and geta for alpha blending
+   * Integrated into config.h for SDL_Mixer
+   * Added more Keysyms

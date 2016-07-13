@@ -1,0 +1,16 @@
++-------------------------------------------------+
+|                     $STdesc                     |
+|                                                 |
+| hatari: ^hatari_bin__________       %Advanced   |
+| STeem:  ^steem_bin___________                   |
+| ARAnyM: ^aranym_bin__________                   |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+STdesc|ST_desc
+hatari bin          |hatari_bin|findbin|hatari_dir
+steem bin           |steem_bin|findbin|steem_dir
+aranym bin          |aranym_bin|findbin|aranym_dir
+=END VARIABLE MAP

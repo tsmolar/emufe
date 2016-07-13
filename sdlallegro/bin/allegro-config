@@ -1,0 +1,89 @@
+#!/bin/sh
+
+# Todo:
+#   Need to check if compiled, if not run configure-  some settings
+#   can be gathered from that process
+#
+#   - need to report mixer and image libs if compiled in
+#   - get true version
+
+getsdl() {
+  if [ "$sdlpfx" != "" ]; then
+    PATH=$sdlpfx/bin:$PATH; export PATH
+  fi
+  x=$(sdl-config $1)
+  if [ $? -ne 0 ]; then
+    echo "*** Could not find SDL, either ensure that it's in your path, or"
+    echo "pass --sdl=<sdl prefix> first on the command line"
+    exit 1
+  fi
+  echo $x
+}
+
+showprefix() {
+  x=$(dirname $1)
+  if [ "$(echo $x| cut -d/ -f1)" = "." ]; then
+    y="$(pwd)$(echo $x |cut -c2-)"
+    x=$(dirname $y)
+  else
+      if [ "$(echo $x| cut -d/ -f1)" = ".." ]; then
+        z=$(pwd)
+        y="$(dirname $z)$(echo $x |cut -c3-)"
+        x=$(dirname $y)
+      else
+        y=$(dirname $x)
+	x=$y
+      fi
+  fi
+  echo $x
+}
+
+usage() {
+  echo "
+    allegro-config for SDLallegro
+    
+    Usage: allegro-config [OPTIONS] [LIBRARIES*]
+    
+    *Note: Libraries currently ignored
+    
+    Options:
+         --sdl=SDL DIR (give this first, if needed)
+         --prefix[=DIR]
+	 --exec-prefix[=DIR]
+	 --version[=VERSION]
+	 --cflags
+	 --cppflags
+	 --libs
+	 --static
+	 --shared
+	 --env
+  "
+  exit
+  }
+
+if [ $# -eq 0 ]; then  usage; fi
+
+for option in $*
+do
+  if [ "$(echo $option | cut -c1-6)" = "--sdl=" ]; then
+    sdlpfx=$(echo $option | cut -c7-)
+  fi
+  case $option in
+    "--version") echo "0.5.14";;
+    "--prefix") showprefix $0;;
+    "--exec-prefix") showprefix $0;;
+    "--cflags"|"--cppflags") pfx=$(showprefix $0)
+                sdl=$(getsdl --cflags)
+                echo "-I$pfx -DUSESDL $sdl";;
+    "--libs") pfx=$(showprefix $0)
+                sdl=$(getsdl --libs)
+                echo "$pfx/libsdlallegro.a $sdl";;
+    "--static") pfx=$(showprefix $0)
+                sdl=$(getsdl --static-libs)
+                echo "$pfx/libsdlallegro.a $sdl";;
+    "--shared") pfx=$(showprefix $0)
+                sdl=$(getsdl --libs)
+                echo "$pfx/libsdlallegro.a $sdl";;
+    "--env") echo "Nothing";;
+  esac
+done

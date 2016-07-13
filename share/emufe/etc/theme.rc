@@ -1,0 +1,43 @@
+# Theme Configuration v.2.0
+# Set Background (should be 640 x 480)
+BACKGROUND=emubk.pcx
+TITLEBOX=banner.pcx
+PICBOX=picbox.pcx
+#MENUBOX=menubox.pcx
+MENUBOX=trans
+DESCBOX=descbox.pcx
+TEXTBG=a000a0
+TEXTFG=ffff00
+TEXTSD=505050
+TEXTHL=7F007F
+DESCBG=000000
+TEXTIE=AA0000
+SHDCOL=BB0000
+BANRBG=000000 
+#BANRFG=ccc0af
+BANRFG=0000FF
+# New for 2.0
+# Global Theme dir.  This is an optional parameter, and it's where the theme
+# bitmaps and fonts go.  EMUHOME is prepended to it.
+# GTHEMEDIR=pics
+# Fontname, defaults to silkfont.fnt.  This was added to prevent emufe from
+# loading silkfont, then loading the font specified in the menus.  If you
+# don't have a reason to specify fonts in the menu, then set it here
+# instead
+FONTNAME=silkfont.fnt
+# Cachefont.  This will cause emufe to dump the font to a bitmap file
+# to /tmp/fontbmp.pcx  You should only set this when you need to 
+# produce such a font.
+# Important, you will need to recache it everytime you change font colors
+CACHEFONT=Y
+#
+# Font Bitmap, to make loading fonts even faster, they can be cached to
+# a bitmap file.  If you want to use this, create it with the CACHEFONT
+# setting, and use this to load it.
+# FONTBMP=themefnt.pcx
+#
+# New for 3.0
+MENUXY=32,96,316,152
+PICBXY=364,96,244,152
+DESCXY=364,300,244,200
+# End config

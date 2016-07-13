@@ -1,0 +1,7 @@
+t                  Setup: Front End                   s
+S  FE=emufe                                           tempdir.menu
+s  Graphical (emufe)                                  RECemufe
+S  FE=demufe                                          tempdir.menu
+s  Console (demufe)                                   RECdemufe
+u  Cancel Setup                                       p
+e End of Menu                                         end

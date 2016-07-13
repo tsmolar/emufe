@@ -1,0 +1,101 @@
+sdl_allegro.o sdl_allegro.o: sdl_allegro.c /opt/sdl/include/SDL/SDL.h \
+  /opt/sdl/include/SDL/SDL_main.h /opt/sdl/include/SDL/SDL_types.h \
+  /opt/sdl/include/SDL/begin_code.h /opt/sdl/include/SDL/close_code.h \
+  /opt/sdl/include/SDL/SDL_getenv.h /opt/sdl/include/SDL/SDL_error.h \
+  /opt/sdl/include/SDL/SDL_rwops.h /usr/include/stdio.h \
+  /usr/include/_ansi.h /usr/include/newlib.h /usr/include/sys/config.h \
+  /usr/include/machine/ieeefp.h \
+  /usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stddef.h \
+  /usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stdarg.h \
+  /usr/include/sys/reent.h /usr/include/_ansi.h /usr/include/sys/_types.h \
+  /usr/include/sys/lock.h /usr/include/sys/types.h \
+  /usr/include/machine/_types.h /usr/include/machine/types.h \
+  /usr/include/sys/features.h /usr/include/sys/stdio.h \
+  /usr/include/sys/cdefs.h /opt/sdl/include/SDL/SDL_timer.h \
+  /opt/sdl/include/SDL/SDL_audio.h /opt/sdl/include/SDL/SDL_byteorder.h \
+  /opt/sdl/include/SDL/SDL_cdrom.h /opt/sdl/include/SDL/SDL_joystick.h \
+  /opt/sdl/include/SDL/SDL_events.h /opt/sdl/include/SDL/SDL_active.h \
+  /opt/sdl/include/SDL/SDL_keyboard.h /opt/sdl/include/SDL/SDL_keysym.h \
+  /opt/sdl/include/SDL/SDL_mouse.h /opt/sdl/include/SDL/SDL_video.h \
+  /opt/sdl/include/SDL/SDL_mutex.h /opt/sdl/include/SDL/SDL_quit.h \
+  /opt/sdl/include/SDL/SDL_version.h sdl_allegro.h
+
+/opt/sdl/include/SDL/SDL.h:
+
+/opt/sdl/include/SDL/SDL_main.h:
+
+/opt/sdl/include/SDL/SDL_types.h:
+
+/opt/sdl/include/SDL/begin_code.h:
+
+/opt/sdl/include/SDL/close_code.h:
+
+/opt/sdl/include/SDL/SDL_getenv.h:
+
+/opt/sdl/include/SDL/SDL_error.h:
+
+/opt/sdl/include/SDL/SDL_rwops.h:
+
+/usr/include/stdio.h:
+
+/usr/include/_ansi.h:
+
+/usr/include/newlib.h:
+
+/usr/include/sys/config.h:
+
+/usr/include/machine/ieeefp.h:
+
+/usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stddef.h:
+
+/usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stdarg.h:
+
+/usr/include/sys/reent.h:
+
+/usr/include/_ansi.h:
+
+/usr/include/sys/_types.h:
+
+/usr/include/sys/lock.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/machine/_types.h:
+
+/usr/include/machine/types.h:
+
+/usr/include/sys/features.h:
+
+/usr/include/sys/stdio.h:
+
+/usr/include/sys/cdefs.h:
+
+/opt/sdl/include/SDL/SDL_timer.h:
+
+/opt/sdl/include/SDL/SDL_audio.h:
+
+/opt/sdl/include/SDL/SDL_byteorder.h:
+
+/opt/sdl/include/SDL/SDL_cdrom.h:
+
+/opt/sdl/include/SDL/SDL_joystick.h:
+
+/opt/sdl/include/SDL/SDL_events.h:
+
+/opt/sdl/include/SDL/SDL_active.h:
+
+/opt/sdl/include/SDL/SDL_keyboard.h:
+
+/opt/sdl/include/SDL/SDL_keysym.h:
+
+/opt/sdl/include/SDL/SDL_mouse.h:
+
+/opt/sdl/include/SDL/SDL_video.h:
+
+/opt/sdl/include/SDL/SDL_mutex.h:
+
+/opt/sdl/include/SDL/SDL_quit.h:
+
+/opt/sdl/include/SDL/SDL_version.h:
+
+sdl_allegro.h:

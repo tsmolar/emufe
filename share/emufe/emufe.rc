@@ -1,0 +1,29 @@
+# Configuration for emufe v.1.2
+VERSION=1.2
+# 
+# FONTDIR could be relative or absoulute, but don't use shell variables
+#
+FONTDIR=./fonts
+# Pics dir
+PICSDIR=./pics
+# Description Dir
+DESCDIR=./desc
+#
+# Font Shadow
+SHADOW=Y
+#
+# Default Menu Name (It must exist in the directory that emufe starts in!)
+MENUNAME=index.menu
+#
+#DEFLTIMG=undefinded.pcx
+#
+# Set fullscreen
+#   yes=try fullscreen
+#    no=window
+#  auto=Let Allegro Figure it out
+FULLSCREEN=no
+#
+# Theming
+# Set Background (should be 640 x 480)
+THEME=theme1024.rc
+#

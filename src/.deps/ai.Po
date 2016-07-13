@@ -1,0 +1,3 @@
+ai.o ai.o: ai.c wwtypes.h
+
+wwtypes.h:

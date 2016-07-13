@@ -1,0 +1,24 @@
++----------------------------------------------------------+
+|                            Setup                         |
+| Emulator Behavior                Front-End Behavior      |
+| @_Full_Screen                    @_FE_Full_Screen        |
+| @_Sound                          @_FE_Joystick           |
+| @_Use_Joystick                                           |
+| @_Fast_CPU                       Temp Dir                |
+| @_VESA (Use safe gfx modes)      ^_TEMPDIR____________   |
+| @_MIDI (Where Supported)                                 |
+|                                  Scanline Mode ^SC       |
+|                                                          |
+|                  %ACCEPT   %CANCEL              %NEXT->  |
++----------------------------------------------------------+
+=VARIABLE MAP
+SC|SCANLINE|fixedlist|0,1,2
+ Full Screen|FULLSCREEN|fixedlist|N,Y
+ Sound|SOUND|fixedlist|N,Y
+ Use Joystick|JOYSTICK|fixedlist|N,Y
+ Fast CPU|FASTCPU|fixedlist|N,Y
+ VESA|VESA|fixedlist|N,Y
+ MIDI|MIDI|fixedlist|N,Y
+ FE Full Screen|EMUFEfull|fixedlist|no,yes,auto
+ FE Joystick|EMUFEjoy|fixedlist|n,y
+=END VARIABLE MAP

@@ -1,0 +1,12 @@
++-------------------------------------------------+
+|              $Desc                              |
+|                                                 |
+| MAME:  ^mame_bin____________         %Advanced  |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|arcade_desc
+mame bin            |mame_bin|findbin|mame_dir
+=END VARIABLE MAP

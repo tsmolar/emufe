@@ -1,0 +1,100 @@
+gfx.o gfx.o: gfx.c \
+  /usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/stdio.h \
+  /usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/_mingw.h \
+  /usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stddef.h \
+  /usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stdarg.h \
+  /usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/sys/types.h \
+  ../config.h bltypes.h ../widget/window.h ../widget/widget.h \
+  ../widget/font.h ../widget/button.h /opt/sdl-combo/include/SDL/SDL.h \
+  /opt/sdl-combo/include/SDL/SDL_main.h \
+  /opt/sdl-combo/include/SDL/SDL_types.h \
+  /opt/sdl-combo/include/SDL/begin_code.h \
+  /opt/sdl-combo/include/SDL/close_code.h \
+  /opt/sdl-combo/include/SDL/SDL_getenv.h \
+  /opt/sdl-combo/include/SDL/SDL_error.h \
+  /opt/sdl-combo/include/SDL/SDL_rwops.h \
+  /opt/sdl-combo/include/SDL/SDL_timer.h \
+  /opt/sdl-combo/include/SDL/SDL_audio.h \
+  /opt/sdl-combo/include/SDL/SDL_byteorder.h \
+  /opt/sdl-combo/include/SDL/SDL_cdrom.h \
+  /opt/sdl-combo/include/SDL/SDL_joystick.h \
+  /opt/sdl-combo/include/SDL/SDL_events.h \
+  /opt/sdl-combo/include/SDL/SDL_active.h \
+  /opt/sdl-combo/include/SDL/SDL_keyboard.h \
+  /opt/sdl-combo/include/SDL/SDL_keysym.h \
+  /opt/sdl-combo/include/SDL/SDL_mouse.h \
+  /opt/sdl-combo/include/SDL/SDL_video.h \
+  /opt/sdl-combo/include/SDL/SDL_mutex.h \
+  /opt/sdl-combo/include/SDL/SDL_quit.h \
+  /opt/sdl-combo/include/SDL/SDL_version.h ../sdlallegro/sdl_allegro.h \
+  /opt/sdl-combo/include/SDL/SDL_mixer.h
+
+/usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/stdio.h:
+
+/usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/_mingw.h:
+
+/usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stddef.h:
+
+/usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stdarg.h:
+
+/usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/sys/types.h:
+
+../config.h:
+
+bltypes.h:
+
+../widget/window.h:
+
+../widget/widget.h:
+
+../widget/font.h:
+
+../widget/button.h:
+
+/opt/sdl-combo/include/SDL/SDL.h:
+
+/opt/sdl-combo/include/SDL/SDL_main.h:
+
+/opt/sdl-combo/include/SDL/SDL_types.h:
+
+/opt/sdl-combo/include/SDL/begin_code.h:
+
+/opt/sdl-combo/include/SDL/close_code.h:
+
+/opt/sdl-combo/include/SDL/SDL_getenv.h:
+
+/opt/sdl-combo/include/SDL/SDL_error.h:
+
+/opt/sdl-combo/include/SDL/SDL_rwops.h:
+
+/opt/sdl-combo/include/SDL/SDL_timer.h:
+
+/opt/sdl-combo/include/SDL/SDL_audio.h:
+
+/opt/sdl-combo/include/SDL/SDL_byteorder.h:
+
+/opt/sdl-combo/include/SDL/SDL_cdrom.h:
+
+/opt/sdl-combo/include/SDL/SDL_joystick.h:
+
+/opt/sdl-combo/include/SDL/SDL_events.h:
+
+/opt/sdl-combo/include/SDL/SDL_active.h:
+
+/opt/sdl-combo/include/SDL/SDL_keyboard.h:
+
+/opt/sdl-combo/include/SDL/SDL_keysym.h:
+
+/opt/sdl-combo/include/SDL/SDL_mouse.h:
+
+/opt/sdl-combo/include/SDL/SDL_video.h:
+
+/opt/sdl-combo/include/SDL/SDL_mutex.h:
+
+/opt/sdl-combo/include/SDL/SDL_quit.h:
+
+/opt/sdl-combo/include/SDL/SDL_version.h:
+
+../sdlallegro/sdl_allegro.h:
+
+/opt/sdl-combo/include/SDL/SDL_mixer.h:

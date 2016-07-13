@@ -1,0 +1,12 @@
++-----------------------------------------------------+
+|                 $Desc                               |
+|                                                     |
+| Virtual Jaguar: ^vj_bin______________   %Advanced   |
+|                                                     |
+|                                                     |
+|  %<_BACK        %ACCEPT     %CANCEL        %NEXT_>  |
++-----------------------------------------------------+
+=VARIABLE MAP
+Desc|jaguar_desc
+vj bin            |vj_bin|findbin|vj_dir
+=END VARIABLE MAP

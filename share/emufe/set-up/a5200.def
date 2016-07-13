@@ -1,0 +1,14 @@
++-------------------------------------------------+
+|             $Desc                               |
+|                                                 |
+| Atari800: ^atari800_bin________     %Advanced   |
+| Atari++:  ^atariplus_bin_______                 |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|a5200_desc
+atari800 bin        |atari800_bin|findbin|atari800_dir
+atariplus bin       |atariplus_bin|findbin|atariplus_dir
+=END VARIABLE MAP

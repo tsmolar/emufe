@@ -1,0 +1,45 @@
+EMUFE 3.1.4 README 7-12-2016
+----------------------------
+
+This is yet another emulator front end.  I wrote this because just about
+every emulator front-end I looked at was either system specific, or ran as a
+gui window.
+
+I was looking for something that could run in full screen kiosk mode,
+and run emulators full screen, was independant of any gui or windowing
+system.  I also wanted a system that could support virtually
+any emulator.
+
+So I wrote EMUFE.  Current Features are
+* Run in kiosk mode, but can run in a window.
+* Themable
+* Extensible, can be made to work with most emulators
+* uses SDL (or Allegro)
+* Runs on Linux and Windows
+* Supports descriptions and artwork
+* Designed so that it can be run off a CD, DVD or USB drive, either as
+  boot device with it's own OS, or run with a currently running OS
+* Designed to be read only (for CD use), but makes local storage of
+  save disks, nvram, etc for save games and other permenant changes
+
+Future Plans
+* Port to arm devices (Raspberry Pi, maybe Android devices too)
+* Pull graphics and descriptions from the web rather than store them
+  local
+* Port to SDL2
+* Make a decent looking HD theme.
+* Better configuration
+
+Emufe doesn't work it's magic alone, there is a set of scripts that run it,
+and translate generic wishes (enable fullscreen, use joysticks) into
+emulator specific settings.  To get those scripts, as well as a sample
+setup, you will need to download the emufe-env-1.0.tar.gz package.
+
+This package contains two binaries:
+  emufe, the actual menu system
+  splsh, a splash screen that I launch when my emulator CD is insterted.
+Completely optional.
+
+Requirements:
+  Allegro (alleg.sf.net)
+  emufe-env-1.0.tar.gz (unless you want to develop your own set of scripts)

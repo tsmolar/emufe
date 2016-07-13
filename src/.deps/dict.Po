@@ -1,0 +1,26 @@
+dict.o dict.o: dict.c \
+  /usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/stdio.h \
+  /usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/_mingw.h \
+  /usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stddef.h \
+  /usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stdarg.h \
+  /usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/sys/types.h \
+  ../config.h /opt/mlibz/include/zlib.h /opt/mlibz/include/zconf.h \
+  wwtypes.h
+
+/usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/stdio.h:
+
+/usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/_mingw.h:
+
+/usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stddef.h:
+
+/usr/lib/gcc/i686-pc-cygwin/3.4.4/include/stdarg.h:
+
+/usr/lib/gcc/i686-pc-mingw32/3.4.4/../../../../i686-pc-mingw32/include/sys/types.h:
+
+../config.h:
+
+/opt/mlibz/include/zlib.h:
+
+/opt/mlibz/include/zconf.h:
+
+wwtypes.h:

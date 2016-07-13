@@ -1,0 +1,12 @@
+This library is currently assumes a backend of Allegro.   There is some
+SDL specific code, but it's not complete.   The Macros GFXLIB_ALLEGRO
+or GFXLIB_SDL should be used to determine which code to use
+
+[ ] The procedure that handles keyboard focus should be a callback so that
+    different types of keyboard widgets can be supported.
+    
+[ ] Set up a structure that holds theme information for colors transparency
+    and maybe even bitmaps
+    
+[ ] Once theme structure is in place,  consoldation of different constructors
+    may be possible.

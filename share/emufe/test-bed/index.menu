@@ -1,0 +1,22 @@
+f                                                     shadow.fnt
+t             Choose A System:                        s
+f                                                     silkfont.fnt
+  Apple II/+/e/gs                                     AppleII
+d Arcade                                              Arcade
+d Atari VCS 2600                                      2600
+d Atari 5200                                          5200
+d Atari 7800                                          7800
+d Atari 400/800/XL/XE                                 8bit
+d Atari Lynx                                          Lynx
+d Atari ST                                            ST
+d Colecovision                                        Coleco
+d Commodore 64                                        c64
+d Commodore Amiga                                     Amiga
+d Intellivision                                       INTV
+d longtest                                            longtest
+d setup                                               setup
+i Donky Kong                                          dkong
+i ST Disk                                             stdisk
+i Ultima IV                                           u4
+i Wiz Crown                                           wc
+e End of Menu                                         huh

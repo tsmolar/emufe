@@ -1,0 +1,12 @@
++-------------------------------------------------+
+|              $Desc                              |
+|                                                 |
+| handy: ^handy_bin___________         %Advanced  |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|lynx_desc
+handy bin           |handy_bin|findbin|handy_dir
+=END VARIABLE MAP

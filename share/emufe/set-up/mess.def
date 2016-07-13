@@ -1,0 +1,12 @@
++-------------------------------------------------+
+|              $Desc                              |
+|                                                 |
+| MESS:  ^mess_bin____________         %Advanced  |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|mess_desc
+mess bin            |mess_bin|findbin|mess_dir
+=END VARIABLE MAP

@@ -1,0 +1,14 @@
++-------------------------------------------------+
+|             $Desc                               |
+|                                                 |
+| Stella: ^stella_bin__________       %Advanced   |
+| z26:    ^z26_bin_____________                   |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|a2600_desc
+stella bin          |stella_bin|findbin|stella_dir
+z26 bin             |z26_bin|findbin|z26_dir
+=END VARIABLE MAP

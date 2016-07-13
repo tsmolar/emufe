@@ -1,0 +1,544 @@
+3.1.4
+ * Removed warnings
+ * Fixed runtime issues on x86_64 (mostly by adding #include<string.h>
+
+3.1.2
+ * Changed do_imgboxes to do_imgbox.
+ * do_imgboxes is now a wrapper to do_imgbox that processes all images
+ * enabled B_PICBOX for displaying the old style images
+ * disabled the old picbox.  It must now be enabled in the rc file, it's
+   not enabled by default
+ * Added _XY to labels for imgboxes in rc file.  I.E. B_BOXSCAN_XY instead
+   of B_BOXSCAN. This fixes a bug,  B_BOXSCAN processed B_BOXSCAN_BM too,
+   this is why imgboxes would be disabled if the rc file was in the wrong
+   order.  Will no longer be an issue.
+ TODO
+   - Seems most issues are addressed
+   - enable keyboard, find way to only make them display for directory? 
+     may be a challenge.  Maybe change the background image depending on
+     what emulator is selected, and never have it load actual images?
+     ie set prefix to kb_ but have no kb_*pcx images.
+   - bugs in setup?  Probably string length issues, always is.
+   - Recenter banner, allow larger fonts
+   - scrolling for desc box, display company and year in another font
+     also blurb source (mobygames)
+
+3.1.1
+ * Enabled Screen Shot display
+ * BUGS: Name: not working
+
+3.1.0
+ * Descbox2 with word-wrap, headline, can be resized
+
+3.0.9
+ * Define color or background bitmap for imgbx
+ * Draw imgbx in init, if enabled.
+ * Center bitmaps in imgbx, both horizontally and vertically if smaller
+   Than the imgbx
+ * If larger than the imgbx, then downscale in realtime
+ * Added a downscale function that seems fast enough for regular use
+
+3.0.8
+ * Can Load TTF font if defined, USE_FREETYPE is set and BLITFONT is not
+   BLITFONT is only
+   for bitmap fonts, for speeding them up.  Both can coexist with extra code,
+   but to simplify, I'm only adding ttf support where BLITFONT is not 
+   enabled.  I don't think it's been enabled in years, it's not
+   in the configure file, it needs to be enabled with a #DEFINE.  
+   As I recall, BLITFONT has limitations, maybe time to strip it from
+   The font library?
+*  Removed old commented out code
+*  Created a structure (imgbx) to handle several different types of image boxes
+   with different dimensions.  They can be enabled or disabled.
+   Needs background definitions-  These can replace picbox (so that picbox
+   can be disabled)
+*  Display images in new imgbx, needs to center or scale images over background
+*  Enable reading B_BOXSCAN, other types need to be added.
+*  Removed old widget directory
+
+3.0.7
+ * Added resolution setting to rcfile.c
+ * Made menubox movable
+ * Created theme file for 1024x768 with windows in diff positions.
+ * Can now display background images larger than 640x480 (this was fixed in the code)
+ * -res, -W are probably depricated, these only pad out and center the display
+   for larger resolutions.  Larger resolutions can be supported natively
+ * FIXED: Menubox drawn with text bg color now instead of gray128
+ * FIXED, Picbox, Descbox now display in the right place.
+ * Did test load of TTF Font, it appears that all you need to do is make the
+   TTF font active and the font print routines will do the right thing
+   TTF fonts cannot be loaded through the legacy font_load() routine, but
+   bitmapped fonts can be loaded through fnt_loadfont(), but you need to set
+   the type.   It should be possible to transparently load either type and
+   not change code -BUT- if the emufe tries to load a TTF font on a system
+   that doesn't have it compiled in, (should be a flag to check), then there
+   needs to be a bitmapped fallback to load
+
+3.0.6
+ * Bug fixes to allow larger sizes in modules.c,  fixes atari800, hatari,
+aranym
+
+3.0.5
+ * Integrated widget library from pach-0.90, this includes font 3.7.1,
+	which has working TTF support.
+ * MENUBOX size can be changed and placed anywhere
+ * PICTBOX size can be changed and placed anywhere
+ * fixed bugs in font library
+
+3.0.1
+ * Added support for directories (thought this was set?)
+
+3.0.0
+ * same as 2.9.9
+
+2.9.9
+ * AKA RC8
+ * Extend the ^M removal to setup.c
+
+2.9.8
+ * AKA RC7
+ * remove ^M returns when they are found in modules.c,  this should fix
+   some of the windows problems without having to reformat the file.
+   (only enabled in windows, could be enabled in linux too, for better 
+   compatibility, if need be)
+ * Moved more printfs to debug
+
+2.9.7
+ * AKA RC6
+ * in tmpziplist,  ensure that tmp dir exists, and create if not
+ * can't see an issue with mod_getsystem on windows, enabled debug code 
+   for it
+
+2.9.6
+ * AKA RC5
+ * moveds some printfs to DEBUG in splash
+
+2.9.5
+ * AKA RC4
+ * Added version info
+ * special processing for EMUHOME=$EMUHOME
+ * Don't clean up tmp dir when not set
+ * If CDROOT isn't set then set emuhome to the EMUHOME var in
+   the settings (NOT in the env!)
+ * Fix auto problem
+ * Fix for z26
+
+2.9.4
+ * AKA RC3
+ * Fixed Title to display
+ * Changed adv option save method so that it searches for desc instead 
+   of bin
+ * Removed printfs
+ * Fixes for the test-harness
+
+TODO/BUGS:
+   -test test test
+   -work on runme/bat file!
+   -setup seems to memleak - less now that the widget_init was fixed
+
+2.9.3
+ * AKA RC2
+ * Setup now centered on Widescreen
+ * TMPDIR issue:  new type automatically loads the tmpdir choices
+   into the dropdown.   Use 'tmplist' instead of 'fixedlist'
+ * limited dropdowns to not display more characters than their width.
+ * Changed widget_init so that it only inits once.   Fixes the too many
+   levels problem.   Might also help the mem leak issue.
+
+2.9.2
+ * AKA RC1
+ * restore pic and description in type-4
+ * restore title in type-4 (title is now stored in imenu structure rather
+   than waste.)
+ * Changed find_datadir again, if not in a "src" dir, or a "bin" dir and 
+   cdroot isn't set, then the current directory will be used as basename.
+   Verify that this doesn't break emufe, or splash
+   NOTE: This change *might* make the -c option obsolete, test that too!
+ * Splash reads CDROOT env var
+ * Updated runme2 to locate exe directory and work with type 1 and type 2
+ * runme2 now works on Win and Linux without changes
+ * fixed bug where type-3 doesn't work second time.   Bookmark wasn't 
+   saving emulator name
+ * put joy_enable key on F12, where it's supposed to be according to doc
+   There is one other mystery key,  p/F11?   it is now disabled
+ * added fileio_mv and fileio_rm to fileio.c
+ * setup now replaces the file, rather than just writing to emucd.env2
+
+2.9.1
+ * Changed cdroot for bin directories
+ * Finished Widescreen
+ * loads widescreen bg properly
+ * Added EMUFEwide variable to emuenv
+ * Added EMUFEres variable to emuenv 
+ * Changed the way that CDROOT works,  splash calculates CDROOT, so that
+   it doesn't need to be preset if autorun
+ * The -c option added to emufe.   It means to use the directory launched
+   from as CDROOT.    This will override the env setting (I Think)
+ * rewrote runme2.    Looks like reading bookmark might not be working right
+
+2.9.0
+ * Added joystick handling to sdl_allegro
+ * enabled joysticks in emufe.  It almost works
+ * converted joystick loop to use key names rather than numbers
+ * working on the jdn,jup, jbu problem.   That apparently worked
+   if it was constantly polling,  with rest, it no longer works properly
+   need a better way (no joystick repeat?)
+ * replaced jdn, jup and jbu with jflag.  The idea was to use a timer to
+   clear it, but this doesn't seem to work so well b/c of the rest,
+ * Just when I was about to give up on mousewheel, I copied some code 
+   off the internet, and it worked!
+ * Found a way to work around the joystick repeat problem
+ * Fixed a bug that only shows up in gcc4
+ * Updated Splash
+
+2.8.4
+ * Completed install for hd images
+ * Completed install for hd directories
+ * use the Allegro command for setting text mode,  no more SDL code
+ * created a flag to determine if in graphics or text mode
+ * reset keyboard rate when restarting gfx
+
+2.8.3
+ * Added BPROG, which is the basename of a prog
+ * Started Install HD
+ * dzip now changes bintype and fqrom to the first one in the zip if not a 
+   disk,  zip otherwise
+ * individual emus can override types, IE support dzip, so dzip is not 
+   enabled globally
+ * reorged the stuff around dealwithzip quite abit (but not dealwithzip
+   itself..   check for bugs
+ * can export variables with the exp directive (Linux only)
+
+2.8.2
+ * HARDDRIVEx is a reserved word to force it to set bintype to hdd
+   (for fs-based hard drives).   x can be anything so that emu_pergame
+   can be configured to set different options.  (color, mono)
+ * fix for reading ziplist, wasn't working for large files, due to no
+   space in front
+ * use CFGFILE variable to determine the output cfgfile (why this wasn't
+   set before, I have no idea
+ * mkdir the parent of the output cfg file,  needed for gens to create a 
+   gens subfolder
+
+2.8.1
+ * Make title bg get restored
+ * fixed mem leak in above
+ * Large Font is now selectable
+ * emu_*.cfg files can be put in subdirectories linux or win32
+   if one of those directories exist, then it will be used, ignoring the top
+   level.   emu_pergame and emu_ for systems do not follow this rule since
+   they are not believed to contain any OS-specific settings
+ * e_*cfg files are now located in win32 or linux subdir if they exist
+ * added fileio_basename() which doesn't use strtok,  the old basename was
+   failing under some circumstances.
+ * fixed tmp cleanup on windows.   Needs /Q flag
+ * Added close gfx on game launch
+   
+
+2.8.0
+ * Copy new emucd.env now works, will do mkdir too
+ * TMPDIR dialog working,  no code change needed
+ * save bookmark for type-3 launch
+ * restore from bookmark
+ * Implemented autoselect (-ac flag), works both ways!
+ * Did large font for title
+ * Fixed Amiga menu crash
+ * Centered large font
+
+2.7.4
+ * Advanced option saving now appears to work,  it is simpler than expected
+   and possibly can be made even simpler since it doesn't really seem
+   to need to check for bin, desc, or dir
+ * Widescreen bg now works
+ * Added BGWIDE to rcfile
+ * descbox now cached, like menubox
+ * fixed memory leaks with F11 is pressed, no more calling a new
+   create_bitmap
+ * Fixed the text shadow color problem when F11 is pressed
+
+2.7.3
+ * Fixed The dialog crash
+ * Removed Makeshift checkbox checking
+ * Changed no relaunch code so that you can relaunch if you key
+   away from the item first
+ * Checkboxes now save
+ * Saves emufe file, but does not overwrite old one
+ * Advanced dialogs can be called, but not saved
+
+2.7.1
+ * Made c64 a 'computer' type (so that it can use zip files)
+ * Created front<->back setup defs
+ * Can run setup on everything but Advanced
+ * sets check on load, but not reading them on save
+ * Added missing mess menu
+ * Fixed 1-second bug, where it consumes CPU if there's no pic
+
+2.7.0
+ * Made dropdowns work
+ * fixed lists for select now work
+ * Use fixed font for setup dialog, so it looks better
+
+2.6.4
+ * Pressing drop down button now gets the dropdown wheels rolling
+ * reads directory (but * processing is basic)
+
+2.6.3
+ * added select and text edit,  the select dropdown doesn't work yet
+ * select and edit changes are written to env_change structure on ACCEPT
+
+2.6.2
+ * Added envset for setup
+ * Started select/dropdown widget for setup
+ * added way to lookup envvars in setup
+ * added support for local hdimages with the hdi directive
+ * if there is an 'hdi' in a zip image, then disktype is set to zhdi, so 
+   that a different command line can be used (do we REALLY need this
+   if we are supporting locally installable HDIs?)
+
+2.6.1
+ * Added hdd directive to define fs hard drives.  One drive per
+   emulator
+ * added cmd_gethdd to process the HDD variable
+ * Started adding definitions for harddrive directory
+ * added CMDsetup
+ * CMDsteemclean works
+ * bin2disk works, for xfds, anyway
+ * Create Blank disk works
+ * fixed bug in dealwithzip where full path was passed to unzip,
+   not just filename,  this meant nothing could be extracted.
+ * Added CMD processing
+ * Added create blank disk (incomplete)
+ * added 'uwd' directive that allows the setting of a working directory
+ * load env before cmdtable in generic as well, so it can take advantage
+   of the perversion config
+ * chdir to cddir, if it is set
+   
+2.6.0
+ * Moved the persistant config to the cfg directory, to make it compatible
+   with existing disk
+ * Made sure cfg dir still worked when localcfg is not set
+ * Context now works
+ * deletes the config file with .new extension after it is written
+ * Added persistant config files, where it will copy a config to a local
+directory, and only update it if it already exists.
+ * Expanded the cmdtable opt field by 5 chars.  For Steem
+   
+2.5.5
+ * cfgfile can have a localname and remote name, can specify different
+   paths, and have variables in name
+ * Made BOOTDISK a special var, like CPLOCAL
+ * BOOTDISK is stuffed into disk1
+ * cfgfile can now have VARs separated by semicolon, for compactness,
+   doesn't save space internally, however
+ * arc now must hold the full path to the disk, since there can be
+   disks in multiple locations
+ * Use HAVEDISK1, HAVEDISK2 vars
+ * Put Maxsize on env and cmdtable, now they give errors if reached
+
+2.5.4
+ * moved the load_settings call to before the mod_loademucfg() call
+   so that it can get the (emu)_bin variable, for perversion settings
+   This was done in module_computer.  If it works out, then it will need
+   to be done for arcade and generic too.
+ * Version-specific config files, not quite working
+ * Added !=, <, > for ENV conditions < & > not tested yet
+ * Added delete tmpdir, but it doesn't seem to work yet
+ * added fileio_mkdir_p()
+ * added fileio_dirname()
+ * changed local diskdir to c:\emulator\disks\sys
+ * Made it impossible to launch the same game twice, this is to work
+   around an issue on windws where it seems to repeatly send KEY_ENTER
+   causing the game to keep launching.  There must be a better way.
+
+2.5.3
+ * Uncommented COLDEF defaults, seems to work
+ * Made amiga a system that uses generic computer
+ * Strip sys/emu name from most env vars, this allows a generic
+   config to work across all MESS systems
+ * Created setup dialog, reading it from a file
+ * Added gfx_alert from gameworx
+ * Added gfx styling from gameworx
+ * Fixed bug in sdlallegro with not reading mouse button, must have been
+   introduced while experimenting with mousewheel
+
+2.5.2
+ * Updated splash.c with dfixsep2 and rest()
+ * Added rest() to dramatically cut down on CPU usage
+ * set the keyboard repeat rate, so it repeats in SDL
+ * On GFX_TEXT, make SDL quit and re-init video subsystem
+   This seems to be the only way to close a gfx mode
+ * Added default values for COLDEFs, but commentted it out after the 
+   c64 emu started acting kooky
+
+2.5.1
+ * Expanded cmd space to 120 in cmdtble (for atari800)
+ * Tested spawnl instead of system() to try to prevent dos windows on Windows
+   didn't work, backed off
+ * added dzip type, only process as a zip file if cplocal is set
+ * Now saves disks to CFGDIR if set, or TMPDIR if not set
+
+2.5.0
+ * cplocal added
+ * cmd_getcmdline() modified to allow '*' for bintype
+ * bintype accessable from env
+ * Can deal with system subdirs in tmp and conf dirs
+ * Process a custom cfg
+
+2.4.9
+ * started dealwithzip(), needs minizip
+ * dealwithzip can list zip disks to an array
+ * dealwithzip can extract zips, and be called from cfg file
+   + cleanup?
+ * F11 now toggles between fullscreen and window, but has to load
+   bitmaps from file
+   + does not restore pic currently
+   + font colors may be wrong
+ * Extracts individual files separately, and doesn't overwrite if they
+   exist (don't clobber saved games)
+
+2.4.8
+ * Recursively process %VARS%
+ * Can handle cfg directory now, and pass extra cmdline opts
+
+2.4.7
+ * Can set ROMBASE by copying from an env var
+ * changed some of the dynamic strings for menus to a struct
+ TODO- Change commands and lmenus, used for saving?
+ * After Exec, returns to menu
+ * can run multiple emulators sequentially without errors (bug fix)1
+
+2.4.6
+ * if cfg file for emu does not exist, then dump out emu and game (parms 
+   needed for old scripts)
+ * added exec flag, that can be set through the cfg file,  if set
+   emufe tries to exec command line, else it dumps command line
+ * The bug where the mess CMD line gets screwed up is because the raw
+   command line is 93 characters, and 60 bytes were reserved to hold it
+ * Created pergame settings file, with multiple fields
+ * Created special version of hss_index to process pergame file
+
+2.4.5
+ * Load rc file for level 2
+ * Fix the directory for theme loading in rcfile.c
+ * Execute command lines (not: had problems, maybe minimizing is an issue)
+ * Changed dfixsep2 to remove double //
+ * Added load_settings, which behaves the same way as the shell verison,
+   loading a local env file if present.  also clears the env on load
+ * load load_settings & env before rc file (to determine fullscreen)
+ * get EMUFEfull from the new env if using new mode
+ * get EMUFEjoy from the new env if using new mode
+
+2.4.3
+ * Configuration files for systems
+ * Can determine binary types by extension (cart, disk, etc)
+ * separate command lines for different bin types
+
+2.4.2
+ * Finished cmd processing, so that it works for stella, at least
+ * Started runme2.sh
+
+2.4.1
+ * Made new version of cfg processing that allows for conditionals, and
+   adds more flexibility
+ * load env files
+ * new version of cmd processing using the new env & cfg processing
+ * renamed old version with a 0 on the end
+
+2.4.0
+ * Made 'back' work both on windows & with new format
+ * Processing command line opts,  this needs work since the emuenv needs
+   to be loaded to determine which options to use.
+
+2.3.0
+ * Started implementing a file to set cmd line options
+ * Determine system by looking at emucd.env
+ * created dfilepath2, which converts slashes to the right way AND
+   processes . and .. (recursive)
+ * Two cycle menu appears to work in one direction, it's likely that it
+   won't work on the way back, yet
+
+2.2.0
+ * Added -i for using new 2-cycle mode
+ * made alphabet & numbers work in SDL
+ * CDROOT
+ * Tested SDL_WaitEvent, to lower CPU
+ * Fixes for Linux
+ * Removed platform.c, as it wasn't needed
+
+2.1.0 - 1/29/2008
+ * Updated sdl_allegro
+ * Used Keysyms instead of the code
+ * redid some strings (they were used dangerously)
+ * Added -n for new style command line processing
+ * Added -res for resolution and -W for widescreen (in case we fill the
+   screen)
+ * changed how basedir is handled
+ * added hss_index
+ * Code reorginization, mimic structure used by gameworx
+ * splash.c uses dfilepath.c, and share directory
+
+2-17-2006
+ * Cleanup, first public release on sourceforge (2.0.1) 
+
+2005
+ * Released version 2.0
+   Release designed to add Windows/Cygwin compatibility
+ * font.c: Add BLITFONT support.  
+   font displays were noticably slow under Windows/VMware in some
+   instances.  Ideally, I'd like to use Allegro's built in font support
+   but the ability to load fonts is too new, and the font format is not
+   well documented in older versions of Allegro.  The next best alternative
+   is to use blits to draw fonts instead of drawing them pixel by pixel.
+   This seems to have fixed the problem on Windows.
+ * Added gthemedir, so that all the theme-related files can be stored in a 
+   central place without the need for symbolic links
+ * replaced "silkfont.fnt" with the variable tfont
+ * Add the ability to load fonts as a pcx file rather than a .fnt file.  This
+   could greatly speed up the initial loading of fonts.  pcx files can be 
+   created by setting the appropriate setting in theme.rc
+ * long standing font display bug fixes. 
+ * Version 1.7
+ * Changed the following keys:
+             'q' (QUIT) is now ESC
+             'j' (JOYSTICK TOGGLE) is now F12
+             'p' (PLAY) is F11
+ * Added support for HOME and END keys
+ * If you press an alpha/numeric key, it will take you to the 
+   first or next menu entry that matches the letter or number
+   you pressed.
+ * Make banner themeable
+ * Added SHDCOL to rcfile.c to allow the setting of the shadow color
+ * Added 's' and 'S' menutypes to support setup selection
+ * Added writeoptions
+ * Added 'F' menutype to support fileselectors
+ * Bug Fixes, conversions to sprintf
+
+2-04-2004
+* load from separate theme file
+* EMUFEfull variable can override the fullscreen setting
+* wait for mouse button release before acting on commands (should prevent icons 
+  from being selected)
+* Middle butten simulates "Enter"
+* rcfile.c - Allow the color for the menu hilight to be set in the file.
+* rcfile.c - Allow capital Hex values as well as lowercase
+* Auto_load images after 1-2 seconds
+* Joystick can be toggled with the 'j' key
+* Add joystick support
+* Menu highlight color can be set
+* Bug fixes
+
+1-31-2004
+* Added mousewheel support
+
+February-March 2003
+* Theming
+* mouse support
+
+3-06-2002
+* Solved Freeze problem (hopefully)
+
+1-24-2002 - 3-05-2002
+* Lots of Stuff that I forgot to document
+
+1-23-2002
+First Version

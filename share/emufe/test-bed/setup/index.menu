@@ -1,0 +1,10 @@
+t                  Setup                              s
+S  SETUP=FULL                                         dir
+s  Full                                               RECfull
+S  SETUP=CUSTOM                                       emufe.menu
+s  Custom                                             RECcustom
+S  SETUP=MINIMAL                                      dir
+s  Minimal                                            RECmin
+m  menutest                                           emufe.menu
+u  Cancel Setup                                       p
+e End of Menu                                         end

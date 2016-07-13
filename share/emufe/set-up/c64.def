@@ -1,0 +1,12 @@
++-------------------------------------------------+
+|              $Desc                              |
+|                                                 |
+| VICE:  ^vice_bin____________        %Advanced   |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|c64_desc
+vice bin            |vice_bin|findbin|vice_dir
+=END VARIABLE MAP

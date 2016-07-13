@@ -1,0 +1,14 @@
++-------------------------------------------------+
+|              $Desc                              |
+|                                                 |
+| jzIntv:  ^jzintv_bin__________      %Advanced   |
+| Bliss:   ^bliss_bin___________                  |
+|                                                 |
+|                                                 |
+|  %<_BACK       %ACCEPT   %CANCEL       %NEXT_>  |
++-------------------------------------------------+
+=VARIABLE MAP
+Desc|intv_desc
+jzintv bin          |jzintv_bin|findbin|jzintv_dir
+bliss bin           |bliss_bin|findbin|bliss_dir
+=END VARIABLE MAP

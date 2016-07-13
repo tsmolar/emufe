@@ -1,0 +1,101 @@
+2.1.9
+  * wdg_adjust - for moving widgets on res change
+  * wdg_refresh - for redrawing widgets when needed
+  
+2.1.8
+  * button.c - added wdg_add_bmp_button(),  this handles bitmaps
+      better than the old function, and is compatible with floating 
+      windows
+  * dialog.c - Added SU_BMPBUTTON for bitmap buttons
+  * Create bitmap buttons,  still need to allow them to be animated
+  * Fixed save_under and restore_under so that they can use floating windows
+
+2.1.7
+  * dialog.c - +/- widget for selecting  SU_PLUSMINUS
+  * dialog.c - better bitmap handling,
+  * Bitmap file can be specified
+  * bitmap regions can be assigned to labels
+  * changing a select can now change bitmaps
+  * labels are stored in the env structure, might need a separate
+    array structure for this
+  * A bitmap file DOES NOT need to be specified for each new dialog, if they 
+    all use the same one.
+
+2.1.6
+  * Tried using a Cancel button in floating window, it leads to crashes
+    I think it's because the event_loop in widget is still processing
+    when cancel destroys the widgets being processed (causing the 
+    linked list to get 'lost').  I think if I wan't to be able to
+    do this, then I need to mark widgets for deletion (active flag=2
+    or something), then afterwards delete them linearly.
+  * reworked parts of the destroy window, since it wasn't stable on linux
+  * fixed the destroy_tree procedure to remember that it is using a 
+    doubly linked list!
+  * other stability fixes for Linux.
+
+2.1.5
+  * Added flags to help prevent click-throughs on floating window
+    (it's up to the program to determine whether to ignore these)
+  * Added id and index fields,  these can help debug widget library
+    as well as help dialog
+  * dialog.c - you can assign a value to the widget id in the variable
+    definition
+  * dialog.c - dialog_buttoncb() changed so that P_CANCEL is no longer the
+    default button,  it checks the widget ID field to see what the button
+    should do,  not all buttons close the window now.
+  * added wdg_destroy, should be able to destroy any widget, should we 
+    used this as the destroy callback now?   Instead of button_destroy and
+    others?
+  * wdg_tree_destroy seems to properly close a window tree now, including
+    keeping the widget linked list sane.
+  * dialog.c - added two flags,  fdlg_active and fdlg_lastopen, so that 
+    we can see what it's doing.
+
+2.1.4
+  * Many new functions that can set a parent,  the goal is to have
+    the old functions call the new ones
+  * Can draw to a bitmap,  doesn't seem like everything currently draws
+    such as the background style_rectfile (seems to draw to the screen)
+
+2.1.1
+  * Started allowing windows to be drawn to bitmaps
+  * Added Parent Pointer
+  TODO:
+    The goal is to produce free floating windows.  Windows of this type:
+    1. all sub widgets should have a pointer to its parent widget, so that
+       they can be moved, deactivated, & destroyed by finding a parent.
+       They are on the same level as the base, so that they don't
+       freeze the program.
+    2. These widgets need an active flag, so they can be hidden or 
+       unfocused.
+    3. They should have an X/Y offset settings from their parent, so
+       when the parent is moved, their new position can be quickly calculatd
+    4. These windows should be stored in a bitmap, the size of the window
+       stored in the widget structure (extra field maybe?)
+    5. draggable window bars-- eventually.
+
+2.1.0 - 2008-8-28
+  * Integrated Changed from emufe
+
+2.0.2 - 2007-01-17
+  * Draggable bmp buttons repeatedly call handler when they are depressed.
+    This might cause other problems, but what good is a draggable button
+    without this?
+
+2.0.1 - 11/27/2007
+  * Fixed a bug in button creation that causes a crash on some platforms
+    when the button is destroyed
+
+1.9.5 - 2007-05-04
+  * Fixed some things that could cause segfaults under certain conditions
+  * Left and Right widget searching fixed,  they were not breaking out of
+    a loop properly, causing only widgets on the bottom half of the screen
+    to be found
+  * Finished Text entry widget
+  * Fixed text entry widget to accept char instead of int, this caused
+    text to not display sometimes, creating a frustrating error to debug
+
+1.9.0 - 2007-05-03
+  * Added input.c for input widgets
+  * Fixed the just_popped issue that was causing problems for the buttons
+    (might not be completely fixed, but is better)

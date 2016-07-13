@@ -1,0 +1,9 @@
+f                                                     shadow.fnt
+t             Choose A System:                        s
+t                                                     silkfont.fnt
+  Apple II/+/e/gs                                     AppleII
+  Commodore 64                                        c64
+  Commodore Amiga                                     Amiga
+  Intellivision                                       INTV
+d test                                                test-bed
+e End of Menu
