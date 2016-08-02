@@ -74,7 +74,7 @@
 #define PACKAGE_NAME "emufe"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "emufe 3.1.4"
+#define PACKAGE_STRING "emufe 3.1.5"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "emufe"
@@ -83,13 +83,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.1.4"
+#define PACKAGE_VERSION "3.1.5"
 
 /* Define if using FreeType */
 /* #undef USE_FREETYPE */
 
 /* Version number of package */
-#define VERSION "3.1.4"
+#define VERSION "3.1.5"
 
 /* Define if using Zaurus */
 /* #undef ZAURUS */

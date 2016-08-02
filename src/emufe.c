@@ -16,63 +16,8 @@
 
 /* #include <allegro/internal/aintern.h> */
 
-/* Version 3.0
-/* Version History
- * 3.0  2008 (See ChangeLog)
- * 2.10 2007-1-29  
- * 2.05 2007 - Integrate sdl_allegro, to allow this to run under SDL
- * 2.0: 2005
- *           - Release designed to add Windows/Cygwin compatibility
- *           - font.c: Add BLITFONT support.  
- *             font displays were noticably slow under Windows/VMware in some
- *             instances.  Ideally, I'd like to use Allegro's built in font support
- *             but the ability to load fonts is too new, and the font format is not
- *             well documented in older versions of Allegro.  The next best alternative
- *             is to use blits to draw fonts instead of drawing them pixel by pixel.
- *             This seems to have fixed the problem on Windows.
- *           - Added gthemedir, so that all the theme-related files can be stored in a 
- *             central place without the need for symbolic links
- *           - replaced "silkfont.fnt" with the variable tfont
- *           - Add the ability to load fonts as a pcx file rather than a .fnt file.  This
- *             could greatly speed up the initial loading of fonts.  pcx files can be 
- *             created by setting the appropriate setting in theme.rc
- *           - long standing font display bug fixes. 
- * 1.7: 2005
- *           - Changed the following keys:
- *             'q' (QUIT) is now ESC
- *             'j' (JOYSTICK TOGGLE) is now F12
- *             'p' (PLAY) is F11
- *           - Added support for HOME and END keys
- *           - If you press an alpha/numeric key, it will take you to the 
- *             first or next menu entry that matches the letter or number
- *             you pressed.
- *           - Make banner themeable
- *           - Added SHDCOL to rcfile.c to allow the setting of the shadow color
- *           - Added 's' and 'S' menutypes to support setup selection
- *           - Added writeoptions
- *           - Added 'F' menutype to support fileselectors
- *           - Bug Fixes, conversions to sprintf
- * 1.6: 2004 
- *           - EMUFEfull variable can override the fullscreen setting
- *           - load from separate theme file
- *           - wait for mouse button release before acting on commands (should prevent icons 
- *             from being selected)
- *           - Auto_load images after 1-2 seconds
- *           - Joystick can be toggled with the 'j' key
- *           - Add joystick support
- *           - Add mousewheel support
- *           - Middle button support
- *           - Menu highlight color can be set
- *           - Bug fixes
- * 
- * 1.5: 2003 - Add theming
- *           - Mouse support
- *           - new configuration files
- *           - bug fixes
- * 
- * 1.0: 2002 - First Release
- */
-
+// debug level can be 0-5
+#define DEBUG_LEVEL 3
 
 BITMAP *bitmap, *descmap;
 BITMAP *defbmp;
@@ -102,7 +47,7 @@ char *commands[30], *lmenus[30];
 char descdir[90], descbox[40], menubox[40], picbox[40], theme[200], gthemedir[96], fullscr;
 char tfontbmp[30],fullpath[120];
 char basedir[160], restr[20];
-char startdir[160], lastitem[160], *fname;
+char startdir[160], lastitem[160], *fname, debugtxt[300];
 int menulength, usembmap, usedbmap;
 /* FORCE picload */
 int cdclock=0,widescreen=0;
@@ -124,9 +69,13 @@ gfx_sdlflip() {
 }
 #endif
 
+void debug(int level,char *text) {
+   // log debugging in a way that can be switched off at ru
+   if (level <= DEBUG_LEVEL)
+     printf("log(%d): %s\n",level,text);
+}
 
-
-st_txt_col(char etype) {
+int st_txt_col(char etype) {
    /* Return menu txt color based on entry type,  colors can eventually
     * be defined in the rc file */
    /* Shortcut warning!  Instead of calling set_font_fcolor() like we
@@ -162,7 +111,7 @@ st_txt_col(char etype) {
    }   
 }
 
-restore_menuback() {
+int restore_menuback() {
    int black, white, gray128;
    
    scare_mouse();
@@ -176,7 +125,7 @@ restore_menuback() {
    unscare_mouse();
 }
 
-menu_uhlight(int index, int slct) {
+int menu_uhlight(int index, int slct) {
 
    /* Unhilight the menu selection */
    
@@ -443,7 +392,8 @@ show_desc2(char *desc) {
    strcpy(nxline,"\n");
 
 #ifdef DEBUG
-   printf("Loading Description (2)...%s\n",desc);
+   sprintf(debugtxt,"Loading Description (2)...%s\n",desc);
+   debug(3,debugtxt);
 #endif
    if(imenu.mode==0) {
      sprintf(line, "%s/%s.desc",descdir,desc);
@@ -463,7 +413,8 @@ show_desc2(char *desc) {
    else
      blit(descmap,screen, 0,0,rc.db_x+rx0,rc.db_y+ry0,rc.db_w,rc.db_h);
 #ifdef DEBUG
-   printf("descffname=%s\n",descffname);
+   sprintf(debugtxt,"descffname=%s\n",descffname);
+   debug(3,debugtxt);
 #endif
 
    if ((fp=fopen(descffname, "r")) != NULL) {
@@ -505,7 +456,8 @@ show_desc(char *desc) {
    char line[72], descffname[90], *ww;
    int lineno, white, black;
 #ifdef DEBUG
-   printf("Loading Description...%s\n",desc);
+   sprintf(debugtxt,"Loading Description...%s\n",desc);
+   debug(1,debugtxt);
 #endif
    if(imenu.mode==0)
      sprintf(descffname, "%s/%s.desc",descdir,desc);
@@ -526,7 +478,8 @@ show_desc(char *desc) {
    else
      blit(descmap,screen, 0,0,rc.db_x+rx0,rc.db_y+ry0,rc.db_w,rc.db_h);
 #ifdef DEBUG
-   printf("descffname=%s\n",descffname);
+   sprintf(debugtxt,"descffname=%s\n",descffname);
+   debug(3,debugtxt);
 #endif
 //   fnt_setactive(myttf);
    if ((fp=fopen(descffname, "r")) != NULL) {
@@ -560,7 +513,8 @@ display_info(int slc)  {
    strcat(picname,roms[slc]);
    strcat(picname,".pcx"); */
 #ifdef DEBUG
-   printf("\n>>picname is: %s\n", picname);
+   sprintf(debugtxt,"\n>>picname is: %s\n", picname);
+   debug(2,debugtxt);
 #endif
 //   disp_image(picname);
    do_imgboxes(picsdir,menu[slc].rom);
@@ -577,8 +531,10 @@ int load_menu(char *lmenu) {
    char *name, rom[30], waste[39];
    int i=1,sl;
 #ifdef DEBUG
-   printf("Loading Menu...%s\n",lmenu);
-//   printf("Menu strlen: %d\n",strlen(menu));
+   sprintf(debugtxt,"Loading Menu...%s\n",lmenu);
+   debug(1,debugtxt);
+   sprintf(debugtxt,"Menu strlen: %d\n",strlen(menu));
+   debug(5,debugtxt);
 #endif
    fp=fopen(lmenu, "r");
    while( type != 'e' ) {
@@ -608,7 +564,8 @@ int load_menu(char *lmenu) {
 	    title(-1,-1,imenu.title);
 //	    sprintf(picname, "%s/%s.pcx",picsdir ,rom); 
 #ifdef DEBUG
-	    printf("\npicsdir is: %s  rom is %s\n", picsdir,rom);
+	    sprintf(debugtxt,"\npicsdir is: %s  rom is %s\n", picsdir,rom);
+	    debug(2,debugtxt);
 #endif
             do_imgbox(B_PICBOX,picsdir,rom);
             do_imgbox(B_KEYBOARD,picsdir,rom);
@@ -618,7 +575,10 @@ int load_menu(char *lmenu) {
 	  case 'f':
 	    if(strncmp(currfont,rom,strlen(currfont))!=0)
 	      sprintf(fullpath,"%s%c%s",fontdir,mysep,rom);
-	    printf("menu bitmap.font.load\n");
+#ifdef DEBUG
+	    sprintf(debugtxt,"menu bitmap.font.load\n");
+	    debug(3,debugtxt);
+#endif
 	    // Kludge, don't load fonts from menu if using TTF
 	    if(ActiveFont->type != TTF)
 	      font_load(fullpath);
@@ -670,7 +630,8 @@ int load_menu(char *lmenu) {
 	 
 #ifdef DEBUG
       } else {
-	 printf("ignored: %s\n",name);
+	 sprintf(debugtxt,"ignored: %s\n",name);
+	 debug(3,debugtxt);
 	 /* put a free here */
 #endif
       }      
@@ -679,8 +640,9 @@ int load_menu(char *lmenu) {
    menulength=i-2;
    fclose(fp);
 #ifdef DEBUG
-   printf("done\n");
-   printf("menulength: %d\n",menulength);
+   debug(3,"done\n");
+   printf(debugtxt,"menulength: %d\n",menulength);
+   debug(3,debugtxt);
 #endif
    return i-2;
 }
@@ -721,7 +683,7 @@ settxtmode() {
       // this MIGHT be useful for testing
       w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
 # ifdef DEBUG
-      printf("settxtmode() attempting window mode rather than text mode to address a bug\n");
+      debug(3,"settxtmode() attempting window mode rather than text mode to address a bug\n");
 # endif
 #else
       w=set_gfx_mode(GFX_TEXT,usex,usey,0,0);
@@ -734,7 +696,8 @@ setgfxmode() {
    int w=0;
    
 #ifdef DEBUG
-   printf("setgfxmode() fullscr=%c  usex=%d  usey=%d\n",fullscr,usex,usey);
+   sprintf(debugtxt,"setgfxmode() fullscr=%c  usex=%d  usey=%d\n",fullscr,usex,usey);
+   debug(3,debugtxt);
 #endif
    if(in_gfxmode==0) {
       if(fullscr=='n') 
@@ -749,7 +712,7 @@ setgfxmode() {
    }
    if(w!=0) {
 #ifdef DEBUG
-      printf("Could not set graphics mode!\n");
+      debug(1,"Could not set graphics mode!\n");
 #endif
       exit(34);
    }
@@ -840,8 +803,10 @@ printf("bitmap.font.load\n");
 # else
    sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
 #  ifdef DEBUG
-   printf("Font: %s\n",fullpath);
-   printf("zdescbox: %s\n",descbox);
+   sprintf(debugtxt,"Font: %s\n",fullpath);
+   debug(3,debugtxt);
+   sprintf(debugtxt,"zdescbox: %s\n",descbox);
+   debug(3,debugtxt);
 #  endif
    // so font_load is messing up descbox!!!
    printf("afnt loading: %s\n",fullpath);
@@ -854,6 +819,7 @@ printf("bitmap.font.load (no freetype)\n");
 
 
 title(int x1,int y1,char *s) {
+   // draw title
    int width, length, fpx, fpy, shcol=-1, bgcol=-1;
    
    blit(titlemap,screen,0,0,rc.bb_x+rx0,rc.bb_y+ry0,rc.bb_w,rc.bb_h);
@@ -863,10 +829,18 @@ title(int x1,int y1,char *s) {
   if(rc.banr.sh.enable=='Y')
      shcol=makecol(rc.banr.sh.r,rc.banr.sh.g,rc.banr.sh.b);
    if(strcmp(rc.fontsize,"16x32")==0) {
+      // Use arcade styled large font instead of default font
       length=strlen(s)*8;
-      fnt_print_string(screen,rx0+rc.bb_x+x1-length,y1+rc.bb_y+ry0-16,s,
-			makecol(rc.banr.fg.r,rc.banr.fg.g,rc.banr.fg.b),bgcol,
-			shcol);
+      if(x1=-1) {
+	 fpx=rx0+rc.bb_x+(rc.bb_w-(length*2))/2;
+         fpy=ry0+rc.bb_y+(rc.bb_h-32)/2;
+      } else {
+         fpx=rx0+rc.bb_x+x1-(length*2);
+	 fpy=ry0+rc.bb_y+y1-24;
+      }      
+      print_string_16x32(screen,fpx,fpy,s,
+			 makecol(rc.banr.fg.r,rc.banr.fg.g,rc.banr.fg.b),bgcol,
+			 shcol);
    } else {
       length=strlen(s)*8;
       if(x1=-1) {
@@ -886,7 +860,7 @@ bbox(int x1, int y1, int x2, int y2, int color, int bcolor) {
    rectfill(screen, x1, y1, x2, y2, color);
    rect(screen, x1, y1, x2, y2, bcolor);
    rect(screen, x1+1, y1+1, x2-1, y2-1, bcolor);
-}
+} // bbox()
 
 load_dfltimg(char *fname) {
    PALETTE p; 
@@ -895,51 +869,95 @@ load_dfltimg(char *fname) {
 
    sprintf(picname,"%s%c%s",picsdir,mysep,fname);
 #ifdef DEBUG
-   printf("load_dfltimg: loading %s\n",picname);
+   sprintf(debugtxt,"load_dfltimg: loading %s\n",picname);
+   debug(1,debugtxt);
 #endif 
    defbmp=load_bitmap(picname,p);
-}
+} // load_dfltimg()
 
-BITMAP *downscale_bm(BITMAP *orgbm,int dw, int dh) {
-   BITMAP *newbm;
-   int nw,nh,px,py,pc,ox,oy;
-   Uint8 rrr,ggg,bbb;
-   float fow,foh,fdw,fdh,xf,yf,uf;
+do_imgbox_scale(int i, char *imgdir, char *iname) {
+  // Use this if scaling is enabled
+  PALETTE p;
+  char picname[350];
+  int dsx,dsy,new_w,new_h,x2,y2;
+  float fow,foh,fdw,fdh,xf,yf,uf;
+  BITMAP *sc_bitmap;
+   
+  get_palette(p);
+//  for(i=0;i<12;i++) {
+    if(imgbx[i].enabled==1) {
+      sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
+#ifdef DEBUG
+       sprintf(debugtxt,"do_imgbox_scale(): looking for picname:%s\n",picname);
+       debug(3,debugtxt);
+#endif
+       bitmap=load_bitmap(picname,p);
+       if(imgbx_bmp[i] && i!=B_KEYBOARD)
+	 masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
+       else 
+	 printf("do_imgbox_scale(): I HAVE NO BG!\n");
+		 
 
-   // Need to do the math with floats or it won't work
-   fow=orgbm->w;foh=orgbm->h;fdw=dw;fdh=dh;
-   xf=fow/fdw;
-   yf=foh/fdh;
+       if(bitmap) {
+	  //
+	  //  note: stretching isn't working atm
+	  //
+	  
+        if(bitmap->w != imgbx[i].w || bitmap->h != imgbx[i].h) {
+//        if(bitmap->w == 4 || bitmap->h == 5) {
+	   // downscale
+	   // compute scale factor, need to use floats here
+	   // This will keep aspect and works for both down and upscaling
+	   fow=bitmap->w;foh=bitmap->h;fdw=imgbx[i].w;fdh=imgbx[i].h;
+	   xf=fow/fdw;
+	   yf=foh/fdh;
+	   if(xf>yf) uf=xf; else uf=yf;
+	   new_w=fow/uf;
+	   new_h=foh/uf;
+	   // mask the dest with black bars
+	   //   or bitmap!
+	   x2=imgbx[i].x + imgbx[i].w;
+	   y2=imgbx[i].y + imgbx[i].h;
 
-//  if(xf>1 || yf>1) {
-    if(xf>yf) 
-      uf=xf;
-    else
-      uf=yf;
+#ifdef DEBUG
+       sprintf(debugtxt,"rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2);
+       debug(3,debugtxt);
+#endif
+	   // Figure out how to mask this (if masktype==0 then ignore)
+	   // bitmap
+	   // black bars
+	   if(imgbx[i].masktype==2)
+	     rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
+	   // blit (need to fix dest w/h)
+	   // uncomment to center:
+	   dsx=((imgbx[i].w-new_w)/2)+imgbx[i].x+rx0;
+	   dsy=((imgbx[i].h-new_h)/2)+imgbx[i].y+ry0;
+//	   dsx=((imgbx[i].w-sc_bitmap->w)/2)+imgbx[i].x+rx0;
+//	   dsy=((imgbx[i].h-sc_bitmap->h)/2)+imgbx[i].y+ry0;
+//	   dsx=imgbx[i].x+rx0;
+//	   dsy=imgbx[i].y+ry0;
 
-   // uf is the factor to scale by
-   nw=fow/uf;
-   nh=foh/uf;     
-   printf("scale to:  %dx%d\n",nw,nh);
-   newbm=create_bitmap(nw,nh);
-   yf=0;
-   for(py=0;py<nh;py++) {
-     xf=0;
-     for(px=0;px<nw;px++) {
-       ox=xf;oy=yf;
-//       if(xf>nw) ox=nw;
-//       if(yf>nh) oy=nh;
-       pc=getpixel(orgbm,ox,oy);
-       SDL_GetRGB(pc,orgbm->format,&rrr,&ggg,&bbb);
-       putpixel(newbm,px,py,makecol(rrr,ggg,bbb));
-       xf=xf+uf;
-//       printf("XF: %f\n",xf);
-     }
-     yf=yf+uf;
-   }
+	   stretch_blit(bitmap,screen,0,0,bitmap->w,bitmap->h,dsx,dsy,new_w,new_h);
+	   
+//	   sc_bitmap=sa_scale_bm(bitmap,new_w,new_h);
+//	   blit(sc_bitmap,screen,0,0,dsx,dsy,sc_bitmap->w,sc_bitmap->h);
+//	   destroy_bitmap(sc_bitmap);
 
-   return(newbm);
-}
+	   destroy_bitmap(bitmap);
+	   
+	} else {
+	   // no scaling
+	   dsx=imgbx[i].x+rx0;
+	   dsy=imgbx[i].y+ry0;
+	   blit(bitmap,screen,0,0,dsx,dsy,bitmap->w,bitmap->h);
+	   destroy_bitmap(bitmap);
+	}
+#ifdef DEBUG
+	debug(3,"do_imgbox_scale():loaded bitmap\n");
+#endif
+      } // endif
+    } // endif
+} // do_imgbox_scale
 
 do_imgbox(int i, char *imgdir, char *iname) {
   PALETTE p;
@@ -958,9 +976,15 @@ do_imgbox(int i, char *imgdir, char *iname) {
 
       if(bitmap) {
         // TODO: Centering and maybe scaling (course scaling)
-        if(bitmap->w > imgbx[i].w || bitmap->h > imgbx[i].h)
-           sc_bitmap=downscale_bm(bitmap,imgbx[i].w,imgbx[i].h);
-	else
+        if(bitmap->w > imgbx[i].w || bitmap->h > imgbx[i].h) {
+#ifdef DEBUG
+	   sprintf(debugtxt,"Scaling: bitmap(w):%d  bitmap(h):%d\n",bitmap->w,bitmap->h);
+	   debug(3,debugtxt);
+	   sprintf(debugtxt,"Scaling: box(w):%d  box(h):%d\n",imgbx[i].w,imgbx[i].h);
+	   debug(3,debugtxt);
+#endif
+           sc_bitmap=sa_scale_bm(bitmap,imgbx[i].w,imgbx[i].h);
+	} else
            sc_bitmap=bitmap;
         dsx=((imgbx[i].w-sc_bitmap->w)/2)+imgbx[i].x+rx0;
         dsy=((imgbx[i].h-sc_bitmap->h)/2)+imgbx[i].y+ry0;
@@ -981,7 +1005,8 @@ do_imgboxes(char *imgdir, char *iname) {
   int i;
   // only really need to go to 8, not 12
   for(i=0;i<8;i++)
-   do_imgbox(i, imgdir, iname);
+//   do_imgbox(i, imgdir, iname);
+   do_imgbox_scale(i, imgdir, iname);
 }
 
 //disp_image(char *fname) {
@@ -1042,9 +1067,12 @@ set_bg() {
 	sprintf(fname,"%s/%s",gthemedir,bgpic);
       
 #ifdef DEBUG
-      printf("set_bg: gthemedir:%s\n",gthemedir);
-      printf("set_bg: ws:%d  file:%s\n",widescreen,bgpic);
-      printf("set_bg: load_bitmap:%s\n",fname);
+      sprintf(debugtxt,"set_bg: gthemedir:%s\n",gthemedir);
+      debug(3,debugtxt);
+      sprintf(debugtxt,"set_bg: ws:%d  file:%s\n",widescreen,bgpic);
+      debug(3,debugtxt);
+      sprintf(debugtxt,"set_bg: load_bitmap:%s\n",fname);
+      debug(3,debugtxt);
 #endif
       bitmap=load_bitmap(fname,p);
       if(bitmap) {
@@ -1085,7 +1113,6 @@ draw_title(int fg, int bg) {
    if(!titlemap)
       titlemap=create_bitmap(rc.bb_w,rc.bb_h);
    blit(screen,titlemap,rc.bb_x+rx0,rc.bb_y+ry0,0,0,rc.bb_w,rc.bb_h);
-//   title(160,40,"Emufe");
    title(-1,-1,"Emufe");
 }
 
@@ -1105,7 +1132,8 @@ draw_imgbx(int boxno) {
    PALETTE p; 
 
 #ifdef DEBUG
-   printf("DEBUG: in draw_imgbx(%d)\n",boxno);
+   sprintf(debugtxt,"in draw_imgbx(%d)\n",boxno);
+   debug(3,debugtxt);
 #endif
    if(imgbx[boxno].enabled==1) {
      destroy_bitmap(imgbx_bmp[boxno]);
@@ -1114,9 +1142,13 @@ draw_imgbx(int boxno) {
        bgcol=makecol16(imgbx[boxno].r,imgbx[boxno].g,imgbx[boxno].b);
        rectfill(imgbx_bmp[boxno],0,0,imgbx[boxno].w,imgbx[boxno].h,bgcol);
      } else {
-       sprintf(pathname,"%s%c%s",picsdir,mysep,imgbx[boxno].imgname);
+	if(strncmp(gthemedir, "na", 2) == 0)
+	  sprintf(pathname,"%s%c%s",picsdir,mysep,imgbx[boxno].imgname);
+	else
+	  sprintf(pathname,"%s%c%s",gthemedir,mysep,imgbx[boxno].imgname);
 #ifdef DEBUG
-       printf("IMGBOX #%d: %s\n",boxno,pathname);
+       sprintf(debugtxt,"IMGBOX #%d: %s\n",boxno,pathname);
+       debug(3,debugtxt);
 #endif
        imgbx_bmp[boxno]=load_bitmap(pathname,p);
      }
@@ -1240,7 +1272,7 @@ int find_entry(char stletter, int startpos) {
    return r;
 }
 
-ef_shutdown() {
+int ef_shutdown() {
 /*   allegro_exit(); */
    exit(0);
 }
@@ -1251,7 +1283,7 @@ Uint32 timercb(Uint32 interval, void *param) {
    return(interval);  // If you don't do this, it gets slower
 }
 
-print_version() {
+int print_version() {
    printf("%s Version %s\n",PACKAGE_NAME,VERSION);
    fnt_version_info();
    widget_version_info();
@@ -1259,6 +1291,82 @@ print_version() {
    sa_version_info();
 #endif
 }
+
+/* ****************************************
+ *  Special Arcade Font section for titles
+ * ****************************************
+*/
+int display_char_16x32(BITMAP *b,int x, int y, unsigned char chr,int fcolor) {
+   // Display 80's arcade style font
+   int t,c,dc,cx;
+   int fh=ActiveFont->height;
+   unsigned char* fdata;
+   BITMAP* bfdata;
+#ifdef USESDL
+   SDL_Rect srect, drect;
+#endif
+
+   if(ActiveFont->type==BIOS_8X8 || ActiveFont->type==BIOS_8X16) {
+      fdata=ActiveFont->data;
+      for(t=0; t<fh; t++) {
+	 //      c=fontdata[(chr*16)+t];
+	 c=fdata[(chr*fh)+t];
+	 for(cx=0;cx<8;cx++) {
+	    c<<=1;
+	    if(c>255) {
+	       //	    putpixel(b, x+cx, y+t, fnfgcol);
+	       putpixel(b, x+(cx*2), y+(t*2), fcolor);
+	       c=c-256;  
+	    }
+	 }
+      }
+   }
+} // display_char_16x32
+
+int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int sd) {
+   // New method that can draw on any bitmap, and hand solid, shadow and plain
+   int c=0, l=0, cx,cy, sl=strlen(str)*16;
+   int fh=(ActiveFont->height*2)-1;
+
+   if(bg>-1)
+     rectfill(b,x,y,x+sl,y+fh,bg);
+#ifdef USESDL
+      // Put here for speed optimization
+      //   if(SDL_MUSTLOCK(screen)){
+      if(b==screen && ActiveFont->type<2)
+	if(SDL_LockSurface(b) < 0) return;
+#endif
+      
+      while(*str) {
+	 if (*str == '\n'){
+	    l++;
+	    str++;
+	    c=0;
+	 } else {
+	    cx=x+(c++)*16;
+	    cy=y+l*9;
+	    if(sd>-1) // shadow
+	      display_char_16x32(b, cx+1, cy+1, *(str),sd);
+	    display_char_16x32(b, cx, cy, *(str++),fg);
+	 }
+      }
+      
+      
+#ifdef USESDL
+      if(b==screen) {
+	 if(ActiveFont->type<2)
+	   SDL_UnlockSurface(b);
+	 if(SA_AUTOUPDATE==1)
+	   SDL_UpdateRect(screen,x,y,sl,16);
+	 //      printf("hokee: %d %d %d\n",x,y,sl);
+      }
+#endif
+   
+} // print_string_16x32
+
+/* ****************************************
+ *  End special font section
+ */
 
 int main(int argc, char* argv[]) {
    long w;
@@ -1338,8 +1446,10 @@ int main(int argc, char* argv[]) {
 	 }
       }
 #ifdef DEBUG
-      printf("rx0=%d   ry0=%d\n",rx0,ry0);
-      printf("Use CDROOT: %s\n",cdroot); 
+      sprintf(debugtxt,"rx0=%d   ry0=%d\n",rx0,ry0);
+      debug(3,debugtxt);
+      sprintf(debugtxt,"Use CDROOT: %s\n",cdroot); 
+      debug(1,debugtxt);
 #endif
       init();
    } else {
@@ -1506,7 +1616,8 @@ int main(int argc, char* argv[]) {
       if(keypressed()) {
 	 keyp=readkey() >> 8; 
 #ifdef DEBUG
-	 printf("k=%d\n",keyp);
+	 printf(debugtxt,"keyp=%d\n",keyp);
+	 debug(3,debugtxt);
 #endif
 	 if(keyp==KEY_F2) {
 //	    run_setup("setup1");
@@ -1537,8 +1648,10 @@ int main(int argc, char* argv[]) {
 	       display_menu(index);
 	    }
 #ifdef DEBUG
-	    printf("slc is %d index is %d\n",slc, index);
-	    printf("Type: %c",menu[slc].type);
+	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
+	    debug(3,debugtxt);
+	    sprintf(debugtxt,"Type: %c",menu[slc].type);
+	    debug(3,debugtxt);
 #endif
 	    menu_hlight(index,slc);
 	 }
@@ -1562,7 +1675,8 @@ int main(int argc, char* argv[]) {
 	    display_menu(index);
 
 #ifdef DEBUG
-	    printf("Type: %c",menu[slc].type);
+	    sprintf(debugtxt,"Type: %c",menu[slc].type);
+	    debug(3,debugtxt);
 #endif
 	    menu_hlight(index,slc);
 	 }
@@ -1628,8 +1742,10 @@ int main(int argc, char* argv[]) {
 	    display_menu(index);
 
 #ifdef DEBUG
-	    printf("slc is %d index is %d\n",slc, index);
-	    printf("Type: %c",menu[slc].type);
+	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
+	    debug(3,debugtxt);
+	    sprintf(debugtxt,"Type: %c",menu[slc].type);
+	    debug(3,debugtxt);
 #endif
 	    menu_hlight(index,slc);
 	 }
@@ -1638,11 +1754,13 @@ int main(int argc, char* argv[]) {
 	    cdclock=0;
 	    type=menu[slc].type;
 #ifdef DEBUG
-	    printf("SLC was %d\n",slc);
+	    sprintf(debugtxt,"SLC was %d\n",slc);
+	    debug(3,debugtxt);
 #endif
 	    if( type=='m' ) {
 #ifdef DEBUG
-	       printf("Loading File___%s\n",menu[slc].rom);
+	       sprintf(debugtxt,"Loading File___%s\n",menu[slc].rom);
+	       debug(3,debugtxt);
 #endif
 	       sprintf(newmenu, "%s/%s", dirname, menu[slc].rom);
 	       menuitems=load_menu(newmenu);
@@ -1654,9 +1772,12 @@ int main(int argc, char* argv[]) {
 	    if( type=='d' ) {
 	       ww=menu[slc].rom;
 #ifdef DEBUG
-	       printf("Loading Directory___%s\n",menu[slc].rom);
-	       printf("dirname is %s\n",dirname);
-	       printf("romname is %s\n",ww);
+	       sprintf(debugtxt,"Loading Directory___%s\n",menu[slc].rom);
+	       debug(3,debugtxt);
+	       sprintf(debugtxt,"dirname is %s\n",dirname);
+	       debug(3,debugtxt);
+	       sprintf(debugtxt,"romname is %s\n",ww);
+	       debug(3,debugtxt);
 #endif
 	       /* strcat is very picky, I can only seem to get it to 
 		work if the first parameter is a static string, and the
@@ -1665,7 +1786,8 @@ int main(int argc, char* argv[]) {
 	       sprintf(dirname,"%s%s%c",dirname,menu[slc].rom,mysep);
 	       sprintf(newmenu,"%s%c%sindex.menu",basedir,mysep,dirname);
 #ifdef DEBUG
-	       printf("dirname is %s\n",newmenu);
+	       sprintf(debugtxt,"dirname is now %s\n",newmenu);
+	       debug(3,debugtxt);
 #endif
 	       menuitems=load_menu(newmenu);
 //	       printf("menuitems is %d\n",menuitems);
@@ -1700,7 +1822,8 @@ int main(int argc, char* argv[]) {
 	       sprintf(newmenu,"%s%c%s%s",basedir,mysep,dirname,usemenu);
 //		  strcat(newmenu, usemenu);
 #ifdef DEBUG
-	       printf("newmenu %s   dirname:%s\n",newmenu,dirname);
+	       sprintf(debugtxt,"newmenu %s   dirname:%s\n",newmenu,dirname);
+	       debug(3,debugtxt);
 #endif
 		  menuitems=load_menu(newmenu);
 

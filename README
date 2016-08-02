@@ -1,3 +1,13 @@
+Important!  Versions above 3.1.4 will have important changes that will
+    affect backwards compatibility:
+    
+* Allegro will probably be disabled from autoconf, (though the
+   sdlallegro library will remain, and you could probably get it working
+   again if you are determined)
+* This will be aimed at HD widescreen resolutions only, and the screen 
+  scaling code will be redone.  May not work well at sub-HD resolutions
+* Drop any Zaurus support
+
 EMUFE 3.1.4 README 7-12-2016
 ----------------------------
 

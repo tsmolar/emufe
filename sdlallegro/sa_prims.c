@@ -34,6 +34,7 @@ Uint32 getpixel(SDL_Surface *surface, int x, int y) {
    bpp = surface->format->BytesPerPixel;
    p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
+//   printf("getpixel bpp=%d\n",bpp);
    switch(bpp) {
     case 1:
       return *p;
@@ -42,7 +43,7 @@ Uint32 getpixel(SDL_Surface *surface, int x, int y) {
       return *(Uint16 *)p;
       
     case 3:
-      if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+      if(SDL_BYTEORDER != SDL_BIG_ENDIAN)
 	return p[0] << 16 | p[1] << 8 | p[2];
       else
 	return p[0] | p[1] << 8 | p[2] << 16;
@@ -63,6 +64,7 @@ void putpixel(SDL_Surface *bmp,int x, int y, Uint32 color) {
    
    
    int bpp = bmp->format->BytesPerPixel;
+//   printf("putpixel bpp=%d\n",bpp);
    /* Get Address */
    Uint8 *p = (Uint8 *)bmp->pixels +y * bmp->pitch +x *bpp;
    
@@ -236,6 +238,13 @@ void fastline(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
    
 void line(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
    fastline(bmp,x1,y1,x2,y2,color);
+}
+
+void triangle(BITMAP *bmp,int x1,int y1,int x2, int y2, int x3, int y3, int color) {
+   /* TODO, this needs to be filled,  might be able to steal code from arps */
+   fastline(bmp,x1,y1,x2,y2,color);
+   fastline(bmp,x2,y2,x3,y3,color);
+   fastline(bmp,x3,y3,x1,y1,color);
 }
 
 	 

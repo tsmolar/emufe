@@ -87,9 +87,12 @@ load_defaults() {
     // font                                                                    
     rc.font_w=8; rc.font_h=16;
     for(i=0;i<12;i++) {
-      imgbx[i].enabled=0;
-      strcpy(imgbx[i].imgname,"na");
-      imgbx[i].r=imgbx[i].g=imgbx[i].b=128;
+       imgbx[i].enabled=0;
+       strcpy(imgbx[i].imgname,"na");
+       imgbx[i].r=imgbx[i].g=imgbx[i].b=128;
+       imgbx[i].masktype=0;
+       imgbx[i].ovpct=0;
+       strcpy(imgbx[i].ovname,"na");
     }
 }
 
@@ -167,6 +170,9 @@ load_rc(char *filen) {
 	 value=(char *)strchr(v, v[1]);
 	 v[0]=0;
 	 key=line;
+#ifdef DEBUG
+	 printf("* Processing Directive: %s\n", key);
+#endif
 	 if(strncmp(key, "FONTDIR", 7)==0) {
 //	    strcpy(fontdir,value);
 	    dfixsep2(fontdir,value,1);
@@ -315,6 +321,17 @@ load_rc(char *filen) {
 	 if(strncmp(key, "B_BOXSCAN_BM", 12)==0) {
 	    strcpy(imgbx[B_BOXSCAN].imgname,value);
 	 }
+	 if(strncmp(key, "B_BOXSCAN_MM", 12)==0) {
+	    if(strcmp(value,"none")==0)
+	      imgbx[B_BOXSCAN].masktype=0;
+	    if(strcmp(value,"bitmap")==0)
+	      imgbx[B_BOXSCAN].masktype=1;
+	    if(strcmp(value,"bars")==0)
+	      imgbx[B_BOXSCAN].masktype=2;
+#ifdef DEBUG
+	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_BOXSCAN].masktype);
+#endif
+	 }
 
 	 if(strncmp(key, "B_PICBOX_XY", 11)==0) {
 	   imgbx[B_PICBOX].enabled=1;
@@ -383,6 +400,17 @@ load_rc(char *filen) {
 	 if(strncmp(key, "B_SSHOT1_BM", 12)==0) {
 	    strcpy(imgbx[B_SSHOT1].imgname,value);
 	 }
+	 if(strncmp(key, "B_SSHOT1_MM", 12)==0) {
+	    if(strcmp(value,"none")==0)
+	      imgbx[B_SSHOT1].masktype=0;
+	    if(strcmp(value,"bitmap")==0)
+	      imgbx[B_SSHOT1].masktype=1;
+	    if(strcmp(value,"bars")==0)
+	      imgbx[B_SSHOT1].masktype=2;
+#ifdef DEBUG
+	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT1].masktype);
+#endif
+	 }
 	 if(strncmp(key, "B_SSHOT2_XY", 12)==0) {
 	   imgbx[B_SSHOT2].enabled=1;
 	   strcpy(imgbx[B_SSHOT2].pfx,"s2_");
@@ -405,6 +433,17 @@ load_rc(char *filen) {
 	 if(strncmp(key, "B_SSHOT2_BM", 12)==0) {
 	    strcpy(imgbx[B_SSHOT2].imgname,value);
 	 }
+	 if(strncmp(key, "B_SSHOT2_MM", 12)==0) {
+	    if(strcmp(value,"none")==0)
+	      imgbx[B_SSHOT2].masktype=0;
+	    if(strcmp(value,"bitmap")==0)
+	      imgbx[B_SSHOT2].masktype=1;
+	    if(strcmp(value,"bars")==0)
+	      imgbx[B_SSHOT2].masktype=2;
+#ifdef DEBUG
+	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT2].masktype);
+#endif
+	 }
 	 if(strncmp(key, "B_SSHOT3_XY", 12)==0) {
 	   imgbx[B_SSHOT3].enabled=1;
 	   strcpy(imgbx[B_SSHOT3].pfx,"s3_");
@@ -426,6 +465,17 @@ load_rc(char *filen) {
 	 }
 	 if(strncmp(key, "B_SSHOT3_BM", 12)==0) {
 	    strcpy(imgbx[B_SSHOT3].imgname,value);
+	 }
+	 if(strncmp(key, "B_SSHOT3_MM", 12)==0) {
+	    if(strcmp(value,"none")==0)
+	      imgbx[B_SSHOT3].masktype=0;
+	    if(strcmp(value,"bitmap")==0)
+	      imgbx[B_SSHOT3].masktype=1;
+	    if(strcmp(value,"bars")==0)
+	      imgbx[B_SSHOT3].masktype=2;
+#ifdef DEBUG
+	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT3].masktype);
+#endif
 	 }
 
 // End pic boxes

@@ -7,7 +7,7 @@
 //#include"SDL_mixer.h"
 //#endif
 
-#define SDL_ALLEGRO_VERS_C "0.6.4"
+#define SDL_ALLEGRO_VERS_C "0.6.10"
 
 SDL_PixelFormat *sdlpixfmt;
 SDL_Surface *screen;
@@ -21,7 +21,11 @@ int zcomp=0;
 //#endif
 //extern int num_joysticks;
 
-sa_version_info() {
+void sa_version_info() {
+   const SDL_version * v = SDL_Linked_Version();
+   
+   printf("SDL compile-time version: %d.%d.%d\n",SDL_MAJOR_VERSION,SDL_MINOR_VERSION,SDL_PATCHLEVEL);
+   printf("SDL run-time version: %d.%d.%d\n",v->major,v->minor,v->patch);
    printf("SDL/Allegro Library Version %s\n",SDL_ALLEGRO_VERS_C);
 #ifdef HAVE_LIBSDL_IMAGE
    printf("  * Have SDLImage for file loading\n");
@@ -38,7 +42,7 @@ sa_version_info() {
 #endif
 }
 
-sa_sdl_info() {
+void sa_sdl_info() {
    const SDL_VideoInfo* xx=SDL_GetVideoInfo();
    printf("SDL Hardware info\n");
    printf("-----------------\n");
@@ -53,7 +57,7 @@ sa_sdl_info() {
    printf("Fills accellerated?  %d\n",xx->blit_fill);
 }
 
-sa_getmodes() {
+void sa_getmodes() {
    SDL_Rect **modes;
    int i;
    
@@ -117,7 +121,7 @@ int allegro_init() {
 //
 //  KEYBOARD SECTION
 //
-install_keyboard()  {
+void install_keyboard()  {
    SDL_EnableUNICODE(1);
 //   printf("install_keyboard\n");
 }
@@ -137,7 +141,7 @@ void set_keyboard_rate(int delay, int repeat) {
    SDL_EnableKeyRepeat(delay,repeat);
 }
 
-simulate_keypress(int key) {
+void simulate_keypress(int key) {
    SDL_Event event;
 //   SDL_KeyboardEvent keyevent;
 //   printf("GSK:%d\n",key); 
@@ -207,7 +211,7 @@ int readkey() {
 //}
 // END Joystick section
 
-set_color_depth(int depth)  {
+void set_color_depth(int depth)  {
 //   printf("set_color_depth\n");
    sa_depth=depth;
 }
@@ -216,16 +220,16 @@ set_color_depth(int depth)  {
 // Mouse Section
 //
 
-install_mouse()  {
+void install_mouse()  {
 //   printf("install_mouse stub\n");
 }
-scare_mouse() {
+void scare_mouse() {
 //   printf("scare_mouse stub\n");
 }
-show_mouse(BITMAP *bmp) {
+void show_mouse(BITMAP *bmp) {
 //   printf("scare_mouse stub\n");
 }
-unscare_mouse() {
+void unscare_mouse() {
 //   printf("scare_mouse stub\n");
 }
 
@@ -244,8 +248,13 @@ int poll_mouse() {
    if(zcomp==1)
      mouse_y=mouse_y+33+(mouse_y/80);
 #endif
+   // These should be bitwise!
    if(SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(1))
      mouse_b=1;
+   if(SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(3))
+     mouse_b=2;
+   if(SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(2))
+     mouse_b=4;
    // I took this code off the internet
    count = SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEBUTTONDOWN));
    for( i = 0; i<count;++i) {
@@ -399,7 +408,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 }
 
 // Palette Routines
-get_palette(PALETTE *p) {
+void get_palette(PALETTE *p) {
 //   printf("get_palette stub\n");
 }
 
@@ -431,13 +440,17 @@ SDL_Surface *create_bitmap(int width, int height) {
    return(new_surface);
 }
 
-destroy_bitmap(SDL_Surface *bmp) 
+SDL_Surface *create_system_bitmap(int width, int height) {
+   return create_bitmap(width,height);
+}
+
+void destroy_bitmap(SDL_Surface *bmp) 
 {
    SDL_FreeSurface(bmp);
 }
 
 
-blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
+void blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
 {
    SDL_Rect srect, drect;
    
@@ -464,7 +477,7 @@ blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, in
 //     SDL_Flip(dest);
 }
 
-masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
+void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
 {
    SDL_Rect srect, drect;
    Uint32 key;
@@ -488,6 +501,89 @@ masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int 
 	SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
    }
 //     SDL_Flip(dest);
+}
+
+
+SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
+   
+   // SDL 1.2 doesn't seem to scale bitmaps properly
+   //         this could be moved into sdl_allegro
+   //         and wrapped by stretch_blit()
+   
+   SDL_Surface *newbm;
+   int nw,nh,px,py,pc,ox,oy;
+   Uint8 rrr,ggg,bbb;
+   float fow,foh,fdw,fdh,xf,yf,uf;
+
+   // Need to do the math with floats or it won't work
+   fow=orgbm->w;foh=orgbm->h;fdw=dw;fdh=dh;
+   xf=fow/fdw;
+   yf=foh/fdh;
+
+//  if(xf>1 || yf>1) {
+    if(xf>yf) 
+      uf=xf;
+    else
+      uf=yf;
+
+   // uf is the factor to scale by
+   nw=fow/uf;
+   nh=foh/uf;     
+   printf("scale to:  %dx%d\n",nw,nh);
+   newbm=create_bitmap(nw,nh);
+
+   
+   yf=0;
+   for(py=0;py<nh;py++) {
+     xf=0;
+     for(px=0;px<nw;px++) {
+       ox=xf;oy=yf;
+//       if(xf>nw) ox=nw;
+//       if(yf>nh) oy=nh;
+       pc=getpixel(orgbm,ox,oy);
+       SDL_GetRGB(pc,orgbm->format,&rrr,&ggg,&bbb);
+	
+	// I don't understand why upscaling (uf<1) reverses
+	// the red and blue pixels, but not always!
+	if(uf < 1) 
+	  putpixel(newbm,px,py,makecol(bbb,ggg,rrr));
+	else
+	  putpixel(newbm,px,py,makecol(rrr,ggg,bbb));
+
+       xf=xf+uf;
+//       printf("XF: %f\n",xf);
+     }
+     yf=yf+uf;
+   }
+
+   return(newbm);
+}  // sa_scale_bm
+
+void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h) {
+
+   // SDL1 method
+
+   BITMAP *newbm;   
+   SDL_Rect src_r, dst_r;
+   
+   src_r.x = src_x;
+   src_r.y = src_y;
+   src_r.w = dst_w;
+   src_r.h = dst_h;
+   dst_r.x = dst_x;
+   dst_r.y = dst_y;
+   dst_r.w = dst_w;
+   dst_r.h = dst_h;
+
+   newbm=sa_scale_bm(src, dst_w, dst_h);
+   SDL_BlitSurface(newbm, &src_r, dst, &dst_r);
+   destroy_bitmap(newbm);
+// end SDL1 method
+   
+   if(SA_AUTOUPDATE==1) {	
+      if(dst == screen)
+	SDL_UpdateRect(dst, dst_x, dst_y, dst_w, dst_h);
+   }
 }
 
 int show_video_bitmap(BITMAP *bitmap) {
@@ -525,6 +621,7 @@ SAMPLE *load_wav(const char *filename) {
 int play_sample(const Mix_Chunk *spl, Uint8 vol, Uint8 pan, Uint16 freq, int loop) { 
    int r;
    if(loop>0) loop=-1;
+   Mix_VolumeChunk(spl, (vol/2));
    r=Mix_PlayChannel(-1, spl, loop);
    return(r);
 }

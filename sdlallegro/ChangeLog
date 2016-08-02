@@ -1,3 +1,37 @@
+0.6.12 - 2016-7-28
+   * Add stretch_blit()
+
+0.6.11 - 2009-7-6
+   * created sa_readpcx and sa_readpcx to load pcx images
+   * Fix so that it can load images created by gimp and imagemagick
+
+0.6.10 - 2009-6-30
+   * Created save_pcx_pf save_pcx now calls this
+
+0.6.9 - 2009-4-17
+   * Changed getpixel from SDL_BYTEORDER == SDL_BIG_ENDIAN to
+     SDL_BYTEORDER != SDL_BIG_ENDIAN.   This seems to fix the 
+     problem I was having with colors in the scaling functions,
+     but it's disturbing that the problem exists in the first place
+     since that code was copied straight from the SDL website.
+
+0.6.8 - 2009-3-10
+   * save_pcx, implemented.   SDL_image not required!
+
+0.6.7 - 2009-3-3
+   * Added save_bitmap, save_bmp, save_pcx (doesn't do anything)
+   TODO
+     - What does load_bitmap actually do?
+     - Create a pcx writing util
+
+0.6.6 - 2009-1-20
+   * Added create_system_bitmap,  basically calls create_bitmap for now
+   * Added triangle, but doesn't currently fill
+   * Added mouse_b for middle & right button too
+
+0.6.5 - 2008-7-25
+   * Volume Control in play_sample now works (supposedly)
+
 0.6.3 - 2008
    * For GFX_TEXT, close and reinit gfx mode
    * fix rest() so that passing a 0 sends a NULL to SDL_waitevent()

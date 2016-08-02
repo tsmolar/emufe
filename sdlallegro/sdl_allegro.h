@@ -33,15 +33,51 @@ BITMAP *screen;
 int mouse_x, mouse_y, mouse_z, mouse_b;
 
 /* functions */
+void sa_version_info();
+void sa_sdl_info();
+void sa_getmodes();
+void sa_surface_info();
+int allegro_init();
+void install_keyboard();
+void remove_keyboard();
+void clear_keybuf();
+void set_keyboard_rate(int delay, int repeat);
+void simulate_keypress(int key);
+int keypressed();
+int readkey();
+void set_color_depth(int depth);
+void install_mouse();
+void show_mouse(BITMAP *bmp);
+void scare_mouse();
+void unscare_mouse();
+int mouse_needs_poll();
+int poll_mouse();
+int makecol(int r, int g, int b);
 int makecol16(Uint8 r, Uint8 g, Uint8 b);
 int makecol24(Uint8 r, Uint8 g, Uint8 b);
 int makecol32(Uint8 r, Uint8 g, Uint8 b);
+int makeacol16(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+int makeacol24(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+int makeacol32(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+unsigned int makeacol(int r, int g, int b, int a);
+int set_gfx_mode(int card, int w, int h, int v_w, int v_h);
+void get_palette(PALETTE *p);
 BITMAP *create_bitmap(int width, int height);
+BITMAP *create_system_bitmap(int width, int height);
+void destroy_bitmap(BITMAP *bmp);
+//void blit(BITMAP *src, BITMAP *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt);
+void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt);
+void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
+int show_video_bitmap(BITMAP *bitmap);
 BITMAP *load_bitmap(const char *filename, RGB *pal);
+int file_select_ex(const char *message, char *path, const char *ext, int size, int w, int h );
+void set_window_title(const char *name);
 
 #ifdef HAVE_LIBSDL_MIXER
+int install_sound(int digi, int midi, const char *cfg_path);
 SAMPLE *load_sample(const char *filename);
 SAMPLE *load_wav(const char *filename);
+int play_sample(const Mix_Chunk *spl, Uint8 vol, Uint8 pan, Uint16 freq, int loop);
 #endif
 
 /* Globals */

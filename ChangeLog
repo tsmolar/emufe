@@ -1,3 +1,21 @@
+3.1.4+
+ * Added do_imgbox_scale to perform upscaling (and downscaling) via
+   SDL rather than my procedure.
+ * Added stretch_blit() to sdl_allegro
+ * add debug logging function
+ * Added 80's arcade-styled bitmap font, set fontsize to 16x32 to
+   activate
+ * moved downscale_bm to sdl_allegro and ensured that it also
+   upscales, but it gets the color wrong,  more reason to move
+   to SDL2
+ * created new MM (mask) parameter in rcfile, need to do OV
+ * Fixed long-standing bug where the boxscan background bitmap disappears 
+   after playing a game-- needed to load image from gthemedir, not
+   picsdir
+ * use stretch_blit instead of calling internal stretch procedure
+   directly (should help when porting to SDL2)
+
+
 3.1.4
  * Removed warnings
  * Fixed runtime issues on x86_64 (mostly by adding #include<string.h>
@@ -497,6 +515,7 @@ directory, and only update it if it already exists.
    could greatly speed up the initial loading of fonts.  pcx files can be 
    created by setting the appropriate setting in theme.rc
  * long standing font display bug fixes. 
+ 
  * Version 1.7
  * Changed the following keys:
              'q' (QUIT) is now ESC
@@ -513,7 +532,7 @@ directory, and only update it if it already exists.
  * Added 'F' menutype to support fileselectors
  * Bug Fixes, conversions to sprintf
 
-2-04-2004
+2-04-2004 Version 1.6
 * load from separate theme file
 * EMUFEfull variable can override the fullscreen setting
 * wait for mouse button release before acting on commands (should prevent icons 
@@ -530,9 +549,11 @@ directory, and only update it if it already exists.
 1-31-2004
 * Added mousewheel support
 
-February-March 2003
+February-March 2003 - version 1.5
 * Theming
 * mouse support
+* new configuration files
+* bugfixes
 
 3-06-2002
 * Solved Freeze problem (hopefully)

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.50)
-AC_INIT(emufe, 3.1.4, asmolar@sf.net)
+AC_INIT(emufe, 3.1.5, asmolar@sf.net)
 AC_CONFIG_SRCDIR([src/emufe.c])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([config.h])
