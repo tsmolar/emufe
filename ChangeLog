@@ -1,4 +1,13 @@
 3.1.4+
+ * Added working overlay capability, currently used to make it look like
+   the screenshots are being displayed on a curved TV screen
+ * Removed Widescreen (-W) support, wide screen is assumed now,
+   eventually it will add black bars if the monitor is not the same
+   aspect as the theme.  Note that 4:3 Themes can be created too, or
+   any aspect.  So it's not really losing a feature, it's just removing
+   overhead for supporting it.  At the time, the idea was that this
+   code could target a Zauraus (640x480) or Nokia n900 (800x480) without
+   bars on either.
  * Added do_imgbox_scale to perform upscaling (and downscaling) via
    SDL rather than my procedure.
  * Added stretch_blit() to sdl_allegro

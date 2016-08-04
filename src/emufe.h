@@ -1,6 +1,5 @@
 char picsdir[90];
 char bgpic[90];
-char bgwpic[90];
 char titlebox[40];
 char picbox[40];
 char menubox[40];

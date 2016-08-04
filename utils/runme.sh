@@ -9,7 +9,6 @@ cd $CDR;emuhome=$PWD;cd -
 #echo $emuhome
 #exit
 
-widesceen=0
 type=4
 
 if [ "$(uname -s)" = "CYGWIN_NT-5.1" ]; then
@@ -18,12 +17,12 @@ else
   EMUBOOKMARK=$(mktemp)
 fi
 export EMUBOOKMARK
-WS=""
-if [ "$widescreen" = "1" ]; then WS="-ws -res 840x525"; fi
+# WS=""
+#if [ "$widescreen" = "1" ]; then WS="-ws -res 840x525"; fi
 
 
 if [ "$type" = "4" ]; then
-  $emuhome/bin/emufe.$(uname -m) -n -i -ac $WS
+  $emuhome/bin/emufe.$(uname -m) -n -i -ac
 fi
 
 #cc=1

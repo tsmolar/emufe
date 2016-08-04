@@ -23,7 +23,9 @@ BITMAP *bitmap, *descmap;
 BITMAP *defbmp;
 BITMAP *menumap, *titlemap;
 BITMAP *selection;
+// shouldn't these be in imgbx_t?
 BITMAP *imgbx_bmp[12];
+BITMAP *imgbx_ovl[12];
 int in_gfxmode=0, jflag=0;
 
 fnt_t* LoadedFont;
@@ -42,7 +44,7 @@ char cdroot[220];
 prop_t rc;
 imgbox_t imgbx[12];
 menu_t menu[600];
-char dirname[120], bgpic[90], bgwpic[90], titlebox[40], picsdir[90], menuname[20], rcfilename[20], defimg[20];
+char dirname[120], bgpic[90], titlebox[40], picsdir[90], menuname[20], rcfilename[20], defimg[20];
 char *commands[30], *lmenus[30];
 char descdir[90], descbox[40], menubox[40], picbox[40], theme[200], gthemedir[96], fullscr;
 char tfontbmp[30],fullpath[120];
@@ -50,7 +52,7 @@ char basedir[160], restr[20];
 char startdir[160], lastitem[160], *fname, debugtxt[300];
 int menulength, usembmap, usedbmap;
 /* FORCE picload */
-int cdclock=0,widescreen=0;
+int cdclock=0;
 int joy_enable=1;
 int minx=640, miny=480, usex=640, usey=480;
 int rx0=0, ry0=0; // Where screen starts
@@ -185,7 +187,7 @@ menu_hlight(int index, int slct) {
    unscare_mouse();
 }
 
-menu_uhlight2(int index, int slct) {
+int menu_uhlight2(int index, int slct) {
 
    /* New, experimental version of menu_unlight */
    
@@ -218,7 +220,7 @@ menu_uhlight2(int index, int slct) {
   unscare_mouse();
 } // menu_uhlight
 
-menu_hlight2(int index, int slct) {
+int menu_hlight2(int index, int slct) {
 
    /* New, experimental version of menu_hlight */
    /* Hilight the menu selection */
@@ -248,7 +250,7 @@ menu_hlight2(int index, int slct) {
    unscare_mouse();
 }
 
-find_menu_e(char *rom) {
+int find_menu_e(char *rom) {
    int i,r;
    r=1;
    for(i=1; i<menulength+1; i++) 
@@ -260,7 +262,7 @@ find_menu_e(char *rom) {
    return r;
 }
    
-display_menu(int index) {
+int display_menu(int index) {
 /*   int red=makecol16(240,16,0); */
    int i,io;
    
@@ -293,7 +295,7 @@ display_menu(int index) {
 //   fnt_setactive(LoadedFont);
 }
 
-info_bar() {
+void info_bar() {
 /*   set_font_fcolor(232,232,0); */
    set_font_fcolor(descbgr,descbgg,descbgb);
 //   set_font_bcolor(64,64,64);
@@ -307,7 +309,7 @@ info_bar() {
    solid_string(rc.db_x+296+rx0,rc.db_y+rc.db_h-17+ry0,"<ENTER>");  
 }
 
-rem_info_bar() 
+void rem_info_bar() 
 {
    int white;
    white=makecol16(descbgr,descbgg,descbgb); 
@@ -647,7 +649,7 @@ int load_menu(char *lmenu) {
    return i-2;
 }
 
-draw_screen() {
+int draw_screen() {
    int white,black,gray128,menubg,i;
 
    black=makecol16(0,0,0); 
@@ -735,14 +737,14 @@ init() {
    sprintf(fullpath,"%s%c%s",basedir,mysep,rcfilename);
 //   printf("xdescbox: %s\n",descbox);
    if(imenu.mode>=1) {env_clear(); load_settings(); 
-      env_get(tmpstr,"EMUFEwide");
-      if ( tmpstr[0] == 'y' || tmpstr[0] == 'Y') {
-	 widescreen=1;
-	 if(usex==640) usex=800;
-	 minx=640;
-	 // usex=minx=800;
-	 rx0=(usex-minx)/2;
-      }
+//      env_get(tmpstr,"EMUFEwide");
+//      if ( tmpstr[0] == 'y' || tmpstr[0] == 'Y') {
+//	 widescreen=1;
+//	 if(usex==640) usex=800;
+//	 minx=640;
+//	 // usex=minx=800;
+//	 rx0=(usex-minx)/2;
+//      }
       strcpy(tmpstr,"");
       env_get(tmpstr,"EMUFEres");
       if(strcmp(tmpstr,"")!=0) {
@@ -818,7 +820,7 @@ printf("bitmap.font.load (no freetype)\n");
 }
 
 
-title(int x1,int y1,char *s) {
+int title(int x1,int y1,char *s) {
    // draw title
    int width, length, fpx, fpy, shcol=-1, bgcol=-1;
    
@@ -944,7 +946,13 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 //	   destroy_bitmap(sc_bitmap);
 
 	   destroy_bitmap(bitmap);
-	   
+	   // draw overlay
+	   if(imgbx[i].ovpct>0) {
+	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
+//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
+	      masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
+	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 255);
+	     }
 	} else {
 	   // no scaling
 	   dsx=imgbx[i].x+rx0;
@@ -1056,7 +1064,7 @@ set_bg() {
    char fname[90];
    PALETTE p; 
    
-   if(widescreen==1) strcpy(bgpic,bgwpic);
+//   if(widescreen==1) strcpy(bgpic,bgwpic);
    if(strncmp(bgpic, "default", 7)==0) {
       gradient(2+rx0,2+ry0,minx-2,miny-2);
    } else {
@@ -1069,21 +1077,17 @@ set_bg() {
 #ifdef DEBUG
       sprintf(debugtxt,"set_bg: gthemedir:%s\n",gthemedir);
       debug(3,debugtxt);
-      sprintf(debugtxt,"set_bg: ws:%d  file:%s\n",widescreen,bgpic);
-      debug(3,debugtxt);
+//      sprintf(debugtxt,"set_bg: ws:%d  file:%s\n",widescreen,bgpic);
+//      debug(3,debugtxt);
       sprintf(debugtxt,"set_bg: load_bitmap:%s\n",fname);
       debug(3,debugtxt);
 #endif
       bitmap=load_bitmap(fname,p);
       if(bitmap) {
-	 if(widescreen==1)
-	   blit(bitmap,screen,0,0,(usex-800)/2,ry0,800,480);
-	 else
-//	   blit(bitmap,screen,0,0,rx0,ry0,640,480);
-	   blit(bitmap,screen,0,0,rx0,ry0,usex,usey);
+	 //	   blit(bitmap,screen,0,0,rx0,ry0,640,480);
+	 blit(bitmap,screen,0,0,rx0,ry0,usex,usey);
 	 destroy_bitmap(bitmap);
-      }
-      
+      }      
    }   
 }
 
@@ -1126,7 +1130,8 @@ draw_title(int fg, int bg) {
 //   }
 //}
 
-draw_imgbx(int boxno) {
+void draw_imgbx(int boxno) {
+   // load background bitmaps for the image boxes, and draw them
    int bgcol;
    char pathname[255];
    PALETTE p; 
@@ -1136,27 +1141,44 @@ draw_imgbx(int boxno) {
    debug(3,debugtxt);
 #endif
    if(imgbx[boxno].enabled==1) {
-     destroy_bitmap(imgbx_bmp[boxno]);
-     if(strncmp(imgbx[boxno].imgname, "na", 2)==0) {
-       imgbx_bmp[boxno]=create_bitmap(imgbx[boxno].w,imgbx[boxno].h);
-       bgcol=makecol16(imgbx[boxno].r,imgbx[boxno].g,imgbx[boxno].b);
-       rectfill(imgbx_bmp[boxno],0,0,imgbx[boxno].w,imgbx[boxno].h,bgcol);
+      destroy_bitmap(imgbx_bmp[boxno]);
+      if(strncmp(imgbx[boxno].imgname, "na", 2)==0) {
+	imgbx_bmp[boxno]=create_bitmap(imgbx[boxno].w,imgbx[boxno].h);
+	bgcol=makecol16(imgbx[boxno].r,imgbx[boxno].g,imgbx[boxno].b);
+	rectfill(imgbx_bmp[boxno],0,0,imgbx[boxno].w,imgbx[boxno].h,bgcol);
      } else {
 	if(strncmp(gthemedir, "na", 2) == 0)
 	  sprintf(pathname,"%s%c%s",picsdir,mysep,imgbx[boxno].imgname);
 	else
 	  sprintf(pathname,"%s%c%s",gthemedir,mysep,imgbx[boxno].imgname);
 #ifdef DEBUG
-       sprintf(debugtxt,"IMGBOX #%d: %s\n",boxno,pathname);
-       debug(3,debugtxt);
+	sprintf(debugtxt,"IMGBOX #%d: %s\n",boxno,pathname);
+	debug(3,debugtxt);
 #endif
-       imgbx_bmp[boxno]=load_bitmap(pathname,p);
+	imgbx_bmp[boxno]=load_bitmap(pathname,p);
      }
-     if(imgbx_bmp[boxno])
-       blit(imgbx_bmp[boxno], screen,0,0,imgbx[boxno].x+rx0,imgbx[boxno].y+ry0,imgbx[boxno].w,imgbx[boxno].h);
-     else
-       printf("IMGBOX failed\n");
-  }
+      if(imgbx_bmp[boxno])
+	blit(imgbx_bmp[boxno], screen,0,0,imgbx[boxno].x+rx0,imgbx[boxno].y+ry0,imgbx[boxno].w,imgbx[boxno].h);
+      else
+	printf("IMGBOX failed\n");
+   }
+   
+   // new: load overlays
+   
+   if(imgbx[boxno].ovpct>0) {
+      // making an assumption that if overlay is set, a filename has
+      // been set, because that's how it currently loads.
+      destroy_bitmap(imgbx_ovl[boxno]);
+      if(strncmp(gthemedir, "na", 2) == 0)
+	sprintf(pathname,"%s%c%s",picsdir,mysep,imgbx[boxno].ovname);
+      else
+	sprintf(pathname,"%s%c%s",gthemedir,mysep,imgbx[boxno].ovname);
+#ifdef DEBUG
+	sprintf(debugtxt,"Overlay: #%d: %s\n",boxno,pathname);
+	debug(3,debugtxt);
+#endif
+      imgbx_ovl[boxno]=load_bitmap(pathname,p);
+   }
 }
 
 draw_menubox(int fg, int bg) {
@@ -1410,15 +1432,6 @@ int main(int argc, char* argv[]) {
 	    }
 	    rx0=(usex-minx)/2;
 	    ry0=(usey-miny)/2;
-	 }
-	 if(strcmp("-W",argv[aidx])==0) {
-	    // set widescreen 800x480
-	    // usex=800;
-	    widescreen=1;
-	    if(usex==640) usex=800;
-	    minx=640;
-//	    usex=minx=800;
-	    rx0=(usex-minx)/2;
 	 }
 	 if(strcmp("-b",argv[aidx])==0) {
 	    mod_readbm(argv[aidx+1]);

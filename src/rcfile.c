@@ -16,7 +16,7 @@ int hss_count(const char *ostr, const char del) {
    return(rv);
 }
 
-hss_index(char* rstr, char *ostr, int idx, char del) {
+int hss_index(char* rstr, char *ostr, int idx, char del) {
    // Alternative to strtok
    char *gidx;
    int t=0,i=0,si=0,ei=0,sl;
@@ -45,11 +45,10 @@ hss_index(char* rstr, char *ostr, int idx, char del) {
    }
 }
 
-load_defaults() {
+int load_defaults() {
     int i;
     strcpy(descdir, "./desc");
     strcpy(bgpic, "default");
-    strcpy(bgwpic, "default");
     strcpy(titlebox, "default");
     strcpy(menubox, "default");
     strcpy(descbox, "default");
@@ -96,7 +95,7 @@ load_defaults() {
     }
 }
 
-hextod(char b, char l) {
+int hextod(char b, char l) {
 
    /* Yes this is crappy code and I'm sure there is a much easier way,
     * I just needed to write it fast! */
@@ -135,7 +134,7 @@ hextod(char b, char l) {
    return hival+loval;
 }
 
-load_rc(char *filen) {
+int load_rc(char *filen) {
    /* The rc file should be in the same directory as emufe */
    FILE *fp;
    char line[256], *key, *v, *value, tmpstr[120];
@@ -226,9 +225,6 @@ load_rc(char *filen) {
 	 }
 	 if(strncmp(key, "BACKGROUND", 10)==0) {
 	    strcpy(bgpic,value);
-	 }
-	 if(strncmp(key, "BGWIDE", 6)==0) {
-	    strcpy(bgwpic,value);
 	 }
 	 if(strncmp(key, "TITLEBOX", 8)==0) {
 	    strcpy(titlebox,value);
@@ -400,6 +396,10 @@ load_rc(char *filen) {
 	 if(strncmp(key, "B_SSHOT1_BM", 12)==0) {
 	    strcpy(imgbx[B_SSHOT1].imgname,value);
 	 }
+	 if(strncmp(key, "B_SSHOT1_OV", 12)==0) {
+	    imgbx[B_SSHOT1].ovpct=50;
+	    strcpy(imgbx[B_SSHOT1].ovname,value);
+	 }
 	 if(strncmp(key, "B_SSHOT1_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)
 	      imgbx[B_SSHOT1].masktype=0;
@@ -433,6 +433,10 @@ load_rc(char *filen) {
 	 if(strncmp(key, "B_SSHOT2_BM", 12)==0) {
 	    strcpy(imgbx[B_SSHOT2].imgname,value);
 	 }
+	 if(strncmp(key, "B_SSHOT2_OV", 12)==0) {
+	    imgbx[B_SSHOT2].ovpct=50;
+	    strcpy(imgbx[B_SSHOT2].ovname,value);
+	 }
 	 if(strncmp(key, "B_SSHOT2_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)
 	      imgbx[B_SSHOT2].masktype=0;
@@ -465,6 +469,10 @@ load_rc(char *filen) {
 	 }
 	 if(strncmp(key, "B_SSHOT3_BM", 12)==0) {
 	    strcpy(imgbx[B_SSHOT3].imgname,value);
+	 }
+	 if(strncmp(key, "B_SSHOT3_OV", 12)==0) {
+	    imgbx[B_SSHOT3].ovpct=50;
+	    strcpy(imgbx[B_SSHOT3].ovname,value);
 	 }
 	 if(strncmp(key, "B_SSHOT3_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)
