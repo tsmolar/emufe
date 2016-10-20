@@ -1670,7 +1670,6 @@ m4trace:configure.ac:15: -1- m4_pattern_allow([^target$])
 m4trace:configure.ac:15: -1- m4_pattern_allow([^target_cpu$])
 m4trace:configure.ac:15: -1- m4_pattern_allow([^target_vendor$])
 m4trace:configure.ac:15: -1- m4_pattern_allow([^target_os$])
-m4trace:configure.ac:17: -1- m4_pattern_allow([^ZAURUS$])
 m4trace:configure.ac:25: -1- m4_pattern_allow([^INSTPREFIX$])
 m4trace:configure.ac:27: -1- m4_pattern_allow([^INSTPREFIX$])
 m4trace:configure.ac:29: -1- m4_pattern_allow([^INSTPREFIX$])
@@ -1719,78 +1718,68 @@ m4trace:configure.ac:52: -1- m4_pattern_allow([^FREETYPE_TRUE$])
 m4trace:configure.ac:52: -1- m4_pattern_allow([^FREETYPE_FALSE$])
 m4trace:configure.ac:52: -1- _AM_SUBST_NOTMAKE([FREETYPE_TRUE])
 m4trace:configure.ac:52: -1- _AM_SUBST_NOTMAKE([FREETYPE_FALSE])
-m4trace:configure.ac:59: -1- AM_PATH_ALLEGRO([4.1.0])
-m4trace:configure.ac:59: -1- m4_pattern_allow([^ALLEGRO_CONFIG$])
-m4trace:configure.ac:59: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
+m4trace:configure.ac:59: -1- AM_CONDITIONAL([USESDL2], [false])
+m4trace:configure.ac:59: -1- m4_pattern_allow([^USESDL2_TRUE$])
+m4trace:configure.ac:59: -1- m4_pattern_allow([^USESDL2_FALSE$])
+m4trace:configure.ac:59: -1- _AM_SUBST_NOTMAKE([USESDL2_TRUE])
+m4trace:configure.ac:59: -1- _AM_SUBST_NOTMAKE([USESDL2_FALSE])
+m4trace:configure.ac:60: -1- AM_CONDITIONAL([USESDL], [false])
+m4trace:configure.ac:60: -1- m4_pattern_allow([^USESDL_TRUE$])
+m4trace:configure.ac:60: -1- m4_pattern_allow([^USESDL_FALSE$])
+m4trace:configure.ac:60: -1- _AM_SUBST_NOTMAKE([USESDL_TRUE])
+m4trace:configure.ac:60: -1- _AM_SUBST_NOTMAKE([USESDL_FALSE])
+m4trace:configure.ac:61: -1- AM_CONDITIONAL([USEALLEGRO], [false])
+m4trace:configure.ac:61: -1- m4_pattern_allow([^USEALLEGRO_TRUE$])
+m4trace:configure.ac:61: -1- m4_pattern_allow([^USEALLEGRO_FALSE$])
+m4trace:configure.ac:61: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_TRUE])
+m4trace:configure.ac:61: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_FALSE])
+m4trace:configure.ac:63: -1- AM_PATH_ALLEGRO([4.1.0], [gfx_lib=allegro], [:])
+m4trace:configure.ac:63: -1- m4_pattern_allow([^ALLEGRO_CONFIG$])
+m4trace:configure.ac:63: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2764: AC_TRY_RUN is expanded from...
 m4/allegro.m4:14: AM_PATH_ALLEGRO is expanded from...
-configure.ac:59: the top level])
-m4trace:configure.ac:59: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
+configure.ac:63: the top level])
+m4trace:configure.ac:63: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2687: AC_TRY_LINK is expanded from...
 m4/allegro.m4:14: AM_PATH_ALLEGRO is expanded from...
-configure.ac:59: the top level])
-m4trace:configure.ac:59: -1- m4_pattern_allow([^allegro_CFLAGS$])
-m4trace:configure.ac:59: -1- m4_pattern_allow([^allegro_LIBS$])
-m4trace:configure.ac:62: -1- AM_CONDITIONAL([USESDL], [false])
-m4trace:configure.ac:62: -1- m4_pattern_allow([^USESDL_TRUE$])
-m4trace:configure.ac:62: -1- m4_pattern_allow([^USESDL_FALSE$])
-m4trace:configure.ac:62: -1- _AM_SUBST_NOTMAKE([USESDL_TRUE])
-m4trace:configure.ac:62: -1- _AM_SUBST_NOTMAKE([USESDL_FALSE])
-m4trace:configure.ac:63: -1- AM_CONDITIONAL([USEALLEGRO], [true])
-m4trace:configure.ac:63: -1- m4_pattern_allow([^USEALLEGRO_TRUE$])
-m4trace:configure.ac:63: -1- m4_pattern_allow([^USEALLEGRO_FALSE$])
-m4trace:configure.ac:63: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_TRUE])
-m4trace:configure.ac:63: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_FALSE])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([USEALLEGRO], [false])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^USEALLEGRO_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^USEALLEGRO_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_FALSE])
-m4trace:configure.ac:69: -2- AM_CONDITIONAL([USESDL], [true])
-m4trace:configure.ac:69: -2- m4_pattern_allow([^USESDL_TRUE$])
-m4trace:configure.ac:69: -2- m4_pattern_allow([^USESDL_FALSE$])
-m4trace:configure.ac:69: -2- _AM_SUBST_NOTMAKE([USESDL_TRUE])
-m4trace:configure.ac:69: -2- _AM_SUBST_NOTMAKE([USESDL_FALSE])
-m4trace:configure.ac:70: -2- AM_CONDITIONAL([USESDL], [false])
-m4trace:configure.ac:70: -2- m4_pattern_allow([^USESDL_TRUE$])
-m4trace:configure.ac:70: -2- m4_pattern_allow([^USESDL_FALSE$])
-m4trace:configure.ac:70: -2- _AM_SUBST_NOTMAKE([USESDL_TRUE])
-m4trace:configure.ac:70: -2- _AM_SUBST_NOTMAKE([USESDL_FALSE])
-m4trace:configure.ac:68: -1- AM_PATH_SDL([$SDL_VERSION], [ if true; then
-  USESDL_TRUE=
-  USESDL_FALSE='#'
-else
-  USESDL_TRUE='#'
-  USESDL_FALSE=
-fi
-], [ if false; then
-  USESDL_TRUE=
-  USESDL_FALSE='#'
-else
-  USESDL_TRUE='#'
-  USESDL_FALSE=
-fi
-
-])
-m4trace:configure.ac:68: -1- m4_pattern_allow([^SDL_CONFIG$])
-m4trace:configure.ac:68: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
+configure.ac:63: the top level])
+m4trace:configure.ac:63: -1- m4_pattern_allow([^allegro_CFLAGS$])
+m4trace:configure.ac:63: -1- m4_pattern_allow([^allegro_LIBS$])
+m4trace:configure.ac:65: -1- AM_PATH_SDL([1.2.5], [gfx_lib=sdl1], [:])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_CONFIG$])
+m4trace:configure.ac:65: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2764: AC_TRY_RUN is expanded from...
 m4/sdl.m4:11: AM_PATH_SDL is expanded from...
-configure.ac:68: the top level])
-m4trace:configure.ac:68: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
+configure.ac:65: the top level])
+m4trace:configure.ac:65: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2687: AC_TRY_LINK is expanded from...
 m4/sdl.m4:11: AM_PATH_SDL is expanded from...
-configure.ac:68: the top level])
-m4trace:configure.ac:68: -1- m4_pattern_allow([^SDL_CFLAGS$])
-m4trace:configure.ac:68: -1- m4_pattern_allow([^SDL_LIBS$])
-m4trace:configure.ac:74: -1- m4_pattern_allow([^HAVE_LIBSDL_IMAGE$])
-m4trace:configure.ac:75: -1- m4_pattern_allow([^HAVE_LIBSDL_MIXER$])
-m4trace:configure.ac:87: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:87: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:87: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:87: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:87: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:87: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:87: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:87: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:87: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+configure.ac:65: the top level])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_CFLAGS$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_LIBS$])
+m4trace:configure.ac:71: -1- AM_CONDITIONAL([USESDL2], [true])
+m4trace:configure.ac:71: -1- m4_pattern_allow([^USESDL2_TRUE$])
+m4trace:configure.ac:71: -1- m4_pattern_allow([^USESDL2_FALSE$])
+m4trace:configure.ac:71: -1- _AM_SUBST_NOTMAKE([USESDL2_TRUE])
+m4trace:configure.ac:71: -1- _AM_SUBST_NOTMAKE([USESDL2_FALSE])
+m4trace:configure.ac:76: -1- AM_CONDITIONAL([USESDL], [true])
+m4trace:configure.ac:76: -1- m4_pattern_allow([^USESDL_TRUE$])
+m4trace:configure.ac:76: -1- m4_pattern_allow([^USESDL_FALSE$])
+m4trace:configure.ac:76: -1- _AM_SUBST_NOTMAKE([USESDL_TRUE])
+m4trace:configure.ac:76: -1- _AM_SUBST_NOTMAKE([USESDL_FALSE])
+m4trace:configure.ac:79: -1- m4_pattern_allow([^HAVE_LIBSDL_IMAGE$])
+m4trace:configure.ac:80: -1- m4_pattern_allow([^HAVE_LIBSDL_MIXER$])
+m4trace:configure.ac:85: -1- AM_CONDITIONAL([USEALLEGRO], [true])
+m4trace:configure.ac:85: -1- m4_pattern_allow([^USEALLEGRO_TRUE$])
+m4trace:configure.ac:85: -1- m4_pattern_allow([^USEALLEGRO_FALSE$])
+m4trace:configure.ac:85: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_TRUE])
+m4trace:configure.ac:85: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_FALSE])
+m4trace:configure.ac:132: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:132: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:132: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:132: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:132: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:132: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:132: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:132: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:132: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS

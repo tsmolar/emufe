@@ -1,9 +1,9 @@
-if USEALLEGRO
-SUBDIRS=widget src
+if USESDL2
+  SUBDIRS=sdlallegro widget src
 else
 if USESDL
-SUBDIRS=sdlallegro widget src
+  SUBDIRS=sdlallegro widget src
 else
-SUBDIRS=src
+  SUBDIRS=widget src
 endif
 endif

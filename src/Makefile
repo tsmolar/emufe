@@ -139,13 +139,14 @@ host_triplet = x86_64-unknown-linux-gnu
 target_triplet = x86_64-unknown-linux-gnu
 bin_PROGRAMS = emufe$(EXEEXT) splash$(EXEEXT)
 #AM_CFLAGS=-DUSESDL
-am__append_1 = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
+#am__append_1 = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
 #am__append_2 = ../widget/libfont.a ../widget/libwidget.a $(allegro_LIBS)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/allegro.m4 \
 	$(top_srcdir)/m4/freetype2.m4 $(top_srcdir)/m4/libcurl.m4 \
-	$(top_srcdir)/m4/sdl.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/sdl.m4 $(top_srcdir)/m4/sdl2.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -166,9 +167,9 @@ emufe_DEPENDENCIES = ../widget/libfont.a ../widget/libwidget.a \
 	$(am__append_1) $(am__DEPENDENCIES_2)
 am_splash_OBJECTS = splash.$(OBJEXT) dfilepath.$(OBJEXT)
 splash_OBJECTS = $(am_splash_OBJECTS)
-splash_DEPENDENCIES =  \
-	../sdlallegro/libsdlallegro.a \
-	../widget/libfont.a
+#splash_DEPENDENCIES =  \
+#	../sdlallegro/libsdlallegro.a \
+#	../widget/libfont.a
 #splash_DEPENDENCIES = ../widget/libfont.a \
 #	../widget/libwidget.a $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_$(V))
@@ -228,7 +229,7 @@ CTAGS = ctags
 am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = aclocal-1.15
-ALLEGRO_CONFIG = no
+ALLEGRO_CONFIG = 
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AUTOCONF = autoconf
@@ -237,7 +238,7 @@ AUTOMAKE = automake-1.15
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
+CFLAGS = -g -O2 -D_REENTRANT -I/usr/include/SDL2 
 CPPFLAGS = 
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -258,7 +259,7 @@ LDFLAGS =
 LIBCURL = 
 LIBCURL_CPPFLAGS = 
 LIBOBJS = 
-LIBS = -lSDL_mixer -lSDL_image  -lSDL -lpthread
+LIBS =  -lSDL2 
 LTLIBOBJS = 
 MAKEINFO = makeinfo
 MKDIR_P = /usr/bin/mkdir -p
@@ -266,19 +267,23 @@ OBJEXT = o
 PACKAGE = emufe
 PACKAGE_BUGREPORT = asmolar@sf.net
 PACKAGE_NAME = emufe
-PACKAGE_STRING = emufe 3.1.5
+PACKAGE_STRING = emufe 3.2.0
 PACKAGE_TARNAME = emufe
 PACKAGE_URL = 
-PACKAGE_VERSION = 3.1.5
+PACKAGE_VERSION = 3.2.0
 PATH_SEPARATOR = :
+PKG_CONFIG = /usr/bin/pkg-config
+PKG_CONFIG_LIBDIR = 
+PKG_CONFIG_PATH = 
 RANLIB = ranlib
-SDL_CFLAGS = -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
-SDL_CONFIG = /usr/bin/sdl-config
-SDL_LIBS = -lSDL -lpthread
+SDL2_CONFIG = pkg-config sdl2
+SDL_CFLAGS = -D_REENTRANT -I/usr/include/SDL2 
+SDL_CONFIG = 
+SDL_LIBS = -lSDL2 
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = 
-VERSION = 3.1.5
+VERSION = 3.2.0
 _libcurl_config = 
 abs_builddir = /local/src/x86_64/emufe.git/trunk/src
 abs_srcdir = /local/src/x86_64/emufe.git/trunk/src
@@ -345,12 +350,11 @@ splash_SOURCES = splash.c dfilepath.c
 #AM_CFLAGS = -DUSEALLEGRO -DUSEGFX $(allegro_CFLAGS)
 
 #bl_SOURCES+=gfx.c
-AM_CFLAGS = -DUSESDL -DDEBUG
-#AM_CFLAGS = -DUSESDL
+#AM_CFLAGS = -DUSESDL -DDEBUG
 #splash_LDADD = ../widget/libfont.a ../widget/libwidget.a $(allegro_LIBS)
-splash_LDADD = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
+#splash_LDADD = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
 #INCLUDES = -I../widget
-INCLUDES = -I../sdlallegro -I../widget
+#INCLUDES = -I../sdlallegro -I../widget
 #AM_CXXFLAGS = -DUSEALLEGRO -DUSEGFX $(allegro_CFLAGS)
 all: all-am
 

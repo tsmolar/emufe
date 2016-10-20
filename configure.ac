@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.50)
-AC_INIT(emufe, 3.1.5, asmolar@sf.net)
+AC_INIT(emufe, 3.2.0, asmolar@sf.net)
 AC_CONFIG_SRCDIR([src/emufe.c])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([config.h])
@@ -14,10 +14,10 @@ AC_PROG_RANLIB
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
-AC_ARG_ENABLE(zaurus,
-[  --enable-zaurus  Enable Optimizations for Zaurus and other small devices
-],[AC_DEFINE([ZAURUS],[1],[Define if using Zaurus])
-   use_zaurus=yes])
+#AC_ARG_ENABLE(zaurus,
+#[  --enable-zaurus  Enable Optimizations for Zaurus and other small devices
+#],[AC_DEFINE([ZAURUS],[1],[Define if using Zaurus])
+#   use_zaurus=yes])
 
 # Why this mess?   If ww is in the PATH, then it won't be able to
 # locate the datadir, so INSTPREFIX will be where to look
@@ -52,28 +52,75 @@ else
   AM_CONDITIONAL(FREETYPE,false)
 fi
 
-
-dnl Want Allegro or SDL, but not both!  Allegro takes presidence
-dnl SDLAllegro may eventually function as a drop in replacement, meaning
-dnl we will only need to check for allegro (and sdlallegro will integrate sdl)
-AM_PATH_ALLEGRO(4.1.0)
-if test "$allegro_CFLAGS"
-then
+gfx_lib=null
+dnl Need one of SDL2, SDL or allegro, in order of presidence
+dnl Check for SDL2
+#AM_PATH_SDL2(2.0.0,AM_CONDITIONAL(USESDL2,true),AM_CONDITIONAL(USESDL2,false))
+AM_CONDITIONAL(USESDL2,false)
 AM_CONDITIONAL(USESDL,false)
-AM_CONDITIONAL(USEALLEGRO,true)
-else
 AM_CONDITIONAL(USEALLEGRO,false)
-dnl Check for SDL
-SDL_VERSION=1.2.5
-AM_PATH_SDL($SDL_VERSION,
-            AM_CONDITIONAL(USESDL,true),
-	    AM_CONDITIONAL(USESDL,false)
-)
-CFLAGS="$CFLAGS $SDL_CFLAGS"
-LIBS="$LIBS $SDL_LIBS"
-AC_CHECK_LIB(SDL_image,IMG_Load)
-AC_CHECK_LIB(SDL_mixer,Mix_Linked_Version)
+
+
+AC_MSG_NOTICE([SDL2 check])
+AM_PATH_SDL2(2.0.0,gfx_lib=sdl2,:)
+if [[ "$gfx_lib" = sdl2 ]]; then
+  AC_MSG_NOTICE([Choosing SDL2 Library])
+  AM_CONDITIONAL(USESDL2,true)
+  CFLAGS="$CFLAGS $SDL_CFLAGS"
+  LIBS="$LIBS $SDL_LIBS"
+else
+  AC_MSG_NOTICE([SDL1 check])
+  AM_PATH_SDL(1.2.5,gfx_lib=sdl1,:)
+  if [[ "$gfx_lib" = sdl1 ]]; then
+    AC_MSG_NOTICE([Choosing SDL1 Library])
+    AM_CONDITIONAL(USESDL,true)
+    CFLAGS="$CFLAGS $SDL_CFLAGS"
+    LIBS="$LIBS $SDL_LIBS"
+    AC_CHECK_LIB(SDL_image,IMG_Load)
+    AC_CHECK_LIB(SDL_mixer,Mix_Linked_Version)
+  else
+    AM_PATH_ALLEGRO(4.1.0,gfx_lib=allegro,:)
+    if [[ "$gfx_lib" = allegro ]]; then
+      AC_MSG_NOTICE([Choosing Allegro Library])
+      AM_CONDITIONAL(USEALLEGRO,true)
+    else
+      if [[ "$gfx_lib" = null ]]; then
+        AC_MSG_ERROR([* * * No compatible graphics library found!])
+      fi
+    fi
+  fi
 fi
+
+#dnl Need one of SDL2, SDL or allegro, in order of presidence
+#dnl Check for SDL2
+#AM_PATH_SDL2(2.0.0,AM_CONDITIONAL(USESDL2,true),AM_CONDITIONAL(USESDL2,false))
+#if test "$SDL_CFLAGS"
+#then
+#  AM_CONDITIONAL(USESDL,false)
+#  AM_CONDITIONAL(USEALLEGRO,false)
+#else
+#  dnl Check for SDL1
+#  AM_PATH_SDL(1.2.5,AM_CONDITIONAL(USESDL,true),AM_CONDITIONAL(USESDL,false))
+#  if test "$SDL_CFLAGS"
+#  then
+#    AM_CONDITIONAL(USEALLEGRO,false)
+#    CFLAGS="$CFLAGS $SDL_CFLAGS"
+#    LIBS="$LIBS $SDL_LIBS"
+#    AC_CHECK_LIB(SDL_image,IMG_Load)
+#    AC_CHECK_LIB(SDL_mixer,Mix_Linked_Version)
+#  else
+#    dnl Check for Allegro
+#    AM_PATH_ALLEGRO(4.1.0)
+#    if test "$allegro_CFLAGS"
+#    then
+#      AM_CONDITIONAL(USEALLEGRO,true)
+#    else
+#      AM_CONDITIONAL(USEALLEGRO,false)
+#      AC_MSG_ERROR([* * * No compatible graphics library found!])
+#    endif
+#  endif
+#endif
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.

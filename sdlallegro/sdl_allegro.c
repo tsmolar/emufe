@@ -7,12 +7,17 @@
 //#include"SDL_mixer.h"
 //#endif
 
-#define SDL_ALLEGRO_VERS_C "0.6.10"
+#define SDL_ALLEGRO_VERS_C "0.6.99"
 
 SDL_PixelFormat *sdlpixfmt;
 SDL_Surface *screen;
+#ifdef SDL2
+SDL_Window *sdlWindow;
+SDL_Renderer *sdlRenderer;
+#endif
 int sa_depth;
 char sdldriver[20];
+char sa_win_title[256]; 
 #ifdef ZAURUS
 int zcomp=0;
 #endif
@@ -27,6 +32,12 @@ void sa_version_info() {
    printf("SDL compile-time version: %d.%d.%d\n",SDL_MAJOR_VERSION,SDL_MINOR_VERSION,SDL_PATCHLEVEL);
    printf("SDL run-time version: %d.%d.%d\n",v->major,v->minor,v->patch);
    printf("SDL/Allegro Library Version %s\n",SDL_ALLEGRO_VERS_C);
+#ifdef SDL1
+   printf("Compiled with legacy SDL1, consider upgrading to SDL2\n");
+#endif
+#ifdef SDL2
+   printf("Compiled with SDL2\n");
+#endif
 #ifdef HAVE_LIBSDL_IMAGE
    printf("  * Have SDLImage for file loading\n");
 #else
@@ -43,6 +54,7 @@ void sa_version_info() {
 }
 
 void sa_sdl_info() {
+#ifdef SDL1
    const SDL_VideoInfo* xx=SDL_GetVideoInfo();
    printf("SDL Hardware info\n");
    printf("-----------------\n");
@@ -55,9 +67,17 @@ void sa_sdl_info() {
    printf("Software->H CC Blits accellerated?  %d\n",xx->blit_sw_CC);
    printf("Software->H Alpha Blits accellerated?  %d\n",xx->blit_sw_A);
    printf("Fills accellerated?  %d\n",xx->blit_fill);
+#endif
+# ifdef SDL2
+   printf("SDL Hardware info (SDL2)\n");
+   printf("------------------------\n");
+   printf("OS:   %s\n",SDL_GetPlatform());
+   printf("CPUs:   %d\n",SDL_GetCPUCount());
+#endif
 }
 
 void sa_getmodes() {
+   # ifdef SDL1
    SDL_Rect **modes;
    int i;
    
@@ -78,12 +98,17 @@ void sa_getmodes() {
       for(i=0;modes[i];++i)
 	printf("  %d x %d\n", modes[i]->w, modes[i]->h);
    }
+   # endif
+   # ifdef SDL2
+   printf(" TODO: sa_getmodes() is not yet implemented for SDL2\n");
+   # endif   
 }
 
 void sa_surface_info(SDL_Surface *asurf, char *name) {
    SDL_PixelFormat *fmt;
    fmt=asurf->format;
-   
+
+#ifdef SDL1
    printf("\n%s SDL Surface Info\n",name);
    printf("----------------------------------\n");
    printf("Bits Per Pixel: %d\n",fmt->BitsPerPixel);
@@ -92,6 +117,12 @@ void sa_surface_info(SDL_Surface *asurf, char *name) {
    printf("flags: %d\n",asurf->flags);
    printf("clip: x:%d y:%d w:%d h:%d\n",asurf->clip_rect.x,asurf->clip_rect.y,asurf->clip_rect.w,asurf->clip_rect.h);
    printf("SDL_SRCALPHA: %d\n",SDL_SRCALPHA);
+#endif
+#ifdef SDL2
+   printf("\n%s SDL Surface Info\n",name);
+   printf("----------------------------------\n");
+   printf("Bits Per Pixel: %d\n",fmt->BitsPerPixel);
+#endif
 }
 
 int allegro_init() {
@@ -99,6 +130,7 @@ int allegro_init() {
    int rv;
 //   printf("sdl_allegro version: %s  header: %s \n",SDL_ALLEGRO_VERS_C,SDL_ALLEGRO_VERS_H);
    SA_AUTOUPDATE=1;
+   strcpy(sa_win_title,"sdlallegro App");
    rv=SDL_Init(SDL_INIT_EVERYTHING);
    SDL_VideoDriverName(sdldriver,19);
 //   SDL_VideoDriverName(driver,20);
@@ -122,7 +154,9 @@ int allegro_init() {
 //  KEYBOARD SECTION
 //
 void install_keyboard()  {
+#ifdef SDL1
    SDL_EnableUNICODE(1);
+#endif
 //   printf("install_keyboard\n");
 }
 
@@ -183,6 +217,8 @@ int readkey() {
 //	 key2=event.key.keysym.sym;
 	 key=key<<8;
 //	 printf("UC: %d\n",event.key.keysym.unicode & 0x7f);
+//	 
+// Note: unicode is gone in SDL2	 
 	 key=key+(event.key.keysym.unicode & 0x7F);
 	 if(event.key.keysym.mod & KMOD_SHIFT) key_shifts=(key_shifts | KB_SHIFT_FLAG); 
 	 if(event.key.keysym.mod & KMOD_CTRL) key_shifts=(key_shifts | KB_CTRL_FLAG); 
@@ -366,11 +402,68 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    Uint32 sdlflag,wasinit;
    int retval=0;
    
-   /* Isn't this redundant?  See allegro_init */
-//   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-//      printf("Unable to initialize SDL: %s\n", SDL_GetError());
-//      return 1;
-//   }
+   switch(card) {
+#ifdef SDL2
+    case GFX_AUTODETECT_WINDOWED:
+      sdlflag=SDL_WINDOW_SHOWN; break;
+    case GFX_AUTODETECT:
+      sdlflag=SDL_WINDOW_FULLSCREEN_DESKTOP; break;
+    case GFX_AUTODETECT_FULLSCREEN:
+      sdlflag=SDL_WINDOW_FULLSCREEN_DESKTOP; break;
+#else
+    case GFX_AUTODETECT_WINDOWED:
+      sdlflag=SDL_ANYFORMAT|SDL_DOUBLEBUF; break;
+    case GFX_AUTODETECT:
+      sdlflag=SDL_ANYFORMAT; break;
+    case GFX_AUTODETECT_FULLSCREEN:
+      sdlflag=SDL_FULLSCREEN; break;
+#endif
+    case GFX_TEXT:
+      sdlflag=-1; break;
+   }
+
+#ifdef SDL2
+   // need to define SDL_Window
+   if(sdlflag==SDL_WINDOW_FULLSCREEN_DESKTOP) {
+      if (!(sdlWindow = SDL_CreateWindow(sa_win_title,SDL_WINDOWPOS_UNDEFINED,
+				SDL_WINDOWPOS_UNDEFINED,0,0,sdlflag)))
+	retval=1;
+   } else {
+      if (!(sdlWindow = SDL_CreateWindow(sa_win_title,SDL_WINDOWPOS_UNDEFINED,
+				SDL_WINDOWPOS_UNDEFINED,w,h,sdlflag)))
+	retval=1;
+   }
+   
+   renderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+   // make it black
+   SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
+   SDL_RenderClear(sdlRenderer);
+   SDL_RenderPresent(sdlRenderer); // like SDL Flip?
+   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+   SDL_RenderSetLogicalSize(sdlRenderer, w, h);   
+#else
+   if (sdlflag != -1) {
+      if (!(screen = SDL_SetVideoMode(w, h, sa_depth, sdlflag)))
+	retval=1;
+   } else {
+      SDL_QuitSubSystem(SDL_INIT_VIDEO);
+      SDL_InitSubSystem(SDL_INIT_VIDEO);	
+   }   
+#endif
+
+   if(retval!=1) {
+      SCREEN_W=w; SCREEN_H=h;
+      VIRTUAL_W=w; VIRTUAL_H=h;
+//      SDL_SetAlpha(screen,0,255);
+   }
+   
+   return(retval);
+}
+
+// delete this once the new one works
+int set_gfx_mode0(int card, int w, int h, int v_w, int v_h) {
+   Uint32 sdlflag,wasinit;
+   int retval=0;
    
    /* Start here */
    switch(card) {
@@ -637,7 +730,12 @@ int file_select_ex(const char *message, char *path, const char *ext, int size, i
 
 // WM section
 void set_window_title(const char *name) {
+#ifdef SDL2
+   strcpy(sa_win_title,name);
+   printf("FYI: set_window_title() must be called prior to creating window in sdl2!\n");
+#else
    SDL_WM_SetCaption(name, name);
+#endif
 }
 // END WM section
 

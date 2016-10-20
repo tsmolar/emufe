@@ -1,4 +1,10 @@
-3.1.4+
+3.2.0+
+ * Rewrote configure.ac to support all three graphics libs; removed 
+   Zaurus checks
+ * Fixed Makefile.am's so that it compiles correctly
+ * Working on SDL2 support function by function
+
+3.1.5
  * Added working overlay capability, currently used to make it look like
    the screenshots are being displayed on a curved TV screen
  * Removed Widescreen (-W) support, wide screen is assumed now,

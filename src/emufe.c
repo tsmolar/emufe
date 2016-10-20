@@ -510,10 +510,7 @@ show_desc(char *desc) {
 display_info(int slc)  {
    char picname[300];
    sprintf(picname, "%s%c%s.pcx", picsdir, mysep, menu[slc].rom);
-/*   strcpy(picname,ww);
-   strcat(picname,"/");
-   strcat(picname,roms[slc]);
-   strcat(picname,".pcx"); */
+
 #ifdef DEBUG
    sprintf(debugtxt,"\n>>picname is: %s\n", picname);
    debug(2,debugtxt);
@@ -571,6 +568,7 @@ int load_menu(char *lmenu) {
 #endif
             do_imgbox(B_PICBOX,picsdir,rom);
             do_imgbox(B_KEYBOARD,picsdir,rom);
+            do_imgbox_scale(B_BOXSCAN,picsdir,rom);
 // Note: We need a replacement for this! 
 //	    disp_image(picname);
 	    break;
@@ -688,6 +686,10 @@ settxtmode() {
       debug(3,"settxtmode() attempting window mode rather than text mode to address a bug\n");
 # endif
 #else
+   // if using GFX_TEXT causes trouble, use GFX_AUTODETECT_WINDOWED to
+   // put this app into a window
+      
+//      w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
       w=set_gfx_mode(GFX_TEXT,usex,usey,0,0);
 #endif
    }
@@ -975,9 +977,10 @@ do_imgbox(int i, char *imgdir, char *iname) {
 
   get_palette(p);
 //  for(i=0;i<12;i++) {
+printf("picname (jk) boxtype(%d) enabled:%d\n",i,imgbx[i].enabled);
     if(imgbx[i].enabled==1) {
       sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
-      printf("NEW: looking for picname:%s\n",picname);
+      printf("NEW: boxtype(%d) looking for picname:%s\n",i,picname);
       bitmap=load_bitmap(picname,p);
       if(imgbx_bmp[i] && i!=B_KEYBOARD)
         masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);

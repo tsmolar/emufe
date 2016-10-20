@@ -5,10 +5,10 @@
 /* #undef HAVE_LIBCURL */
 
 /* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
-#define HAVE_LIBSDL_IMAGE 1
+/* #undef HAVE_LIBSDL_IMAGE */
 
 /* Define to 1 if you have the `SDL_mixer' library (-lSDL_mixer). */
-#define HAVE_LIBSDL_MIXER 1
+/* #undef HAVE_LIBSDL_MIXER */
 
 /* Help find data dir */
 #define INSTPREFIX "/usr/local"
@@ -74,7 +74,7 @@
 #define PACKAGE_NAME "emufe"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "emufe 3.1.5"
+#define PACKAGE_STRING "emufe 3.2.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "emufe"
@@ -83,16 +83,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.1.5"
+#define PACKAGE_VERSION "3.2.0"
 
 /* Define if using FreeType */
 /* #undef USE_FREETYPE */
 
 /* Version number of package */
-#define VERSION "3.1.5"
-
-/* Define if using Zaurus */
-/* #undef ZAURUS */
+#define VERSION "3.2.0"
 
 /* Define curl_free() as free() if our version of curl lacks curl_free. */
 /* #undef curl_free */
