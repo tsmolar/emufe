@@ -204,21 +204,15 @@ int keypressed() {
 
 int readkey() {
    SDL_Event event;
+#ifdef SDL1
    int key=0,key2;
-//   SDL_WaitEvent(&event);
-//   SDL_EnableUNICODE(1);
+   
    while(SDL_PollEvent(&event)) {
-//      printf("In event loop\n");
       if (event.type==SDL_KEYDOWN) {
 	 key_shifts=0;
-//	 mykeysym=event.key.keysym;
-//	 myscancode=mykeysym.scancode;
 	 key=event.key.keysym.sym;
-//	 key2=event.key.keysym.sym;
 	 key=key<<8;
-//	 printf("UC: %d\n",event.key.keysym.unicode & 0x7f);
-//	 
-// Note: unicode is gone in SDL2	 
+
 	 key=key+(event.key.keysym.unicode & 0x7F);
 	 if(event.key.keysym.mod & KMOD_SHIFT) key_shifts=(key_shifts | KB_SHIFT_FLAG); 
 	 if(event.key.keysym.mod & KMOD_CTRL) key_shifts=(key_shifts | KB_CTRL_FLAG); 
@@ -233,8 +227,85 @@ int readkey() {
 	 break;
       }
    }
-//   SDL_EnableUNICODE(0);
+#endif
+#ifdef SDL2
+   int key=0,key2=0,sc,uc;
    
+   while(SDL_PollEvent(&event)) {
+      if (event.type==SDL_KEYDOWN) {
+	 key_shifts=0;
+	 key=event.key.keysym.sym;
+	 sc=event.key.keysym.scancode;
+         uc=key;
+	 
+	 // translations for SDL1 compatability follow
+	 // function keys
+	 if(sc>=58 && sc<=69) {
+	    uc=0;
+	    key=sc+224;
+	 }
+	 // shift,control, etc
+	 switch(sc) {
+	  case 225: key=304; uc=0; break;
+	  case 229: key=303; uc=0; break;
+	  case 224: key=306; uc=0; break;
+	  case 227: key=311; uc=0; break;
+	  case 226: key=308; uc=0; break;
+	  case 230: key=307; uc=0; break;
+	  case 231: key=312; uc=0; break;
+	  case 101: key=319; uc=0; break;
+	  case 228: key=305; uc=0; break;
+	    // Arrow section
+	  case 71: key=302; uc=0; break;
+	  case 72: key=19; uc=0; break;
+	  case 73: key=277; uc=0; break;
+	  case 74: key=278; uc=0; break;
+	  case 75: key=280; uc=0; break;
+	  case 76: key=127; uc=127; break;
+	  case 77: key=279; uc=0; break;
+	  case 78: key=281; uc=0; break;
+	  case 82: key=273; uc=0; break;
+	  case 80: key=276; uc=0; break;
+	  case 81: key=274; uc=0; break;
+	  case 79: key=275; uc=0; break;
+	    // keypad
+	  case 83: key=300; uc=0; break;
+	  case 84: key=267; uc=47; break;
+	  case 85: key=268; uc=42; break;
+	  case 86: key=269; uc=45; break;
+	  case 95: key=263; uc=0; break;
+	  case 96: key=264; uc=0; break;
+	  case 97: key=265; uc=0; break;
+	  case 87: key=270; uc=43; break;
+	  case 92: key=260; uc=0; break;
+	  case 93: key=261; uc=0; break;
+	  case 94: key=262; uc=0; break;
+	  case 89: key=257; uc=0; break;
+	  case 90: key=258; uc=0; break;
+	  case 91: key=259; uc=0; break;
+	  case 88: key=271; uc=13; break;
+	  case 98: key=256; uc=0; break;
+	  case 99: key=266; uc=0; break;
+	 }
+	
+	 key=key<<8;
+	 
+	 key=key+uc;
+	 if(event.key.keysym.mod & KMOD_SHIFT) key_shifts=(key_shifts | KB_SHIFT_FLAG);
+	 if(event.key.keysym.mod & KMOD_CTRL) key_shifts=(key_shifts | KB_CTRL_FLAG);
+	 if(event.key.keysym.mod & KMOD_ALT) key_shifts=(key_shifts | KB_ALT_FLAG);
+	 if(event.key.keysym.mod & KMOD_LGUI) key_shifts=(key_shifts | KB_LWIN_FLAG); 
+	 if(event.key.keysym.mod & KMOD_RGUI) key_shifts=(key_shifts | KB_RWIN_FLAG); 
+	 if(event.key.keysym.mod & KMOD_NUM) key_shifts=(key_shifts | KB_NUMLOCK_FLAG);
+	 if(event.key.keysym.mod & KMOD_CAPS) key_shifts=(key_shifts | KB_CAPSLOCK_FLAG);
+	 if(event.key.keysym.mod & KMOD_MODE) key_shifts=(key_shifts | KB_MENU_FLAG);
+      }
+      
+      if (event.type==SDL_KEYUP) {
+	 break;
+      }
+   }	 
+#endif
    return(key);
       
 }
@@ -280,10 +351,10 @@ int poll_mouse() {
    SDL_PumpEvents();
    SDL_GetMouseState(&mouse_x,&mouse_y);
    int count, i;
-#ifdef ZAURUS
-   if(zcomp==1)
-     mouse_y=mouse_y+33+(mouse_y/80);
-#endif
+//#ifdef ZAURUS
+//   if(zcomp==1)
+//     mouse_y=mouse_y+33+(mouse_y/80);
+//#endif
    // These should be bitwise!
    if(SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(1))
      mouse_b=1;
@@ -292,15 +363,26 @@ int poll_mouse() {
    if(SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(2))
      mouse_b=4;
    // I took this code off the internet
+#ifdef SDL1
    count = SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEBUTTONDOWN));
+#endif
+#ifdef SDL2
+   count = SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN);
+#endif
    for( i = 0; i<count;++i) {
       if(events[i].button.button == SDL_BUTTON_WHEELUP)
 	{ mouse_z--; }
       else if(events[i].button.button == SDL_BUTTON_WHEELDOWN)
 	{ mouse_z++; }
    }
+   // Todo, SDL2 handles Mouse scrolls differently
    //get the release events of the queue
+#ifdef SDL1
    SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEBUTTONUP) );
+#endif
+#ifdef SDL2
+   SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEBUTTONUP, SDL_MOUSEBUTTONUP );
+#endif
    // End Internet code
    
 //   if(SDL_PollEvent(&event) && event.type==SDL_MOUSEBUTTONDOWN) {
