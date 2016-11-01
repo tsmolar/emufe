@@ -365,25 +365,29 @@ int poll_mouse() {
    // I took this code off the internet
 #ifdef SDL1
    count = SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEBUTTONDOWN));
-#endif
-#ifdef SDL2
-   count = SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN);
-#endif
+
    for( i = 0; i<count;++i) {
       if(events[i].button.button == SDL_BUTTON_WHEELUP)
 	{ mouse_z--; }
       else if(events[i].button.button == SDL_BUTTON_WHEELDOWN)
 	{ mouse_z++; }
    }
-   // Todo, SDL2 handles Mouse scrolls differently
-   //get the release events of the queue
-#ifdef SDL1
+   
    SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEBUTTONUP) );
 #endif
-#ifdef SDL2
-   SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEBUTTONUP, SDL_MOUSEBUTTONUP );
-#endif
    // End Internet code
+#ifdef SDL2
+   // I adopted this from the SDL1 code, not sure if this is the best way to read the mouse
+   // wheel under SDL2, it feels a little laggy
+   count = SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL);
+
+   for( i = 0; i<count;++i) {
+      if(events[i].wheel.direction == SDL_MOUSEWHEEL_NORMAL)
+	{ mouse_z=mouse_z-events[i].wheel.y; }
+   }
+   // Is this needed (to flush the buffer maybe?)
+   // SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL );
+#endif
    
 //   if(SDL_PollEvent(&event) && event.type==SDL_MOUSEBUTTONDOWN) {
 //      if(event.type!=SDL_MOUSEBUTTONDOWN && event.type!=SDL_MOUSEBUTTONUP) SDL_PushEvent(&event);
