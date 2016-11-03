@@ -520,13 +520,21 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 	retval=1;
    }
    
-   renderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+   sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+   if(sdlRenderer == NULL) {
+      /* Handle problem */
+      fprintf(stderr, "%s\n", SDL_GetError());
+      SDL_Quit();
+   }
+  
    // make it black
    SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
    SDL_RenderClear(sdlRenderer);
    SDL_RenderPresent(sdlRenderer); // like SDL Flip?
    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
    SDL_RenderSetLogicalSize(sdlRenderer, w, h);   
+//   screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
+   screen = create_bitmap(w,h);
 #else
    if (sdlflag != -1) {
       if (!(screen = SDL_SetVideoMode(w, h, sa_depth, sdlflag)))
@@ -547,6 +555,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 }
 
 // delete this once the new one works
+#ifdef SDL1
 int set_gfx_mode0(int card, int w, int h, int v_w, int v_h) {
    Uint32 sdlflag,wasinit;
    int retval=0;
@@ -585,6 +594,7 @@ int set_gfx_mode0(int card, int w, int h, int v_w, int v_h) {
    
    return(retval);
 }
+#endif
 
 // Palette Routines
 void get_palette(PALETTE *p) {
@@ -595,6 +605,7 @@ void get_palette(PALETTE *p) {
 
 SDL_Surface *create_bitmap(int width, int height) {
    SDL_Surface *new_surface, *xyz;
+   #ifdef SDL1
    Uint16 rmask,gmask,bmask,amask;
    
    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -615,6 +626,29 @@ SDL_Surface *create_bitmap(int width, int height) {
 //     printf("created\n"); else printf("failed to convert surface\n") ;
    SDL_FreeSurface(xyz);
    SDL_SetAlpha(new_surface,0,255);
+   #endif
+   
+#ifdef SDL2
+   Uint32 rmask,gmask,bmask,amask;
+   
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+   rmask = 0xff000000;
+   gmask = 0x00ff0000;
+   bmask = 0x0000ff00;
+   amask = 0x000000ff;
+#else
+   rmask = 0x000000ff;
+   gmask = 0x0000ff00;
+   bmask = 0x00ff0000;
+   amask = 0xff000000;
+#endif
+   new_surface = SDL_CreateRGBSurface(0,width,height,sa_depth,rmask,gmask,bmask,amask);
+   // might need theis for compatability
+   //   new_surface=SDL_ConvertSurface(xyz, const SDL_PixelFormat* fmt, 0);
+   //   SDL_FreeSurface(xyz);
+   SDL_SetAlpha(new_surface,0,255);
+#endif
+   
 //   SDL_SetAlpha(new_surface,SDL_SRCALPHA,SDL_ALPHA_OPAQUE);
    return(new_surface);
 }
@@ -658,6 +692,8 @@ void blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int ds
 
 void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
 {
+   // probably can reuse more of this
+   #ifdef SDL1  
    SDL_Rect srect, drect;
    Uint32 key;
 // Test removal
@@ -680,6 +716,7 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
 	SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
    }
 //     SDL_Flip(dest);
+  #endif
 }
 
 

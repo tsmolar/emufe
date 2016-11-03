@@ -1,7 +1,8 @@
 sa_joystick.o: sa_joystick.c /usr/include/stdc-predef.h \
- /usr/include/SDL/SDL.h /usr/include/SDL/SDL_main.h \
- /usr/include/SDL/SDL_stdinc.h /usr/include/SDL/SDL_config.h \
- /usr/include/SDL/SDL_config-x86_64.h /usr/include/SDL/SDL_platform.h \
+ /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_main.h \
+ /usr/include/SDL2/SDL_stdinc.h /usr/include/SDL2/SDL_config.h \
+ /usr/include/SDL2/SDL_config-x86_64.h /usr/include/SDL2/SDL_platform.h \
+ /usr/include/SDL2/begin_code.h /usr/include/SDL2/close_code.h \
  /usr/include/sys/types.h /usr/include/features.h \
  /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
@@ -19,40 +20,60 @@ sa_joystick.o: sa_joystick.c /usr/include/stdc-predef.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/bits/stdio.h /usr/include/stdlib.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
- /usr/include/xlocale.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
- /usr/include/string.h /usr/include/bits/string.h \
+ /usr/include/alloca.h /usr/include/bits/stdlib-bsearch.h \
+ /usr/include/bits/stdlib-float.h /usr/include/string.h \
+ /usr/include/xlocale.h /usr/include/bits/string.h \
  /usr/include/bits/string2.h /usr/include/strings.h \
  /usr/include/inttypes.h \
  /usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/ctype.h \
- /usr/include/iconv.h /usr/include/SDL/begin_code.h \
- /usr/include/SDL/close_code.h /usr/include/SDL/SDL_audio.h \
- /usr/include/SDL/SDL_error.h /usr/include/SDL/SDL_endian.h \
- /usr/include/SDL/SDL_mutex.h /usr/include/SDL/SDL_thread.h \
- /usr/include/SDL/SDL_rwops.h /usr/include/SDL/SDL_cdrom.h \
- /usr/include/SDL/SDL_cpuinfo.h /usr/include/SDL/SDL_events.h \
- /usr/include/SDL/SDL_active.h /usr/include/SDL/SDL_keyboard.h \
- /usr/include/SDL/SDL_keysym.h /usr/include/SDL/SDL_mouse.h \
- /usr/include/SDL/SDL_video.h /usr/include/SDL/SDL_joystick.h \
- /usr/include/SDL/SDL_quit.h /usr/include/SDL/SDL_loadso.h \
- /usr/include/SDL/SDL_timer.h /usr/include/SDL/SDL_version.h \
- sdl_allegro.h ../config.h /usr/include/SDL/SDL_mixer.h \
- /usr/include/SDL/SDL_types.h
+ /usr/include/math.h /usr/include/bits/math-vector.h \
+ /usr/include/bits/libm-simd-decl-stubs.h /usr/include/bits/huge_val.h \
+ /usr/include/bits/huge_valf.h /usr/include/bits/huge_vall.h \
+ /usr/include/bits/inf.h /usr/include/bits/nan.h \
+ /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h \
+ /usr/include/bits/mathinline.h /usr/include/iconv.h \
+ /usr/include/SDL2/SDL_assert.h /usr/include/SDL2/SDL_atomic.h \
+ /usr/include/SDL2/SDL_audio.h /usr/include/SDL2/SDL_error.h \
+ /usr/include/SDL2/SDL_endian.h /usr/include/SDL2/SDL_mutex.h \
+ /usr/include/SDL2/SDL_thread.h /usr/include/SDL2/SDL_rwops.h \
+ /usr/include/SDL2/SDL_clipboard.h /usr/include/SDL2/SDL_cpuinfo.h \
+ /usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/mmintrin.h \
+ /usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/xmmintrin.h \
+ /usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/mm_malloc.h \
+ /usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/emmintrin.h \
+ /usr/include/SDL2/SDL_events.h /usr/include/SDL2/SDL_video.h \
+ /usr/include/SDL2/SDL_pixels.h /usr/include/SDL2/SDL_rect.h \
+ /usr/include/SDL2/SDL_surface.h /usr/include/SDL2/SDL_blendmode.h \
+ /usr/include/SDL2/SDL_keyboard.h /usr/include/SDL2/SDL_keycode.h \
+ /usr/include/SDL2/SDL_scancode.h /usr/include/SDL2/SDL_mouse.h \
+ /usr/include/SDL2/SDL_joystick.h /usr/include/SDL2/SDL_gamecontroller.h \
+ /usr/include/SDL2/SDL_quit.h /usr/include/SDL2/SDL_gesture.h \
+ /usr/include/SDL2/SDL_touch.h /usr/include/SDL2/SDL_filesystem.h \
+ /usr/include/SDL2/SDL_haptic.h /usr/include/SDL2/SDL_hints.h \
+ /usr/include/SDL2/SDL_loadso.h /usr/include/SDL2/SDL_log.h \
+ /usr/include/SDL2/SDL_messagebox.h /usr/include/SDL2/SDL_power.h \
+ /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_system.h \
+ /usr/include/SDL2/SDL_timer.h /usr/include/SDL2/SDL_version.h \
+ sdl_allegro.h ../config.h
 
 /usr/include/stdc-predef.h:
 
-/usr/include/SDL/SDL.h:
+/usr/include/SDL2/SDL.h:
 
-/usr/include/SDL/SDL_main.h:
+/usr/include/SDL2/SDL_main.h:
 
-/usr/include/SDL/SDL_stdinc.h:
+/usr/include/SDL2/SDL_stdinc.h:
 
-/usr/include/SDL/SDL_config.h:
+/usr/include/SDL2/SDL_config.h:
 
-/usr/include/SDL/SDL_config-x86_64.h:
+/usr/include/SDL2/SDL_config-x86_64.h:
 
-/usr/include/SDL/SDL_platform.h:
+/usr/include/SDL2/SDL_platform.h:
+
+/usr/include/SDL2/begin_code.h:
+
+/usr/include/SDL2/close_code.h:
 
 /usr/include/sys/types.h:
 
@@ -116,8 +137,6 @@ sa_joystick.o: sa_joystick.c /usr/include/stdc-predef.h \
 
 /usr/include/bits/waitstatus.h:
 
-/usr/include/xlocale.h:
-
 /usr/include/alloca.h:
 
 /usr/include/bits/stdlib-bsearch.h:
@@ -125,6 +144,8 @@ sa_joystick.o: sa_joystick.c /usr/include/stdc-predef.h \
 /usr/include/bits/stdlib-float.h:
 
 /usr/include/string.h:
+
+/usr/include/xlocale.h:
 
 /usr/include/bits/string.h:
 
@@ -142,54 +163,110 @@ sa_joystick.o: sa_joystick.c /usr/include/stdc-predef.h \
 
 /usr/include/ctype.h:
 
+/usr/include/math.h:
+
+/usr/include/bits/math-vector.h:
+
+/usr/include/bits/libm-simd-decl-stubs.h:
+
+/usr/include/bits/huge_val.h:
+
+/usr/include/bits/huge_valf.h:
+
+/usr/include/bits/huge_vall.h:
+
+/usr/include/bits/inf.h:
+
+/usr/include/bits/nan.h:
+
+/usr/include/bits/mathdef.h:
+
+/usr/include/bits/mathcalls.h:
+
+/usr/include/bits/mathinline.h:
+
 /usr/include/iconv.h:
 
-/usr/include/SDL/begin_code.h:
+/usr/include/SDL2/SDL_assert.h:
 
-/usr/include/SDL/close_code.h:
+/usr/include/SDL2/SDL_atomic.h:
 
-/usr/include/SDL/SDL_audio.h:
+/usr/include/SDL2/SDL_audio.h:
 
-/usr/include/SDL/SDL_error.h:
+/usr/include/SDL2/SDL_error.h:
 
-/usr/include/SDL/SDL_endian.h:
+/usr/include/SDL2/SDL_endian.h:
 
-/usr/include/SDL/SDL_mutex.h:
+/usr/include/SDL2/SDL_mutex.h:
 
-/usr/include/SDL/SDL_thread.h:
+/usr/include/SDL2/SDL_thread.h:
 
-/usr/include/SDL/SDL_rwops.h:
+/usr/include/SDL2/SDL_rwops.h:
 
-/usr/include/SDL/SDL_cdrom.h:
+/usr/include/SDL2/SDL_clipboard.h:
 
-/usr/include/SDL/SDL_cpuinfo.h:
+/usr/include/SDL2/SDL_cpuinfo.h:
 
-/usr/include/SDL/SDL_events.h:
+/usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/mmintrin.h:
 
-/usr/include/SDL/SDL_active.h:
+/usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/xmmintrin.h:
 
-/usr/include/SDL/SDL_keyboard.h:
+/usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/mm_malloc.h:
 
-/usr/include/SDL/SDL_keysym.h:
+/usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/emmintrin.h:
 
-/usr/include/SDL/SDL_mouse.h:
+/usr/include/SDL2/SDL_events.h:
 
-/usr/include/SDL/SDL_video.h:
+/usr/include/SDL2/SDL_video.h:
 
-/usr/include/SDL/SDL_joystick.h:
+/usr/include/SDL2/SDL_pixels.h:
 
-/usr/include/SDL/SDL_quit.h:
+/usr/include/SDL2/SDL_rect.h:
 
-/usr/include/SDL/SDL_loadso.h:
+/usr/include/SDL2/SDL_surface.h:
 
-/usr/include/SDL/SDL_timer.h:
+/usr/include/SDL2/SDL_blendmode.h:
 
-/usr/include/SDL/SDL_version.h:
+/usr/include/SDL2/SDL_keyboard.h:
+
+/usr/include/SDL2/SDL_keycode.h:
+
+/usr/include/SDL2/SDL_scancode.h:
+
+/usr/include/SDL2/SDL_mouse.h:
+
+/usr/include/SDL2/SDL_joystick.h:
+
+/usr/include/SDL2/SDL_gamecontroller.h:
+
+/usr/include/SDL2/SDL_quit.h:
+
+/usr/include/SDL2/SDL_gesture.h:
+
+/usr/include/SDL2/SDL_touch.h:
+
+/usr/include/SDL2/SDL_filesystem.h:
+
+/usr/include/SDL2/SDL_haptic.h:
+
+/usr/include/SDL2/SDL_hints.h:
+
+/usr/include/SDL2/SDL_loadso.h:
+
+/usr/include/SDL2/SDL_log.h:
+
+/usr/include/SDL2/SDL_messagebox.h:
+
+/usr/include/SDL2/SDL_power.h:
+
+/usr/include/SDL2/SDL_render.h:
+
+/usr/include/SDL2/SDL_system.h:
+
+/usr/include/SDL2/SDL_timer.h:
+
+/usr/include/SDL2/SDL_version.h:
 
 sdl_allegro.h:
 
 ../config.h:
-
-/usr/include/SDL/SDL_mixer.h:
-
-/usr/include/SDL/SDL_types.h:
