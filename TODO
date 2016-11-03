@@ -1,3 +1,2 @@
-* USESDL directive currently needs to be set for SDL1 and SDL2, or font will fail
 * masked blit currently has no SDL2 support
 * remove more warnings
