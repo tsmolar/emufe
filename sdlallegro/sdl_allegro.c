@@ -481,7 +481,17 @@ unsigned int makeacol(int r, int g, int b, int a) {
    return(rv);
 }
 
-
+// Alpha blending
+int sa_setalpha(SDL_Surface *surf, Uint8 alpha) {
+   int rv;
+#ifdef SDL1
+   rv=SDL_SetAlpha(surf, SDL_SRCALPHA, alpha);
+#endif
+#ifdef SDL2
+   rv=SDL_SetSurfaceAlphaMod(surf, alpha);
+#endif
+   return rv;
+}
 
 /* Modes */
 int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {

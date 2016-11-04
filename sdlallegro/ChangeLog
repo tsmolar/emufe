@@ -1,5 +1,7 @@
 0.6.99 - 2016-8-5 (0.7.0 prerelease)
    * Begin supporting SDL1 and SDL2
+   * Added new sa_setalpha because this function is slightly different 
+     between SDL1 and SDL2
 
 0.6.12 - 2016-7-28
    * Add stretch_blit()

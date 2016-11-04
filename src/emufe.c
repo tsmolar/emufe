@@ -950,10 +950,12 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 	   destroy_bitmap(bitmap);
 	   // draw overlay
 	   if(imgbx[i].ovpct>0) {
-	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
+	      sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
+//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
 	      masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
-	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 255);
+	      sa_setalpha(imgbx_ovl[i], 255);
+//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 255);
 	     }
 	} else {
 	   // no scaling
@@ -1194,9 +1196,11 @@ draw_menubox(int fg, int bg) {
 #ifdef USESDL
       //     SDL only
       rectfill(menumap, 0,0 , rc.mb_w, rc.mb_h, makecol16(0,0,0));
-      SDL_SetAlpha(menumap, SDL_SRCALPHA, 80);
+//      SDL_SetAlpha(menumap, SDL_SRCALPHA, 80);
+      sa_setalpha(menumap, 80);
       blit(menumap,screen,0,0,rc.mb_x+rx0,rc.mb_y+ry0,rc.mb_w,rc.mb_h);
-      SDL_SetAlpha(menumap, SDL_SRCALPHA, 255);
+//      SDL_SetAlpha(menumap, SDL_SRCALPHA, 255);
+      sa_setalpha(menumap, 255);
       // End SDL
 #endif
       blit(screen, menumap,rc.mb_x+rx0,rc.mb_y+ry0,0,0,rc.mb_w,rc.mb_h);
@@ -1492,7 +1496,8 @@ int main(int argc, char* argv[]) {
    selection=create_bitmap(rc.mb_w,16);
    rectfill(selection,0,0,rc.mb_w,16,makecol(texthlr,texthlg,texthlb));
 //   rect(selection,0,0,rc.mb_w,16,makecol(255,255,255));
-   SDL_SetAlpha(selection, SDL_SRCALPHA, 128);
+//   SDL_SetAlpha(selection, SDL_SRCALPHA, 128);
+   sa_setalpha(selection, 128);
 
    
    menuitems=load_menu(newmenu);

@@ -309,7 +309,7 @@ int dialog_openselect(Widget *w, int x, int y, int m) {
  *       E N D   C A L L B A C K   S E C T I O N     *
  * ***************************************************/
 
-dialog_pvalchange(const char *evar,const char *newval) {
+void dialog_pvalchange(const char *evar,const char *newval) {
    int i;
    // This is to process changes to values that will cause bitmaps and
    // text fields to change.   
@@ -363,7 +363,7 @@ dialog_parse_line(char *sline, int lno) {
    }
 }
 
-dialog_windecor(BITMAP *wb, int x, int y, int width, int height,int base) {
+void dialog_windecor(BITMAP *wb, int x, int y, int width, int height,int base) {
    int bcr,bcg,bcb,wh,wl,ir,ig,ib;
    bcr=getr(base); bcg=getg(base); bcb=getg(base); 
    wl=makecol(bcr/4,bcg/4,bcb/4);
@@ -434,7 +434,7 @@ int dialog_fenvget(char *val, const char *var) {
    }
 } // dialog_fenvget()
 
-dialog_envprint() {
+void dialog_envprint() {
    int i;
    printf("----------------------------------\n");
    printf(" Printout of envchange\n");
@@ -466,7 +466,7 @@ dialog_envset(const char *var, const char *val) {
    }
 } // dialog_envset()
 
-dialog_mapget(char *ret, const char *var, int pno) {
+void dialog_mapget(char *ret, const char *var, int pno) {
    int i;
    for(i=0;i<mapidx;i++) {
 #ifdef DEBUG
@@ -928,7 +928,7 @@ printf("ERRG: %s %s\n",swin.widget[i].text,nw->id);
    return swin.pw;
 } 
 
-dialog_maplocalcfgname(const char *cfgname) {
+void dialog_maplocalcfgname(const char *cfgname) {
    /* If you want to use a config file to store the config settings
     * (in the /share/game directory, most likely),  then call this with the
     * full path to the file.   It will then be 'registered' to be used with
@@ -936,7 +936,7 @@ dialog_maplocalcfgname(const char *cfgname) {
    strcpy(dinf.localenv,cfgname);
 }
 
-dialog_mapglobalcfgname(const char *cfgname) {
+void dialog_mapglobalcfgname(const char *cfgname) {
    /* similar to map global, but can be used to set a local file 
     * (usually in $HOME/.game/something.conf).   This will override
     * the global, if present */

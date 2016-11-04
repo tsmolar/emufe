@@ -60,6 +60,13 @@ splash_LDADD=../sdlallegro/libsdlallegro.a ../widget/libfont.a
 INCLUDES = -I../sdlallegro -I../widget
 endif
 
+if USESDL2
+AM_CFLAGS=-DUSESDL -DDEBUG
+emufe_LDADD+=../sdlallegro/libsdlallegro.a ../widget/libfont.a
+splash_LDADD=../sdlallegro/libsdlallegro.a ../widget/libfont.a
+INCLUDES = -I../sdlallegro -I../widget
+endif
+
 if USEALLEGRO
 #bl_SOURCES+=gfx.c
 AM_CFLAGS=-DUSEALLEGRO -DUSEGFX $(allegro_CFLAGS)

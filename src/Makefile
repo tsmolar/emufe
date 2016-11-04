@@ -140,7 +140,8 @@ target_triplet = x86_64-unknown-linux-gnu
 bin_PROGRAMS = emufe$(EXEEXT) splash$(EXEEXT)
 #AM_CFLAGS=-DUSESDL
 #am__append_1 = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
-#am__append_2 = ../widget/libfont.a ../widget/libwidget.a $(allegro_LIBS)
+am__append_2 = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
+#am__append_3 = ../widget/libfont.a ../widget/libwidget.a $(allegro_LIBS)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/allegro.m4 \
@@ -164,12 +165,14 @@ am__DEPENDENCIES_1 =
 #am__DEPENDENCIES_2 = ../widget/libfont.a \
 #	../widget/libwidget.a $(am__DEPENDENCIES_1)
 emufe_DEPENDENCIES = ../widget/libfont.a ../widget/libwidget.a \
-	$(am__append_1) $(am__DEPENDENCIES_2)
+	$(am__append_1) $(am__append_2) $(am__DEPENDENCIES_2)
 am_splash_OBJECTS = splash.$(OBJEXT) dfilepath.$(OBJEXT)
 splash_OBJECTS = $(am_splash_OBJECTS)
-#splash_DEPENDENCIES =  \
-#	../sdlallegro/libsdlallegro.a \
-#	../widget/libfont.a
+##splash_DEPENDENCIES = ../sdlallegro/libsdlallegro.a \
+##	../widget/libfont.a
+splash_DEPENDENCIES =  \
+	../sdlallegro/libsdlallegro.a \
+	../widget/libfont.a
 #splash_DEPENDENCIES = ../widget/libfont.a \
 #	../widget/libwidget.a $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_$(V))
@@ -343,17 +346,20 @@ top_builddir = ..
 top_srcdir = ..
 emufe_SOURCES = emufe.c rcfile.c dfilepath.c modules.c fileio.c setup.c
 emufe_LDADD = ../widget/libfont.a ../widget/libwidget.a \
-	$(am__append_1) $(am__append_2)
+	$(am__append_1) $(am__append_2) $(am__append_3)
 splash_SOURCES = splash.c dfilepath.c
 
 #bl_SOURCES+=gfx.c
 #AM_CFLAGS = -DUSEALLEGRO -DUSEGFX $(allegro_CFLAGS)
+AM_CFLAGS = -DUSESDL -DDEBUG
 
 #bl_SOURCES+=gfx.c
 #AM_CFLAGS = -DUSESDL -DDEBUG
 #splash_LDADD = ../widget/libfont.a ../widget/libwidget.a $(allegro_LIBS)
+splash_LDADD = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
 #splash_LDADD = ../sdlallegro/libsdlallegro.a ../widget/libfont.a
 #INCLUDES = -I../widget
+INCLUDES = -I../sdlallegro -I../widget
 #INCLUDES = -I../sdlallegro -I../widget
 #AM_CXXFLAGS = -DUSEALLEGRO -DUSEGFX $(allegro_CFLAGS)
 all: all-am

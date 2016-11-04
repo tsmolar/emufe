@@ -13,6 +13,14 @@
 #else
 #include <SDL.h>
 #include "sdl_allegro.h"
+// New for SDL2 support
+#ifdef SDL2
+#define SA_COLORKEY SDL_TRUE
+#endif
+#ifdef SDL1
+#define SA_COLORKEY SDL_SRCCOLORKEY
+#endif
+// end SDL2 code
 #endif
 //unsigned char fontdata[4096];
 #include "font.h"
@@ -22,7 +30,7 @@
 fnt_t* cf8x16;
 #endif
 
-#define FONT_VERSION "3.7.2"
+#define FONT_VERSION "3.7.3"
 
 fnt_t* ActiveFont;  // Current Active Font
 
@@ -78,7 +86,7 @@ fnt_t* fnt_newfont(int ftype) {
       rectfill(bfd,0,0,1024,64,makecol(255,0,255));
 #ifdef USESDL
       ckey=SDL_MapRGB(bfd->format,255,0,255);
-      SDL_SetColorKey(bfd,SDL_SRCCOLORKEY,ckey);
+      SDL_SetColorKey(bfd,SA_COLORKEY,ckey);
 #endif
       f->data=bfd;
       break;
@@ -89,7 +97,7 @@ fnt_t* fnt_newfont(int ftype) {
       rectfill(bfd,0,0,1024,128,makecol(255,0,255));
 #ifdef USESDL
       ckey=SDL_MapRGB(bfd->format,255,0,255);
-      SDL_SetColorKey(bfd,SDL_SRCCOLORKEY,ckey);
+      SDL_SetColorKey(bfd,SA_COLORKEY,ckey);
 #endif
       f->data=bfd;
       break;
