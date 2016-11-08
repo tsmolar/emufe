@@ -18,6 +18,10 @@ typedef struct RGB {
 typedef RGB PALETTE[256];
 
 BITMAP *screen;
+#ifdef SDL2
+SDL_Window *sdlWindow;
+SDL_Renderer *sdlRenderer;
+#endif
 
 /* JOYstick types */
 #define JOY_TYPE_AUTODETECT 0

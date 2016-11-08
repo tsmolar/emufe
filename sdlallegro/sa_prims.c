@@ -111,8 +111,13 @@ void rectfill(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
    srect.h = y2 - (y1 -1);
    
    SDL_FillRect(bmp, &srect, color); 
+#ifdef SDL1
    SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
-   
+#endif
+#ifdef SDL2
+   SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
+   SDL_RenderPresent(sdlRenderer);
+#endif
 }
 
 void rect(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
@@ -140,8 +145,13 @@ void rect(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
    srect.w = x2 - (x1 -1); srect.h = y2 - (y1 -1);
    
 //   SDL_FillRect(bmp, &srect, color); 
+#ifdef SDL1
    SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
-   
+#endif
+#ifdef SDL2
+   SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
+   SDL_RenderPresent(sdlRenderer);
+#endif   
 }
 
 void hline(SDL_Surface *bmp, int x1, int y, int x2, int color) {
@@ -154,8 +164,13 @@ void hline(SDL_Surface *bmp, int x1, int y, int x2, int color) {
    srect.h = 1;
    
    SDL_FillRect(bmp, &srect, color); 
-   SDL_UpdateRect(bmp, x1, y, srect.w, srect.h);
-   
+#ifdef SDL1
+   SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
+#endif
+#ifdef SDL2
+   SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
+   SDL_RenderPresent(sdlRenderer);
+#endif   
 }
 
 void vline(BITMAP *bmp, int x, int y1, int y2, int color) {
@@ -166,7 +181,13 @@ void vline(BITMAP *bmp, int x, int y1, int y2, int color) {
    srect.w = 1;
    srect.h = y2-y1 ;
    SDL_FillRect(bmp, &srect, color); 
-   SDL_UpdateRect(bmp, x, y1, srect.w, srect.h);
+#ifdef SDL1
+   SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
+#endif
+#ifdef SDL2
+   SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
+   SDL_RenderPresent(sdlRenderer);
+#endif   
 }
 
 void fastline(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
@@ -231,7 +252,13 @@ void fastline(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
 	 // Why was this here?  It causes problems if lines are drawn in
 	 // certain directions
 //	 SDL_UpdateRect(bmp, srect.x, y1, srect.w, srect.h);
+#ifdef SDL1
 	 SDL_UpdateRect(bmp, srect.x, srect.y, srect.w, srect.h);
+#endif
+#ifdef SDL2
+	 SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
+	 SDL_RenderPresent(sdlRenderer);
+#endif   
       } /* hline */
    } /* vline */
 }

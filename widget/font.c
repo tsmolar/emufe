@@ -282,6 +282,10 @@ fnt_print_string(BITMAP *b, int x, int y, char *str, int fg, int bg, int sd) {
    int c=0, l=0, cx,cy, sl=strlen(str)*8;
    int fh=ActiveFont->height-1;
 
+#ifdef SDL2
+   SDL_Rect frect;
+#endif
+   
    if(ActiveFont->type==TTF ) {
 #ifdef USE_FREETYPE
       fnt_ttf_print_string(b,x,y,str,fg,bg,sd);
@@ -316,9 +320,18 @@ fnt_print_string(BITMAP *b, int x, int y, char *str, int fg, int bg, int sd) {
       if(b==screen) {
 	 if(ActiveFont->type<2)
 	   SDL_UnlockSurface(b);
-	 if(SA_AUTOUPDATE==1)
-	   SDL_UpdateRect(screen,x,y,sl,16);
-	 //      printf("hokee: %d %d %d\n",x,y,sl);
+	 if(SA_AUTOUPDATE==1) {
+# ifdef SDL1	      
+	    SDL_UpdateRect(screen,x,y,sl,16);
+	    //      printf("hokee: %d %d %d\n",x,y,sl);
+# endif
+# ifdef SDL2
+	    frect.x=x; frect.y=y;
+	    frect.w=sl; frect.h=16;
+	    SDL_RenderCopy(sdlRenderer,screen,&frect,&frect);
+	    SDL_RenderPresent(sdlRenderer);
+# endif
+	 }
       }
 #endif
    }   

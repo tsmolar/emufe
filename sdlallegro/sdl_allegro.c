@@ -27,15 +27,22 @@ int zcomp=0;
 //extern int num_joysticks;
 
 void sa_version_info() {
+#ifdef SDL1
    const SDL_version * v = SDL_Linked_Version();
    
    printf("SDL compile-time version: %d.%d.%d\n",SDL_MAJOR_VERSION,SDL_MINOR_VERSION,SDL_PATCHLEVEL);
    printf("SDL run-time version: %d.%d.%d\n",v->major,v->minor,v->patch);
    printf("SDL/Allegro Library Version %s\n",SDL_ALLEGRO_VERS_C);
-#ifdef SDL1
    printf("Compiled with legacy SDL1, consider upgrading to SDL2\n");
 #endif
 #ifdef SDL2
+   SDL_version compiled;
+   SDL_version linked;
+  
+   SDL_VERSION(&compiled);
+   SDL_GetVersion(&linked);
+   printf("SDL compile-time version: %d.%d.%d\n",compiled.major,compiled.minor,compiled.patch);
+   printf("SDL linked version: %d.%d.%d\n",linked.major,linked.minor,linked.patch);
    printf("Compiled with SDL2\n");
 #endif
 #ifdef HAVE_LIBSDL_IMAGE
@@ -493,6 +500,23 @@ int sa_setalpha(SDL_Surface *surf, Uint8 alpha) {
    return rv;
 }
 
+#ifdef SDL2
+// replacement for SDL_Flip() (which shouldn't be used)
+int s2a_flip(SDL_Surface* mysurface) {
+   SDL_Rect frect;
+   
+   frect.x=0;
+   frect.y=0;
+   frect.w=screen->w;
+   frect.h=screen->h;
+   
+   SDL_RenderCopy(sdlRenderer,mysurface,&frect,&frect);
+   SDL_RenderPresent(sdlRenderer);
+   
+   return(0);
+}
+#endif 
+
 /* Modes */
 int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    Uint32 sdlflag,wasinit;
@@ -694,8 +718,14 @@ void blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int ds
 //   printf("2call to blit\n");
    if(SA_AUTOUPDATE==1) {	
       if(dest == screen)
+#ifdef SDL1
 	SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
 //      printf("SDL UP: %d %d %d %d \n",dsx,dsy,wdt,hgt);
+#endif
+#ifdef SDL2
+      SDL_RenderCopy(sdlRenderer,screen,&drect,&drect);
+      SDL_RenderPresent(sdlRenderer);
+#endif
    }
 //     SDL_Flip(dest);
 }
@@ -722,8 +752,15 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
    SDL_BlitSurface(src, &srect, dest, &drect);
 //   printf("call to masked blit\n");
    if(SA_AUTOUPDATE==1) {	
-      if(dest == screen)
-	SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
+      if(dest == screen) {
+#ifdef SDL1
+	 SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
+#endif
+#ifdef SDL2
+	 SDL_RenderCopy(sdlRenderer,screen,&drect,&drect);
+	 SDL_RenderPresent(sdlRenderer);
+#endif
+      }
    }
 //     SDL_Flip(dest);
   #endif
@@ -807,8 +844,15 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
 // end SDL1 method
    
    if(SA_AUTOUPDATE==1) {	
-      if(dst == screen)
-	SDL_UpdateRect(dst, dst_x, dst_y, dst_w, dst_h);
+      if(dst == screen) {
+#ifdef SDL1
+	 SDL_UpdateRect(dst, dst_x, dst_y, dst_w, dst_h);
+#endif
+#ifdef SDL2
+	 SDL_RenderCopy(sdlRenderer,screen,&dst_r,&dst_r);
+	 SDL_RenderPresent(sdlRenderer);
+#endif
+      }      
    }
 }
 
@@ -821,7 +865,12 @@ int show_video_bitmap(BITMAP *bitmap) {
    
    // It may already be compatible,  the SDL docs aren't clear what happens
    // if you pass anything other than the screen surface to this:
+#ifdef SDL1
    i=SDL_Flip(bitmap);   
+#endif
+#ifdef SDL2
+   i=s2a_flip(bitmap);   
+#endif
    return(i);
 }
 

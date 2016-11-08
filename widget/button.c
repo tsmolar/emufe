@@ -75,6 +75,10 @@ up_bmp_button(Widget *b,int x,int y) /* called by mouse_depress */
 down_bmp_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
    BITMAP* useb;
+#ifdef SDL2
+   SDL_Rect brect;
+#endif
+   
    useb=getwdgbmp(b);
    scare_once();
    //        rem_pointer(x,y);
@@ -83,7 +87,17 @@ down_bmp_button(Widget *b,int x,int y,int m) /* called by mouse_press */
    masked_blit(b->btbmp.btndnbmp,useb,b->btbmp.dn_x1,b->btbmp.dn_y1,b->x1,b->y1,b->btbmp.dn_x2,b->btbmp.dn_y2);
 //printf("x2\n");
 #ifdef USESDL
-        SDL_UpdateRect(screen,b->x1,b->y1,b->x2-1,b->y2-1);
+# ifdef SDL1
+   SDL_UpdateRect(screen,b->x1,b->y1,b->x2-1,b->y2-1);
+# endif
+# ifdef SDL2
+   brect.x = b->x1;
+   brect.y = b->y1;
+   brect.w = b->x2-1;
+   brect.h = b->y2-1;
+   SDL_RenderCopy(sdlRenderer,screen,&brect,&brect);
+   SDL_RenderPresent(sdlRenderer);
+# endif
 #endif
    // experimental
    if(b->draggable)
@@ -97,6 +111,11 @@ down_bmp_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 up_button(Widget *b,int x,int y) /* called by mouse_depress */
 {
    BITMAP* useb;
+#ifdef SDL2
+   SDL_Rect brect;
+#endif
+
+   
 //   printf("BTN: UP\n");
    useb=getwdgbmp(b);
    
@@ -119,8 +138,20 @@ up_button(Widget *b,int x,int y) /* called by mouse_depress */
 //        set_font_fcolor(255,255,255);
 	fnt_print_string(useb,b->x1+3,b->y1+1,b->text,makecol(255,255,255),-1,-1);
 #ifdef USESDL
-   if(useb==screen)
+   if(useb==screen) {
+# ifdef SDL1
      SDL_UpdateRect(screen,b->x1,b->y1,b->x2-1,b->y2-1);
+# endif
+# ifdef SDL2
+      brect.x = b->x1;
+      brect.y = b->y1;
+      brect.w = b->x2-1;
+      brect.h = b->y2-1;
+      SDL_RenderCopy(sdlRenderer,screen,&brect,&brect);
+      SDL_RenderPresent(sdlRenderer);
+# endif
+      
+   }
 #endif
         unscare_once();
    // What's this for?
@@ -131,6 +162,9 @@ up_button(Widget *b,int x,int y) /* called by mouse_depress */
 down_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
    BITMAP* useb;
+#ifdef SDL2
+   SDL_Rect brect;
+#endif
  //  printf("BTN: DOWN\n");
    useb=getwdgbmp(b);
 
@@ -148,8 +182,19 @@ down_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 	fnt_print_string(useb,b->x1+4,b->y1+2,b->text,makecol(225,225,225),-1,-1);
 //   printf("x4\n");
 #ifdef USESDL
-   if(useb==screen)
+   if(useb==screen) {
+# ifdef SDL1
      SDL_UpdateRect(screen,b->x1,b->y1,b->x2-1,b->y2-1);
+# endif
+# ifdef SDL2
+      brect.x = b->x1;
+      brect.y = b->y1;
+      brect.w = b->x2-1;
+      brect.h = b->y2-1;
+      SDL_RenderCopy(sdlRenderer,screen,&brect,&brect);
+      SDL_RenderPresent(sdlRenderer);
+# endif
+   }
 #endif
         unscare_once();
 //        draw_pointer(x,y);	
