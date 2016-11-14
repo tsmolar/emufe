@@ -67,7 +67,11 @@ menudisp=0;
 
 #ifdef USESDL
 gfx_sdlflip() {
-	    SDL_Flip(screen);
+# ifdef SDL1
+   SDL_Flip(screen);
+# else 
+   s2a_flip(screen);
+# endif
 }
 #endif
 

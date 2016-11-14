@@ -139,7 +139,14 @@ int allegro_init() {
    SA_AUTOUPDATE=1;
    strcpy(sa_win_title,"sdlallegro App");
    rv=SDL_Init(SDL_INIT_EVERYTHING);
+#ifdef SDL1 
    SDL_VideoDriverName(sdldriver,19);
+#endif
+#ifdef SDL2
+   //sdldriver = SDL_GetCurrentVideoDriver();
+   // if the above fails, set this:
+    sprintf(sdldriver,"SDL2-unknown");
+#endif
 //   SDL_VideoDriverName(driver,20);
 #ifdef DEBUG
    printf("Video driver in use is %s\n",sdldriver);
@@ -179,7 +186,12 @@ void clear_keybuf() {
 }
 
 void set_keyboard_rate(int delay, int repeat) {
+#ifdef SDL1
    SDL_EnableKeyRepeat(delay,repeat);
+#endif
+#ifdef SDL2
+   printf("set_keyboard_rate() is not implemented for SDL2 (yet!)\n");
+#endif
 }
 
 void simulate_keypress(int key) {
@@ -680,7 +692,8 @@ SDL_Surface *create_bitmap(int width, int height) {
    // might need theis for compatability
    //   new_surface=SDL_ConvertSurface(xyz, const SDL_PixelFormat* fmt, 0);
    //   SDL_FreeSurface(xyz);
-   SDL_SetAlpha(new_surface,0,255);
+   SDL_SetSurfaceAlphaMod(new_surface, 255);
+   //  SDL_SetAlpha(new_surface,0,255);
 #endif
    
 //   SDL_SetAlpha(new_surface,SDL_SRCALPHA,SDL_ALPHA_OPAQUE);

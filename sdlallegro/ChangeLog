@@ -3,6 +3,7 @@
    * Added new sa_setalpha because this function is slightly different 
      between SDL1 and SDL2
    * Added new s2a_flip to mimic SDL_Flip() in SDL1
+   * library compiles, but SDLimage flag isn't working properly
 
 0.6.12 - 2016-7-28
    * Add stretch_blit()
