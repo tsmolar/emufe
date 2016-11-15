@@ -68,6 +68,8 @@ if [[ "$gfx_lib" = sdl2 ]]; then
   AM_CONDITIONAL(USESDL2,true)
   CFLAGS="$CFLAGS $SDL_CFLAGS"
   LIBS="$LIBS $SDL_LIBS"
+  AC_CHECK_LIB(SDL2_image,IMG_Load)
+  AC_CHECK_LIB(SDL2_mixer,Mix_Linked_Version)
 else
   AC_MSG_NOTICE([SDL1 check])
   AM_PATH_SDL(1.2.5,gfx_lib=sdl1,:)

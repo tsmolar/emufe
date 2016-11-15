@@ -3,9 +3,6 @@
 #endif
 #include<SDL.h>
 #include"sdl_allegro.h"
-//#ifdef HAVE_SDLMIXER
-//#include"SDL_mixer.h"
-//#endif
 
 #define SDL_ALLEGRO_VERS_C "0.6.99"
 
@@ -45,12 +42,12 @@ void sa_version_info() {
    printf("SDL linked version: %d.%d.%d\n",linked.major,linked.minor,linked.patch);
    printf("Compiled with SDL2\n");
 #endif
-#ifdef HAVE_LIBSDL_IMAGE
+#if defined(HAVE_LIBSDL_IMAGE) || defined(HAVE_LIBSDL2_IMAGE)
    printf("  * Have SDLImage for file loading\n");
 #else
    printf("  * Not Using SDLImage\n");
 #endif
-#ifdef HAVE_LIBSDL_MIXER
+#if defined(HAVE_LIBSDL_MIXER) || defined(HAVE_LIBSDL2_MIXER)
    printf("  * Have SDLMixer for audio\n");
 #else
    printf("  * Not Using SDLMixer\n");
@@ -527,6 +524,20 @@ int s2a_flip(SDL_Surface* mysurface) {
    
    return(0);
 }
+
+int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
+   SDL_Rect frect;
+   
+   frect.x=x;
+   frect.y=y;
+   frect.w=w;
+   frect.h=h;
+   
+   SDL_RenderCopy(sdlRenderer,mysurface,&frect,&frect);
+   SDL_RenderPresent(sdlRenderer);
+   
+   return(0);
+}
 #endif 
 
 /* Modes */
@@ -890,7 +901,7 @@ int show_video_bitmap(BITMAP *bitmap) {
 // Audio Section
 // Currently SDL_mixer is needed,  it may be possible to implement
 // with straight SDL, but it would require a little more work.
-#ifdef HAVE_LIBSDL_MIXER
+#if defined(HAVE_LIBSDL_MIXER)
 int install_sound(int digi, int midi, const char *cfg_path) {
    Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024);
 }

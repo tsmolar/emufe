@@ -1,7 +1,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef HAVE_LIBSDL_IMAGE
+#if defined(HAVE_LIBSDL_IMAGE) || defined(HAVE_LIBSDL2_IMAGE)
 #include <SDL.h>
 #include <SDL_image.h>
 #include "sdl_allegro.h"

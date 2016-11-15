@@ -5080,6 +5080,96 @@ fi
 
   CFLAGS="$CFLAGS $SDL_CFLAGS"
   LIBS="$LIBS $SDL_LIBS"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for IMG_Load in -lSDL2_image" >&5
+$as_echo_n "checking for IMG_Load in -lSDL2_image... " >&6; }
+if ${ac_cv_lib_SDL2_image_IMG_Load+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lSDL2_image  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char IMG_Load ();
+int
+main ()
+{
+return IMG_Load ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_SDL2_image_IMG_Load=yes
+else
+  ac_cv_lib_SDL2_image_IMG_Load=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL2_image_IMG_Load" >&5
+$as_echo "$ac_cv_lib_SDL2_image_IMG_Load" >&6; }
+if test "x$ac_cv_lib_SDL2_image_IMG_Load" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBSDL2_IMAGE 1
+_ACEOF
+
+  LIBS="-lSDL2_image $LIBS"
+
+fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mix_Linked_Version in -lSDL2_mixer" >&5
+$as_echo_n "checking for Mix_Linked_Version in -lSDL2_mixer... " >&6; }
+if ${ac_cv_lib_SDL2_mixer_Mix_Linked_Version+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lSDL2_mixer  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char Mix_Linked_Version ();
+int
+main ()
+{
+return Mix_Linked_Version ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_SDL2_mixer_Mix_Linked_Version=yes
+else
+  ac_cv_lib_SDL2_mixer_Mix_Linked_Version=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL2_mixer_Mix_Linked_Version" >&5
+$as_echo "$ac_cv_lib_SDL2_mixer_Mix_Linked_Version" >&6; }
+if test "x$ac_cv_lib_SDL2_mixer_Mix_Linked_Version" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBSDL2_MIXER 1
+_ACEOF
+
+  LIBS="-lSDL2_mixer $LIBS"
+
+fi
+
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: SDL1 check" >&5
 $as_echo "$as_me: SDL1 check" >&6;}

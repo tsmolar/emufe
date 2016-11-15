@@ -4,6 +4,12 @@
 /* Define to 1 if you have a functional curl library. */
 /* #undef HAVE_LIBCURL */
 
+/* Define to 1 if you have the `SDL2_image' library (-lSDL2_image). */
+#define HAVE_LIBSDL2_IMAGE 1
+
+/* Define to 1 if you have the `SDL2_mixer' library (-lSDL2_mixer). */
+#define HAVE_LIBSDL2_MIXER 1
+
 /* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
 /* #undef HAVE_LIBSDL_IMAGE */
 

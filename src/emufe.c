@@ -13,6 +13,7 @@
 #include "font.h"
 #include "font_legacy.h"
 #include "emufe.h"
+// #include "fileio.h"
 
 /* #include <allegro/internal/aintern.h> */
 
@@ -1389,8 +1390,14 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
       if(b==screen) {
 	 if(ActiveFont->type<2)
 	   SDL_UnlockSurface(b);
+# ifdef SDL1
 	 if(SA_AUTOUPDATE==1)
 	   SDL_UpdateRect(screen,x,y,sl,16);
+# endif
+# ifdef SDL2
+	 if(SA_AUTOUPDATE==1)
+	   s2a_updaterect(screen,x,y,sl,16);
+# endif
 	 //      printf("hokee: %d %d %d\n",x,y,sl);
       }
 #endif
