@@ -736,7 +736,12 @@ init() {
    install_mouse();
    install_keyboard();
    install_joystick(JOY_TYPE_AUTODETECT);
+#ifdef SDL1
+   // test to see if SDL1 can take 32
    set_color_depth(16);
+#else
+   set_color_depth(32);
+#endif
    set_keyboard_rate(400,40);
    
    load_defaults();

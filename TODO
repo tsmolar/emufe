@@ -1,3 +1,17 @@
+It's now working in SDL2!  But there are a number of bugs noticed
+  1. Keyboard navigation doesn't work (key mapping issue?)
+  2. Mouse Navigate isn't hitting the exact right spot
+  3. menu hilighter doesn't seem to be working
+  4. You can see too many screen updates, is RendererPresent getting
+     called too frequently?  May need to use the autoupdate flag to
+     reduce.
+  5. No mouse wheel?
+  6. It fails with 16-bit depth, but not 32.  SDL1 always used 16.  
+     I don't necessarily need 16 to work, but just want to understand it
+     better.  (reports invalid pixel format)
+
+Code Issues:
+
 * masked blit currently has no SDL2 support
 * remove more warnings
 * Fix all the UpdateRects

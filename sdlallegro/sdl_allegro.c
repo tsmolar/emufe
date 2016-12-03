@@ -10,6 +10,7 @@ SDL_PixelFormat *sdlpixfmt;
 SDL_Surface *screen;
 #ifdef SDL2
 SDL_Window *sdlWindow;
+SDL_Texture *TXscreen;
 SDL_Renderer *sdlRenderer;
 #endif
 int sa_depth;
@@ -442,18 +443,24 @@ int makecol(int r, int g, int b) {
 
 int makecol16(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
+   printf("16 breaks here? %d,%d,%d\n",r,g,b);
+   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
 
 int makecol24(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
+   printf("24 breaks here? %d,%d,%d\n",r,g,b);
+   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
 
 int makecol32(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
+   printf("32 breaks here? %d,%d,%d\n",r,g,b);
+   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
@@ -519,7 +526,9 @@ int s2a_flip(SDL_Surface* mysurface) {
    frect.w=screen->w;
    frect.h=screen->h;
    
-   SDL_RenderCopy(sdlRenderer,mysurface,&frect,&frect);
+   SDL_UpdateTexture(TXscreen, NULL, mysurface->pixels, mysurface->pitch);
+   SDL_RenderClear(sdlRenderer);
+   SDL_RenderCopy(sdlRenderer,TXscreen,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
    
    return(0);
@@ -527,13 +536,16 @@ int s2a_flip(SDL_Surface* mysurface) {
 
 int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
    SDL_Rect frect;
-   
+   SDL_Texture *mytexture; 
+ 
    frect.x=x;
    frect.y=y;
    frect.w=w;
    frect.h=h;
    
-   SDL_RenderCopy(sdlRenderer,mysurface,&frect,&frect);
+   mytexture=SDL_CreateTextureFromSurface(sdlRenderer, mysurface);
+   SDL_RenderClear(sdlRenderer);  
+   SDL_RenderCopy(sdlRenderer,mytexture,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
    
    return(0);
@@ -544,7 +556,7 @@ int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 
 int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    Uint32 sdlflag,wasinit;
    int retval=0;
-   
+
    switch(card) {
 #ifdef SDL2
     case GFX_AUTODETECT_WINDOWED:
@@ -567,6 +579,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 
 #ifdef SDL2
    // need to define SDL_Window
+  //   SDL_InitSubSystem(SDL_INIT_VIDEO);	
    if(sdlflag==SDL_WINDOW_FULLSCREEN_DESKTOP) {
       if (!(sdlWindow = SDL_CreateWindow(sa_win_title,SDL_WINDOWPOS_UNDEFINED,
 				SDL_WINDOWPOS_UNDEFINED,0,0,sdlflag)))
@@ -576,22 +589,29 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 				SDL_WINDOWPOS_UNDEFINED,w,h,sdlflag)))
 	retval=1;
    }
-   
+
    sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
    if(sdlRenderer == NULL) {
       /* Handle problem */
       fprintf(stderr, "%s\n", SDL_GetError());
       SDL_Quit();
    }
-  
+
    // make it black
    SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
    SDL_RenderClear(sdlRenderer);
    SDL_RenderPresent(sdlRenderer); // like SDL Flip?
    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
    SDL_RenderSetLogicalSize(sdlRenderer, w, h);   
-//   screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
+   // screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
+
    screen = create_bitmap(w,h);
+   // copied straight from the docs
+   if ( screen == NULL ) {
+      SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
+      exit(1);
+   }
+   TXscreen = SDL_CreateTextureFromSurface(sdlRenderer,screen);
 #else
    if (sdlflag != -1) {
       if (!(screen = SDL_SetVideoMode(w, h, sa_depth, sdlflag)))
@@ -699,6 +719,7 @@ SDL_Surface *create_bitmap(int width, int height) {
    bmask = 0x00ff0000;
    amask = 0xff000000;
 #endif
+   printf("SDL2 w:%d h:%d d:%d\n", width, height, sa_depth);
    new_surface = SDL_CreateRGBSurface(0,width,height,sa_depth,rmask,gmask,bmask,amask);
    // might need theis for compatability
    //   new_surface=SDL_ConvertSurface(xyz, const SDL_PixelFormat* fmt, 0);
@@ -741,15 +762,18 @@ void blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int ds
    SDL_BlitSurface(src, &srect, dest, &drect);
 //   printf("2call to blit\n");
    if(SA_AUTOUPDATE==1) {	
-      if(dest == screen)
+      if(dest == screen) {
 #ifdef SDL1
-	SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
-//      printf("SDL UP: %d %d %d %d \n",dsx,dsy,wdt,hgt);
+	 SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
+	 //      printf("SDL UP: %d %d %d %d \n",dsx,dsy,wdt,hgt);
 #endif
 #ifdef SDL2
-      SDL_RenderCopy(sdlRenderer,screen,&drect,&drect);
-      SDL_RenderPresent(sdlRenderer);
+	 SDL_UpdateTexture(TXscreen, NULL, screen->pixels, screen->pitch);
+	 SDL_RenderClear(sdlRenderer);
+	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
+	 SDL_RenderPresent(sdlRenderer);
 #endif
+      }
    }
 //     SDL_Flip(dest);
 }
@@ -781,7 +805,9 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
 	 SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
 #endif
 #ifdef SDL2
-	 SDL_RenderCopy(sdlRenderer,screen,&drect,&drect);
+	 SDL_UpdateTexture(TXscreen, NULL, screen->pixels, screen->pitch);
+	 SDL_RenderClear(sdlRenderer);
+	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
 #endif
       }
@@ -873,7 +899,9 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
 	 SDL_UpdateRect(dst, dst_x, dst_y, dst_w, dst_h);
 #endif
 #ifdef SDL2
-	 SDL_RenderCopy(sdlRenderer,screen,&dst_r,&dst_r);
+	 SDL_UpdateTexture(TXscreen, NULL, screen->pixels, screen->pitch);
+	 SDL_RenderClear(sdlRenderer);
+	 SDL_RenderCopy(sdlRenderer,TXscreen,&dst_r,&dst_r);
 	 SDL_RenderPresent(sdlRenderer);
 #endif
       }      
