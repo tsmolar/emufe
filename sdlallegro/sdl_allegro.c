@@ -527,7 +527,7 @@ int s2a_flip(SDL_Surface* mysurface) {
    frect.h=screen->h;
    
    SDL_UpdateTexture(TXscreen, NULL, mysurface->pixels, mysurface->pitch);
-   SDL_RenderClear(sdlRenderer);
+//   SDL_RenderClear(sdlRenderer);
    SDL_RenderCopy(sdlRenderer,TXscreen,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
    
@@ -544,7 +544,7 @@ int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 
    frect.h=h;
    
    mytexture=SDL_CreateTextureFromSurface(sdlRenderer, mysurface);
-   SDL_RenderClear(sdlRenderer);  
+//   SDL_RenderClear(sdlRenderer);  
    SDL_RenderCopy(sdlRenderer,mytexture,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
    
@@ -769,7 +769,7 @@ void blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int ds
 #endif
 #ifdef SDL2
 	 SDL_UpdateTexture(TXscreen, NULL, screen->pixels, screen->pitch);
-	 SDL_RenderClear(sdlRenderer);
+//	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
 #endif
@@ -806,7 +806,7 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
 #endif
 #ifdef SDL2
 	 SDL_UpdateTexture(TXscreen, NULL, screen->pixels, screen->pitch);
-	 SDL_RenderClear(sdlRenderer);
+//	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
 #endif
@@ -900,7 +900,7 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
 #endif
 #ifdef SDL2
 	 SDL_UpdateTexture(TXscreen, NULL, screen->pixels, screen->pitch);
-	 SDL_RenderClear(sdlRenderer);
+//	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&dst_r,&dst_r);
 	 SDL_RenderPresent(sdlRenderer);
 #endif

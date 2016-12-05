@@ -148,10 +148,19 @@ Uint16 key_shifts;
 #define KEY_SPACE SDLK_SPACE
 #define KEY_BACKSPACE SDLK_BACKSPACE
 #define KEY_TAB SDLK_TAB
+#ifdef SDL1
 #define KEY_LEFT SDLK_LEFT
 #define KEY_RIGHT SDLK_RIGHT
 #define KEY_UP SDLK_UP
 #define KEY_DOWN SDLK_DOWN
+#else
+// Special handling because these don't work right in SDL2
+#define KEY_LEFT 276
+#define KEY_RIGHT 275
+#define KEY_UP 273
+#define KEY_DOWN 274
+#endif
+// #define KEY_DOWN 274
 #define KEY_PGUP SDLK_PAGEUP
 #define KEY_PGDN SDLK_PAGEDOWN
 #define KEY_HOME SDLK_HOME

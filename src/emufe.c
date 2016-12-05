@@ -1652,8 +1652,9 @@ int main(int argc, char* argv[]) {
       
       if(keypressed()) {
 	 keyp=readkey() >> 8; 
+	 printf("key:%d--%d\n",keyp,KEY_DOWN);
 #ifdef DEBUG
-	 printf(debugtxt,"keyp=%d\n",keyp);
+	 printf(debugtxt,"keyp=%d\n",keyp,KEY_DOWN);
 	 debug(3,debugtxt);
 #endif
 	 if(keyp==KEY_F2) {
