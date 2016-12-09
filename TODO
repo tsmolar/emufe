@@ -1,5 +1,5 @@
 It's now working in SDL2!  But there are a number of bugs noticed
-  1. Keyboard navigation doesn't work (key mapping issue?)
+ x1. Keyboard navigation doesn't work (key mapping issue?)
   2. Mouse Navigate isn't hitting the exact right spot
   3. menu hilighter doesn't seem to be working
   4. You can see too many screen updates, is RendererPresent getting
@@ -9,6 +9,10 @@ It's now working in SDL2!  But there are a number of bugs noticed
   6. It fails with 16-bit depth, but not 32.  SDL1 always used 16.  
      I don't necessarily need 16 to work, but just want to understand it
      better.  (reports invalid pixel format)
+     
+New SDL1 issues:
+  SDL1 and SDL2 are not defined for emufe!  We can either define them
+  or call s2a_flip() for both versions
 
 Code Issues:
 

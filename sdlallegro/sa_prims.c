@@ -165,7 +165,7 @@ void hline(SDL_Surface *bmp, int x1, int y, int x2, int color) {
    
    SDL_FillRect(bmp, &srect, color); 
 #ifdef SDL1
-   SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
+   SDL_UpdateRect(bmp, x1, y, srect.w, srect.h);
 #endif
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
@@ -182,7 +182,7 @@ void vline(BITMAP *bmp, int x, int y1, int y2, int color) {
    srect.h = y2-y1 ;
    SDL_FillRect(bmp, &srect, color); 
 #ifdef SDL1
-   SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
+   SDL_UpdateRect(bmp, x, y1, srect.w, srect.h);
 #endif
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
