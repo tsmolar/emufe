@@ -11,11 +11,15 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #include <window.h>
 #include "font.h"
 #include "font_legacy.h"
 #include <button.h>
 #include "emufe.h"
+#include "fileio.h"
+#include "dfilepath.h"
+#include "rcfile.h"
 
 typedef struct charar_t {
    char str[85];
@@ -94,7 +98,7 @@ int wcb_buttoncb(Widget *w, int x, int y, int m) {
 //   pop_level();
 }
 
-limit_str(char *sstr,const char *istr,int len) {
+int limit_str(char *sstr,const char *istr,int len) {
    int i;
    printf("SETUP: limit_str\n");
 
@@ -290,7 +294,7 @@ int wcb_checkcb(Widget *w, int x, int y, int m) {
 //   printf("pressed: %s now %s\n",swin.widget[i].text,swin.widget[i].evalue);
 }
 
-gfx_windecor(int x, int y, int width, int height,int base) {
+int gfx_windecor(int x, int y, int width, int height,int base) {
    int bcr,bcg,bcb,wh,wl,ir,ig,ib;
    
    printf("SETUP: gfx_windecor\n");
@@ -417,7 +421,7 @@ int gfx_alert(char *text,int k1, char *b1,int k2, char *b2,int k3,char *b3) {
    return alert_button;
 }
 
-setup_parse_line(char *sline, int lno) {
+int setup_parse_line(char *sline, int lno) {
    int i,wxs,bc=0;
    char wstr[20];
    
@@ -459,7 +463,7 @@ setup_parse_line(char *sline, int lno) {
 
 // setup essentially starts here
 
-setup_getlocalcfgname(char *cfgname) {
+int setup_getlocalcfgname(char *cfgname) {
    char *homet;
 
    printf("SETUP: setup_getlocalcfgname\n");
@@ -472,7 +476,7 @@ setup_getlocalcfgname(char *cfgname) {
 #endif
 }
 
-setup_getflashcfgname(char *cfgname) {
+int setup_getflashcfgname(char *cfgname) {
 //   char *homet;
 
    printf("SETUP: setup_getflashcfgname\n");
@@ -480,18 +484,18 @@ setup_getflashcfgname(char *cfgname) {
 
 }
 
-setup_getglobalcfgname(char *cfgname) {
+int setup_getglobalcfgname(char *cfgname) {
    // this could be used to fix the crash bug when
    // emufe -n -i is used without CDROOT
    printf("SETUP: setup_getglobalcfgname\n");
    sprintf(cfgname,"%s%cetc%cemucd.env",basedir,mysep,mysep);
 }
 
-setup_envcclr() {
+int setup_envcclr() {
    envcidx=0;
 }
 
-setup_envprint() {
+int setup_envprint() {
    int i;
    printf("----------------------------------\n");
    printf(" Printout of envchange\n");
@@ -501,7 +505,7 @@ setup_envprint() {
    printf("----------------------------------\n");
 }
 
-setup_envset(const char *var, const char *val) {
+int setup_envset(const char *var, const char *val) {
    int i,cc=0;
    //   printf("%s==%s\n",var,val);
 
@@ -543,7 +547,7 @@ setup_mapget(char *ret, const char *var, int pno) {
    }
 }
 
-setup_mapset(const char *var, const char *val,const char *p3, const char *p4) {
+int setup_mapset(const char *var, const char *val,const char *p3, const char *p4) {
    int i,cc=0;
 
    printf("SETUP: setup_mapset\n");
@@ -651,7 +655,7 @@ int setup_envget(char* ival, const char *var) {
    fclose(fp);
 }
 
-setup_menv(char *val,const char *var) {
+int setup_menv(char *val,const char *var) {
    int i;
    
    printf("SETUP: setup_menv\n");
@@ -668,7 +672,7 @@ setup_menv(char *val,const char *var) {
    }
 }
 
-setup_menvget(char *val, const char *var) {
+int setup_menvget(char *val, const char *var) {
    int i;
    char ival[40];
 
@@ -743,14 +747,14 @@ int load_setup_fl(char *fname) {
    }
 }
 
-setup_mystyle() {
+int setup_mystyle() {
    printf("SETUP: setup_mystyle\n");
 
    // Override some of the widget default styles
    activestyle.input.bg=makecol(240,240,240);
 }
 
-run_setup(char *n_setup) {
+int run_setup(char *n_setup) {
    char fname[120],envval[60],wst[20];
    int sx,sy,i,sxo,syo,l;
    Widget *nw;
@@ -899,7 +903,7 @@ int setup_spvar(const char *var) {
    return 0;
 }
 
-setup_advoptlst(char *vlist, const char *var) {
+int setup_advoptlst(char *vlist, const char *var) {
    int i;
    char p1[16],ipv[16];
 //   printf("checking changes\n");
@@ -951,7 +955,7 @@ int setup_hd(const char *glo, const char *loc, const char *type) {
      return 0;
 }
 
-setup_go() {
+int setup_go() {
    // Entry point
    char lc[120], gc[160],val[120],dlist[220],var[30],v1[15],v2[15],v3[90];
    int didx=0,i,sflag, iflag=0;

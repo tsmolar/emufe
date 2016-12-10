@@ -79,7 +79,7 @@ int file_exists(const char *filename) {
    return 0;
 }
 
-mod_readbm(char *bmfile) {
+int mod_readbm(char *bmfile) {
    char bf[220], p1[20], p2[200];
    FILE *fp;
    int i;
@@ -112,7 +112,7 @@ mod_readbm(char *bmfile) {
    }
 }
 
-mod_writebm(int mode) {
+int mod_writebm(int mode) {
    char bmfile[220];
    FILE *fp;
    if(getenv("EMUBOOKMARK"))
@@ -152,7 +152,7 @@ mod_writebm(int mode) {
 }
 
 
-mod_colidx(char* rstr, char *ostr, int idx, char del) {
+int mod_colidx(char* rstr, char *ostr, int idx, char del) {
    // Alternative to strtok
    // Experimental version to allow an arbitrary number of chars
    // between fields
@@ -186,7 +186,7 @@ mod_colidx(char* rstr, char *ostr, int idx, char del) {
    }
 }
 
-zip_bintype(char *btype, const char *cext) {
+int zip_bintype(char *btype, const char *cext) {
    int i,rv=0;
    for(i=0;i<cmdtidx;i++) {
       if(strcmp(cmdtbl[i].optname,"ext")==0) {
@@ -455,7 +455,7 @@ int mod_optype(const char *stmt) {
    return(optype);
 }
 
-env_get(char *val, const char *var) {
+int env_get(char *val, const char *var) {
    int i;
    // Special Cases
    if(strcmp(var,"Ebintype")==0) strcpy(val,emuopt.bintype);
@@ -504,7 +504,7 @@ int env_cmp(char *senv) {
    return(rv);
 }
 
-cmd_gethdx(char *myhd, char *type, char *loc) {
+int cmd_gethdx(char *myhd, char *type, char *loc) {
    int i;
    strcpy(myhd,"");
    for(i=0;i<cmdtidx;i++) {
@@ -515,7 +515,7 @@ cmd_gethdx(char *myhd, char *type, char *loc) {
    }
 }
 
-cmd_insthdi(){
+int cmd_insthdi(){
    char localhd[80], globalhd[80], dirval[80];
    int r;
 
@@ -547,7 +547,7 @@ cmd_insthdi(){
      setup_hderr("Install image does not Exist:","",globalhd);
 }
 
-cmd_insthdd(){
+int cmd_insthdd(){
    char localhd[80], globalhd[80], dirval[80];
    int r;
 
@@ -587,7 +587,7 @@ cmd_insthdd(){
 }
 
 
-cmd_gethdi(char *myhd) {
+int cmd_gethdi(char *myhd) {
    // For hard drive images
    char localhd[80], globalhd[80];
    int i;
@@ -614,7 +614,7 @@ cmd_gethdi(char *myhd) {
    }
 }
 
-cmd_gethdd(char *myhd) {
+int cmd_gethdd(char *myhd) {
    // For directories doubling as hard drives
    char localhd[80], globalhd[80];
    int i;
@@ -639,7 +639,7 @@ cmd_gethdd(char *myhd) {
    }
 }
 
-cmd_getwd(char *wd) {
+int cmd_getwd(char *wd) {
    // If a cd is needed before running an emulator (IE, to find a rom image)
    // It is read hear, from the first uwd entry in the cmd_table
    int i;
@@ -652,7 +652,7 @@ cmd_getwd(char *wd) {
    }
 }
 
-cmd_getcmdline(char *bintype) {
+int cmd_getcmdline(char *bintype) {
    int i;
    
 //   printf("in cmd_getcmdline\n");
@@ -668,7 +668,7 @@ cmd_getcmdline(char *bintype) {
    }
 }
 
-cmd_getvar(char *currl, char *currvar) {
+int cmd_getvar(char *currl, char *currvar) {
    // Replace the %VAR% with a real value
    int i,r,didcomm=0,i2;
    char envo[20], eval[40], edir[40], optvar[60];
@@ -771,7 +771,7 @@ cmd_getvar(char *currl, char *currvar) {
    } // BIN / PROG exception
 }
 
-cmd_scanvar(char *strout, const char *strin) {
+int cmd_scanvar(char *strout, const char *strin) {
    // This will replace all %VARS% in strin, with their values,
    // recursively
    // The recursion is broken if input + output matches.  Might be buggy
@@ -808,7 +808,7 @@ cmd_scanvar(char *strout, const char *strin) {
    }
 }
 
-build_cmd() {
+int build_cmd() {
 //   char currvar[12],currl[50],cmdline[1536];
 //   int i,i2;
    cmd_getcmdline(emuopt.bintype);
@@ -823,11 +823,11 @@ build_cmd() {
    cmd_scanvar(emuopt.cmd_line,emuopt.cmd_patt);
 }
 
-cmdtbl_clear() {
+int cmdtbl_clear() {
    cmdtidx=0;
 }
 
-cmdtbl_new(char *sopt,char *senv, char *scmd) {
+int cmdtbl_new(char *sopt,char *senv, char *scmd) {
    if(cmdtidx>=MAX_CMD) {
       printf("ERROR: Cmd table exhausted!  Increase MAX_CMD and recompile\n");
    } else {
@@ -840,7 +840,7 @@ cmdtbl_new(char *sopt,char *senv, char *scmd) {
    }
 }
 
-cmdtbl_replace(char *sopt,char *senv, char *scmd) {
+int cmdtbl_replace(char *sopt,char *senv, char *scmd) {
    // used to replace an option, namely ext options
    int i, inst=0;
    
@@ -857,7 +857,7 @@ cmdtbl_replace(char *sopt,char *senv, char *scmd) {
      cmdtbl_new(sopt,senv,scmd);
 }
 
-cmdtbl_print() {
+int cmdtbl_print() {
    int i;
    printf("print of cmdtbl\n");
    for(i=0;i<cmdtidx;i++) {
@@ -865,11 +865,11 @@ cmdtbl_print() {
    }
 }
 
-env_clear() {
+int env_clear() {
    envidx=0;
 }
 
-env_print() {
+int env_print() {
    int i;
    printf("print of env\n");
    for(i=0;i<envidx;i++) {
@@ -888,7 +888,7 @@ int env_isset(const char *svar) {
    return(rv);
 }
 
-env_set(char *senv) {
+int env_set(char *senv) {
    char var[40], val[80];
    int i,cc=0;
    hss_index(var,senv,0,'=');
@@ -917,7 +917,7 @@ env_set(char *senv) {
    }
 }
 
-env_load(const char *emuenv) {
+int env_load(const char *emuenv) {
    FILE *fp;
    int i;
    char lb[260], value[20], var[40], v2[40];
@@ -960,7 +960,7 @@ env_load(const char *emuenv) {
    fclose(fp);
 }
 
-mod_cleantmp() {
+int mod_cleantmp() {
    if(emuopt.localcfg!='Y' && strcmp(emuopt.diskloc,"n/a")!=0) {
 #ifdef WIN32
       sprintf(emuopt.cmd_line,"del /Q %s\\*.*",emuopt.diskloc);
@@ -998,7 +998,7 @@ int setbootdisk() {
    }
 }
 
-load_settings() {
+int load_settings() {
    // C version of the shell script
    char *homet, emuenv[160];
    
@@ -1045,7 +1045,7 @@ load_settings() {
    // Check for wrong EMUHOME
 }
 
-mod_loadcfg(const char *emucfg) {
+int mod_loadcfg(const char *emucfg) {
    FILE *fp;
    char lb[260], value[80], var[40];
    char optname[30], envpat[60], cmdopt[150],cond[40],pval[60];
@@ -1159,7 +1159,7 @@ mod_loadcfg(const char *emucfg) {
 #endif
 }
 
-mod_loademucfg() {
+int mod_loademucfg() {
    char cfgfile[160], emuver[45] ,etc[14];
    // Try version-specific file first
    sprintf(cfgfile,"%s_bin",imenu.emulator);
@@ -1191,7 +1191,7 @@ mod_loademucfg() {
    }
 }
 
-mod_loadsyscfg() {
+int mod_loadsyscfg() {
    char cfgfile[160];
    sprintf(cfgfile,"%s%c%setc%cemu_%s.cfg",basedir,mysep,imenu.sysbase,mysep,imenu.system);
 #ifdef DEBUG
@@ -1203,7 +1203,7 @@ mod_loadsyscfg() {
      strcpy(emuopt.cmd_patt,"EMU=%RBIN%:GAME=%RPROG%");
 }
 
-mod_loadpergame() {
+int mod_loadpergame() {
    FILE *fp;
    char cfgfile[160];
    char lb[260], value[40], var[40], rom[30];
@@ -1261,7 +1261,7 @@ mod_loadpergame() {
    }
 }
 
-mod_getsystem(char *msys, char *msysbase) {
+int mod_getsystem(char *msys, char *msysbase) {
    // Determine system id, while maintaining compatibility
    FILE *fp;
    int i;
@@ -1303,7 +1303,7 @@ mod_getsystem(char *msys, char *msysbase) {
    fclose(fp);
 }
 
-mod_searchbin(char *btype,char *fqfile, const char *filen) {
+int mod_searchbin(char *btype,char *fqfile, const char *filen) {
    int i;
    char temps[50];
    
@@ -1325,7 +1325,7 @@ mod_searchbin(char *btype,char *fqfile, const char *filen) {
    } // for
 }
 
-mod_exportvars() {
+int mod_exportvars() {
    // set any export vars
    int i;
    char var[20], val1[70], value[110];
@@ -1350,7 +1350,7 @@ mod_exportvars() {
    }
 }
 
-mod_getbintype(char *btype) {
+int mod_getbintype(char *btype) {
    int i;
    char temps[50];
    
@@ -1369,7 +1369,7 @@ mod_getbintype(char *btype) {
    } // if
 }
 
-bin2disk() {
+int bin2disk() {
    char diskzip[20], util[20],fpath[120],cmd[200],tmpp[120];
    hss_index(diskzip,emuopt.cmd_patt,1,':');
    hss_index(util,emuopt.cmd_patt,2,':');
@@ -1388,7 +1388,7 @@ bin2disk() {
    system(cmd);
 }
 
-process_cmd(char *cmd) {
+int process_cmd(char *cmd) {
    int nd,i;
    char dsk[80],type[12],ext[6],tmpp[88];
    
@@ -1448,7 +1448,7 @@ process_cmd(char *cmd) {
  * 
  * ------------------------------------------------------------------- */
 
-emumodule_generic() {
+int emumodule_generic() {
 #ifdef DEBUG
    printf("EMUmodule: generic\n");
 #endif
@@ -1460,7 +1460,7 @@ emumodule_generic() {
 #endif
 }
 
-emumodule_computer() {
+int emumodule_computer() {
    int didcp=0;
 #ifdef DEBUG
    printf("EMUmodule: computer\n");
@@ -1560,7 +1560,7 @@ emumodule_computer() {
      p_customcfg();
 }
 
-sysmodule_arcade() {
+int sysmodule_arcade() {
 #ifdef DEBUG
    printf("SYSmodule: arcade\n");
 #endif
@@ -1575,7 +1575,7 @@ sysmodule_arcade() {
    emumodule_generic();
 }
 
-sysmodule_generic() {
+int sysmodule_generic() {
   
 #ifdef DEBUG
    printf("SYSmodule: generic\n");
@@ -1596,7 +1596,7 @@ sysmodule_generic() {
    emumodule_generic();
 }
 
-sysmodule_computer() {
+int sysmodule_computer() {
   
 #ifdef DEBUG
    printf("SYSmodule: computer\n");
@@ -1619,7 +1619,7 @@ sysmodule_computer() {
      emumodule_computer();
 }
 
-module_exec() {
+int module_exec() {
    int ransys=0;
    char cddir[80];
    
@@ -1674,7 +1674,7 @@ module_exec() {
    if(strcmp(emuopt.bintype,"cmd")==0) {
       printf("PROCESSCOMMAND: %s\n",emuopt.uqrom);
       process_cmd(emuopt.uqrom);
-      return;
+      return(0);
    }
 //   SDL_QuitSubSystem(SDL_INIT_VIDEO); // shutdown gfx
    settxtmode();

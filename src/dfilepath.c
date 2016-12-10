@@ -16,7 +16,7 @@
    char mysep='/';
 #endif
 
-dfp_index(char* rstr, char *ostr, int idx, char del) {
+int dfp_index(char* rstr, char *ostr, int idx, char del) {
    // Alternative to strtok
    // For some reason, can't use hss_index in here.
    char *gidx;
@@ -45,7 +45,7 @@ dfp_index(char* rstr, char *ostr, int idx, char del) {
    }
 }
 
-abs_dirname(char *paath, char *bin) {
+int abs_dirname(char *paath, char *bin) {
    
    // This mess will try to return the absolute pathname for any directory
    // passed.   absolute, meaning that .'s are translated.   The only things
@@ -92,7 +92,7 @@ abs_dirname(char *paath, char *bin) {
    strcpy(paath,path);
 }
 
-emu_basename(char *paath, char *bin) {
+int emu_basename(char *paath, char *bin) {
    
    // basename   
    char seps[4], strs[200], *carp=NULL;

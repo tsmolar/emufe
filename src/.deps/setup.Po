@@ -58,7 +58,7 @@ setup.o: setup.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/SDL2/SDL_timer.h /usr/include/SDL2/SDL_version.h \
  ../sdlallegro/sdl_allegro.h ../config.h ../widget/window.h \
  ../widget/widget.h ../widget/font.h ../widget/font_legacy.h \
- ../widget/button.h emufe.h
+ ../widget/button.h emufe.h fileio.h dfilepath.h rcfile.h
 
 /usr/include/stdc-predef.h:
 
@@ -295,3 +295,9 @@ setup.o: setup.c /usr/include/stdc-predef.h /usr/include/stdio.h \
 ../widget/button.h:
 
 emufe.h:
+
+fileio.h:
+
+dfilepath.h:
+
+rcfile.h:

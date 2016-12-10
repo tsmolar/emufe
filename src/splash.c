@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include "dfilepath.h"
 
 #ifdef USEALLEGRO
 #include <allegro.h>
@@ -22,7 +23,7 @@ extern char mysep;
 
 char cdroot[220];
 
-find_bindir(char *ddir, char *bin) {
+void find_bindir(char *ddir, char *bin) {
    char path[160],dirname[160];
       
    abs_dirname(path,bin);
@@ -32,7 +33,7 @@ find_bindir(char *ddir, char *bin) {
    strcpy(ddir,path);
 }
 
-set_bg() {
+void set_bg() {
 //    Set background 
    
    char fname[90];
@@ -47,7 +48,7 @@ set_bg() {
    }      
 }   
 
-ch_launch(BITMAP *x) 
+void ch_launch(BITMAP *x) 
 {
    scare_mouse();
 //   masked_blit(x,screen,0,0,24,268,86,27);
@@ -55,7 +56,7 @@ ch_launch(BITMAP *x)
    unscare_mouse();
 }
 
-ch_exit(BITMAP *x) 
+void ch_exit(BITMAP *x) 
 {
    scare_mouse();
 //   masked_blit(x,screen,0,0,24,304,86,27);
@@ -63,7 +64,7 @@ ch_exit(BITMAP *x)
    unscare_mouse();
 }
 
-init() {
+void init() {
    int w;
    allegro_init();
    install_mouse();
@@ -81,36 +82,42 @@ init() {
    }
 }
 
-load_buttons() {
+int load_buttons() {
+   
+   // These were written using an older version of dfixsep2() that
+   // didn't require a third parameter.  I am assuming the third
+   // parameter should be zero.  If problems occur, consider changing
+   // it to 1
+   
    PALETTE p; 
    get_palette(p);
    char *pbmp,tmpstr[200];
 
    pbmp=(char *)malloc(180);
    sprintf(tmpstr,"%s%cpics%claunch_hl.pcx", basedir,mysep,mysep);
-   dfixsep2(pbmp,tmpstr);
+   dfixsep2(pbmp,tmpstr,0);
 #ifdef DEBUG
    printf("load_dfltimg: loading %s\n",pbmp);
 #endif    
    lhlbmp=load_bitmap(pbmp,p);
    sprintf(tmpstr,"%s%cpics%cexit_hl.pcx", basedir,mysep,mysep);
-   dfixsep2(pbmp,tmpstr);
+   dfixsep2(pbmp,tmpstr,0);
    ehlbmp=load_bitmap(pbmp,p);
    sprintf(tmpstr,"%s%cpics%claunch_pr.pcx", basedir,mysep,mysep);
-   dfixsep2(pbmp,tmpstr);
+   dfixsep2(pbmp,tmpstr,0);
    lprbmp=load_bitmap(pbmp,p);
    sprintf(tmpstr,"%s%cpics%cexit_pr.pcx", basedir,mysep,mysep);
-   dfixsep2(pbmp,tmpstr);
+   dfixsep2(pbmp,tmpstr,0);
    eprbmp=load_bitmap(pbmp,p);
    sprintf(tmpstr,"%s%cpics%claunch_bu.pcx", basedir,mysep,mysep);
-   dfixsep2(pbmp,tmpstr);
+   dfixsep2(pbmp,tmpstr,0);
    laubmp=load_bitmap(pbmp,p);
    sprintf(tmpstr,"%s%cpics%cexit_bu.pcx", basedir,mysep,mysep);
-   dfixsep2(pbmp,tmpstr);
+   dfixsep2(pbmp,tmpstr,0);
    exibmp=load_bitmap(pbmp,p);
 }
 
-ef_shutdown() {
+void ef_shutdown() {
 /*   allegro_exit(); */
    exit(0);
 }

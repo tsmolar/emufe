@@ -742,7 +742,7 @@ void destroy_bitmap(SDL_Surface *bmp)
 }
 
 
-void blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
+int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
 {
    SDL_Rect srect, drect;
    

@@ -69,13 +69,15 @@ void get_palette(PALETTE *p);
 BITMAP *create_bitmap(int width, int height);
 BITMAP *create_system_bitmap(int width, int height);
 void destroy_bitmap(BITMAP *bmp);
-//void blit(BITMAP *src, BITMAP *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt);
+// int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt);
 void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt);
 void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 int show_video_bitmap(BITMAP *bitmap);
 BITMAP *load_bitmap(const char *filename, RGB *pal);
 int file_select_ex(const char *message, char *path, const char *ext, int size, int w, int h );
 void set_window_title(const char *name);
+
+void rest(unsigned int itime);
 
 #ifdef HAVE_LIBSDL_MIXER
 int install_sound(int digi, int midi, const char *cfg_path);

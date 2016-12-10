@@ -7,7 +7,7 @@ splash.o: splash.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
  /usr/lib/gcc/x86_64-redhat-linux/5.3.1/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
- /usr/include/bits/stdio.h /usr/include/SDL2/SDL.h \
+ /usr/include/bits/stdio.h dfilepath.h /usr/include/SDL2/SDL.h \
  /usr/include/SDL2/SDL_main.h /usr/include/SDL2/SDL_stdinc.h \
  /usr/include/SDL2/SDL_config.h /usr/include/SDL2/SDL_config-x86_64.h \
  /usr/include/SDL2/SDL_platform.h /usr/include/SDL2/begin_code.h \
@@ -88,6 +88,8 @@ splash.o: splash.c /usr/include/stdc-predef.h /usr/include/stdio.h \
 /usr/include/bits/sys_errlist.h:
 
 /usr/include/bits/stdio.h:
+
+dfilepath.h:
 
 /usr/include/SDL2/SDL.h:
 
