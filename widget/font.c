@@ -277,7 +277,7 @@ fnt_t* fnt_convblit(fnt_t* font) {
 }
 
 // More Improved Font Routines
-fnt_print_string(BITMAP *b, int x, int y, char *str, int fg, int bg, int sd) {
+fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long sd) {
    // New method that can draw on any bitmap, and hand solid, shadow and plain
    int c=0, l=0, cx,cy, sl=strlen(str)*8;
    int fh=ActiveFont->height-1;

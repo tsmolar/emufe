@@ -5,8 +5,8 @@
 /* This is for the old font API.  If using the new api, then include 
  * font.h instead! */
 
-extern int fnfgcol;
-extern int fnbgcol;
+extern unsigned int fnfgcol;
+extern unsigned int fnbgcol;
 extern int shdcol;
 extern int fshadow;
 extern int cachefont;

@@ -423,13 +423,13 @@ int poll_mouse() {
 
 // Graphics Section
 
-int makecol(int r, int g, int b) {
+unsigned int makecol(int r, int g, int b) {
    // Note: 8-bit would require doing a palette lookup and finding the
    // closest match, something that could be avoided in this day and age
    // 15-bit seems rather obscure, so only 16,24 and 32 bit are currently 
    // implemented
-   int rv;
-
+   unsigned int rv;
+   
    switch(sa_depth) {
     case 16: rv=makecol16(r,g,b);
       break;
@@ -441,7 +441,7 @@ int makecol(int r, int g, int b) {
    return(rv);
 }
 
-int makecol16(Uint8 r, Uint8 g, Uint8 b) {
+unsigned int makecol16(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
    printf("16 breaks here? %d,%d,%d\n",r,g,b);
    printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
@@ -449,7 +449,7 @@ int makecol16(Uint8 r, Uint8 g, Uint8 b) {
    return(pixel);
 }
 
-int makecol24(Uint8 r, Uint8 g, Uint8 b) {
+unsigned int makecol24(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
    printf("24 breaks here? %d,%d,%d\n",r,g,b);
    printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
@@ -457,7 +457,7 @@ int makecol24(Uint8 r, Uint8 g, Uint8 b) {
    return(pixel);
 }
 
-int makecol32(Uint8 r, Uint8 g, Uint8 b) {
+unsigned int makecol32(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
    printf("32 breaks here? %d,%d,%d\n",r,g,b);
    printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
@@ -465,21 +465,21 @@ int makecol32(Uint8 r, Uint8 g, Uint8 b) {
    return(pixel);
 }
 
-int makeacol16(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+unsigned int makeacol16(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
    Uint32 pixel;
    pixel=SDL_MapRGBA(screen->format,r,g,b,a);
 //   printf("returning %d\n",pixel);
    return(pixel);
 }
 
-int makeacol24(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+unsigned int makeacol24(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
    Uint32 pixel;
    pixel=SDL_MapRGBA(screen->format,r,g,b,a);
 //   printf("returning %d\n",pixel);
    return(pixel);
 }
 
-int makeacol32(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+unsigned int makeacol32(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
    Uint32 pixel;
    pixel=SDL_MapRGBA(screen->format,r,g,b,a);
 //   printf("returning %d\n",pixel);
@@ -491,7 +491,7 @@ unsigned int makeacol(int r, int g, int b, int a) {
    // closest match, something that could be avoided in this day and age
    // 15-bit seems rather obscure, so only 16,24 and 32 bit are currently 
    // implemented
-   int rv;
+   unsigned int rv;
    switch(sa_depth) {
     case 16: rv=makeacol16(r,g,b,a);
       break;
@@ -606,6 +606,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    // screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
 
    screen = create_bitmap(w,h);
+//   printf("SHH:%d\n",SDL_MapRGBA(screen->format,0x11,0x22,0x33,0x44));
    // copied straight from the docs
    if ( screen == NULL ) {
       SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
@@ -719,6 +720,10 @@ SDL_Surface *create_bitmap(int width, int height) {
    bmask = 0x00ff0000;
    amask = 0xff000000;
 #endif
+   // The above doesn't seem to work right for SDL2, so forcing BIG_ENDIAN
+   // even thought Intel/AMD is little
+   rmask = 0x00ff0000; gmask = 0x0000ff00; bmask = 0x000000ff; amask = 0xff000000;   
+   
    printf("SDL2 w:%d h:%d d:%d\n", width, height, sa_depth);
    new_surface = SDL_CreateRGBSurface(0,width,height,sa_depth,rmask,gmask,bmask,amask);
    // might need theis for compatability

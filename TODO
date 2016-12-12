@@ -2,6 +2,14 @@ It's now working in SDL2!  But there are a number of bugs noticed
  x1. Keyboard navigation doesn't work (key mapping issue?)
   2. Mouse Navigate isn't hitting the exact right spot
   3. menu hilighter doesn't seem to be working
+     MORE INFO!  This is because the BG color for the fnt_print_screen
+       is coming up negative.  It needs to be positive to draw the font 
+       bg.  Is this bad value coming from makecol?   Do we need to use
+       more unsigned ints, or Uint32s since we are using a bigger bit
+       depth. 
+       ** update: unsigned it, Uint32 neither fixed the problem, using
+          longs instead makes hilighting work, but now the background
+	  is white--  need to fix.
   4. You can see too many screen updates, is RendererPresent getting
      called too frequently?  May need to use the autoupdate flag to
      reduce.
@@ -9,6 +17,13 @@ It's now working in SDL2!  But there are a number of bugs noticed
   6. It fails with 16-bit depth, but not 32.  SDL1 always used 16.  
      I don't necessarily need 16 to work, but just want to understand it
      better.  (reports invalid pixel format)
+       MORE INFO: 24 fails as well.   This could be nice to have as I 
+         suspect the ints used everywhere are signed 32-bit integers
+	 when they probably should be Uint32s
+  7. Colors of some components are showing a cyan tint when they
+     should be yellow.
+        I suspect that the ENDIANESS is wrong or being detected wrong.
+	when I reverse the red and blue mask, it looks right.
      
 New SDL1 issues:
   SDL1 and SDL2 are not defined for emufe!  We can either define them

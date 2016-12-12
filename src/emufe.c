@@ -163,7 +163,7 @@ int menu_uhlight(int index, int slct) {
   unscare_mouse();
 } // menu_uhlight
 
-menu_hlight(int index, int slct) {
+int menu_hlight(int index, int slct) {
 
    /* Hilight the menu selection */
    
@@ -173,6 +173,9 @@ menu_hlight(int index, int slct) {
    set_font_fcolor(textsdr,textsdg,textsdb);
 /*   set_font_bcolor(0,0,0); */
    set_font_bcolor(texthlr,texthlg,texthlb);
+   printf("VONG: fcolor: %d,%d,%d\n",textsdr,textsdg,textsdb);
+   printf("VONG: bcolor: %d,%d,%d\n",texthlr,texthlg,texthlb);
+   printf("VONG: mk:%ld\n",makecol(texthlr,texthlg,texthlb));
    scare_mouse();
 //   solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
    fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
@@ -181,6 +184,7 @@ menu_hlight(int index, int slct) {
    if(menu[slct].type=='f' || menu[slct].type=='d') {
       rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
       printf("dmr::x=%d;w=%d\n",(rc.mb_x+3)+rx0,(rc.mb_x+8)+rx0);
+      printf("dmr::y=%d;h=%d\n",(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_y+2)+(offset*rc.font_h)+ry0);
    }
    if(menu[slct].type=='s') {
 /*       rect(screen,37,88+(offset*16),44,95+(offset*16), fnbgcol); */
@@ -1426,6 +1430,12 @@ int main(int argc, char* argv[]) {
    por=0;
    jlf=jrt=jup=jdn=0;
    jbu=1;
+   
+   printf("DMM: SDL_BYTEORDER %d\n",SDL_BYTEORDER);
+   printf("DMM: SDL_BIG_ENDIAN %d\n",SDL_BIG_ENDIAN);
+//   printf("DMM: SDL_LITTLE_ENDIAN %d\n",SDL_LITTLE_ENDIAN);
+   
+   
    strcpy(cdroot,"");
    if(getenv("CDROOT"))
      strcpy(cdroot,getenv("CDROOT"));
