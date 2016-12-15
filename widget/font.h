@@ -39,4 +39,5 @@ extern fnt_t* ActiveFont;
 #define RENDER_NATIVE 2  /* Use SDL or Allegro to Blend */
 #endif
 
+
 #endif /* font.h */

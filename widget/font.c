@@ -293,8 +293,11 @@ fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long sd) 
       printf("Error: TrueType support not compiled in\n");
 #endif
    } else {
-      if(bg>-1)
-	rectfill(b,x,y,x+sl,y+fh,bg);
+      // bg is now a 'long', and -1 maps to a positive number
+      // so I added a cast
+      if((int)bg>-1)
+	 rectfill(b,x,y,x+sl,y+fh,bg);
+      
 #ifdef USESDL
       // Put here for speed optimization
       //   if(SDL_MUSTLOCK(screen)){

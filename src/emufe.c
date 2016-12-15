@@ -285,7 +285,8 @@ int display_menu(int index) {
       st_txt_col(menu[i].type);
       if(menu[i].type=='m' || menu[i].type=='d') {
 /*	 set_font_fcolor(80,0,80); */
-	fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name,fnfgcol,-1,shdcol);
+	 printf("fontprt: passing -1 to fnt_print_screen\n");
+	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name,fnfgcol,-1,shdcol);
 //	show_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name);
 	rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(io*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(io*rc.font_h)+ry0, fnfgcol);
       } else {
@@ -1124,6 +1125,7 @@ comp_load(int x1, int y1, int x2, int y2, char *picname) {
    bitmap=load_bitmap(fname,p);
    if(bitmap) {
       masked_blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
+//      blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
       destroy_bitmap(bitmap);
    }   
 }
@@ -1431,8 +1433,8 @@ int main(int argc, char* argv[]) {
    jlf=jrt=jup=jdn=0;
    jbu=1;
    
-   printf("DMM: SDL_BYTEORDER %d\n",SDL_BYTEORDER);
-   printf("DMM: SDL_BIG_ENDIAN %d\n",SDL_BIG_ENDIAN);
+//   printf("DMM: SDL_BYTEORDER %d\n",SDL_BYTEORDER);
+//   printf("DMM: SDL_BIG_ENDIAN %d\n",SDL_BIG_ENDIAN);
 //   printf("DMM: SDL_LITTLE_ENDIAN %d\n",SDL_LITTLE_ENDIAN);
    
    

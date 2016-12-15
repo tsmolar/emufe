@@ -612,7 +612,11 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
       SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
       exit(1);
    }
-   TXscreen = SDL_CreateTextureFromSurface(sdlRenderer,screen);
+//   TXscreen = SDL_CreateTextureFromSurface(sdlRenderer,screen);
+   TXscreen = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ABGR8888,
+			        SDL_TEXTUREACCESS_STREAMING,
+				w, h);
+				
 #else
    if (sdlflag != -1) {
       if (!(screen = SDL_SetVideoMode(w, h, sa_depth, sdlflag)))
@@ -720,9 +724,9 @@ SDL_Surface *create_bitmap(int width, int height) {
    bmask = 0x00ff0000;
    amask = 0xff000000;
 #endif
-   // The above doesn't seem to work right for SDL2, so forcing BIG_ENDIAN
-   // even thought Intel/AMD is little
-   rmask = 0x00ff0000; gmask = 0x0000ff00; bmask = 0x000000ff; amask = 0xff000000;   
+//   // The above doesn't seem to work right for SDL2, so forcing BIG_ENDIAN
+//   // even thought Intel/AMD is little
+//   rmask = 0x00ff0000; gmask = 0x0000ff00; bmask = 0x000000ff; amask = 0xff000000;   
    
    printf("SDL2 w:%d h:%d d:%d\n", width, height, sa_depth);
    new_surface = SDL_CreateRGBSurface(0,width,height,sa_depth,rmask,gmask,bmask,amask);
@@ -786,12 +790,17 @@ int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy
 void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
 {
    // probably can reuse more of this
-   #ifdef SDL1  
+//   #ifdef SDL1  
    SDL_Rect srect, drect;
    Uint32 key;
 // Test removal
    key=SDL_MapRGB(src->format,255,0,255);
+#ifdef SDL1
    SDL_SetColorKey(src,SDL_SRCCOLORKEY,key);
+#endif
+#ifdef SDL2
+   SDL_SetColorKey(src,SDL_TRUE,key);
+#endif
 
    srect.x = srx;
    srect.y = sry;
@@ -818,7 +827,7 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
       }
    }
 //     SDL_Flip(dest);
-  #endif
+   //#endif
 }
 
 
