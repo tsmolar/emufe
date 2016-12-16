@@ -25,7 +25,11 @@ FX7. Colors of some components are showing a cyan tint when they
         I suspect that the ENDIANESS is wrong or being detected wrong.
 	when I reverse the red and blue mask, it looks right.
 FX8. Masked blits were essentially disabled on SDL2
-  9. CRITICAL! Frequently goes into infinate loop.
+FX9. CRITICAL! Frequently goes into infinate loop.
+         - caused by my scaling function.  Good news is that in SDL2,
+          I can call SDL_BlitScaled instead and not use my code.
+ 10. The TV screens that go over the screen shots are supposed to be 
+     semi-transparent, but they aren't
      
 New SDL1 issues:
   SDL1 and SDL2 are not defined for emufe!  We can either define them

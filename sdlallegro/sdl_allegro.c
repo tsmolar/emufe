@@ -830,7 +830,6 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
    //#endif
 }
 
-
 SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    
    // SDL 1.2 doesn't seem to scale bitmaps properly
@@ -838,6 +837,7 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    //         and wrapped by stretch_blit()
    
    SDL_Surface *newbm;
+#ifdef SDL1
    int nw,nh,px,py,pc,ox,oy;
    Uint8 rrr,ggg,bbb;
    float fow,foh,fdw,fdh,xf,yf,uf;
@@ -856,9 +856,9 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    // uf is the factor to scale by
    nw=fow/uf;
    nh=foh/uf;     
+   printf("original size: %f x %f\n",fow,foh);
    printf("scale to:  %dx%d\n",nw,nh);
    newbm=create_bitmap(nw,nh);
-
    
    yf=0;
    for(py=0;py<nh;py++) {
@@ -867,8 +867,11 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
        ox=xf;oy=yf;
 //       if(xf>nw) ox=nw;
 //       if(yf>nh) oy=nh;
+printf ("x1\n");
        pc=getpixel(orgbm,ox,oy);
+printf ("x2\n");
        SDL_GetRGB(pc,orgbm->format,&rrr,&ggg,&bbb);
+printf ("x3\n");
 	
 	// I don't understand why upscaling (uf<1) reverses
 	// the red and blue pixels, but not always!
@@ -878,11 +881,29 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
 	  putpixel(newbm,px,py,makecol(rrr,ggg,bbb));
 
        xf=xf+uf;
-//       printf("XF: %f\n",xf);
+       printf("X4: %f\n",xf);
      }
      yf=yf+uf;
    }
+printf("x5\n");
+#endif 
+#ifdef SDL2
+   SDL_Rect src_r, dst_r;
+   
+   src_r.x=0; src_r.y=0;
+   src_r.w=orgbm->w;
+   src_r.h=orgbm->h;
+   dst_r.x=0; dst_r.y=0;
+   dst_r.w=dw;
+   dst_r.h=dh;
 
+   printf("original size: %d x %d\n",src_r.w,src_r.h);
+   printf("scale to:  %d x %d\n",dst_r.w,dst_r.h);
+   newbm=create_bitmap(dst_r.w,dst_r.h);
+   
+   SDL_BlitScaled(orgbm, &src_r, newbm, &dst_r);
+
+#endif
    return(newbm);
 }  // sa_scale_bm
 
