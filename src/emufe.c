@@ -966,7 +966,15 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 	   destroy_bitmap(bitmap);
 	   // draw overlay
 	   if(imgbx[i].ovpct>0) {
+	      
+	      
 	      sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
+
+	      // debug info follows for surfaces, uncomment to help debug
+	      // sa_surface_info(screen, "screen");
+	      // sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
+	      // sa_debug_info();
+	      
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
 	      masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      

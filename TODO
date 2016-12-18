@@ -30,6 +30,10 @@ FX9. CRITICAL! Frequently goes into infinate loop.
           I can call SDL_BlitScaled instead and not use my code.
  10. The TV screens that go over the screen shots are supposed to be 
      semi-transparent, but they aren't
+       Findings:  overlay surface format is SDL_PIXELFORMAT_RGB24
+                 screen surface format is SDL_PIXELFORMAT_ABGR8888
+		 the overlay seems to have no alpha component (Amask is 0)
+       TRY: Converting the surfaces after loading the overlays
      
 New SDL1 issues:
   SDL1 and SDL2 are not defined for emufe!  We can either define them

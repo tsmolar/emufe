@@ -127,6 +127,63 @@ void sa_surface_info(SDL_Surface *asurf, char *name) {
    printf("\n%s SDL Surface Info\n",name);
    printf("----------------------------------\n");
    printf("Bits Per Pixel: %d\n",fmt->BitsPerPixel);
+   printf("Pixel Format (see debug info): %d\n",fmt->format);
+   printf("Rmask: %d\n", fmt->Rmask);
+   printf("Gmask: %d\n", fmt->Gmask);
+   printf("Bmask: %d\n", fmt->Bmask);
+   printf("Amask: %d\n", fmt->Amask);
+#endif
+}
+
+sa_debug_info() {
+   // help by dumping decimal values of SDL defined macros
+#ifdef SDL1
+   printf("sa_debug_info() only supports SDL2 right now\n");
+#endif
+#ifdef SDL2
+   printf("Pixel formats and their values\n----------------------\n");
+   printf("SDL_PIXELFORMAT_UNKNOWN: %d\n", SDL_PIXELFORMAT_UNKNOWN);
+   printf("SDL_PIXELFORMAT_INDEX1LSB: %d\n", SDL_PIXELFORMAT_INDEX1LSB);
+   printf("SDL_PIXELFORMAT_INDEX1MSB: %d\n", SDL_PIXELFORMAT_INDEX1MSB);
+   printf("SDL_PIXELFORMAT_INDEX4LSB: %d\n", SDL_PIXELFORMAT_INDEX4LSB);
+   printf("SDL_PIXELFORMAT_INDEX4MSB: %d\n", SDL_PIXELFORMAT_INDEX4MSB);
+   printf("SDL_PIXELFORMAT_INDEX8: %d\n", SDL_PIXELFORMAT_INDEX8);
+   printf("SDL_PIXELFORMAT_RGB332: %d\n", SDL_PIXELFORMAT_RGB332);
+   printf("SDL_PIXELFORMAT_RGB444: %d\n", SDL_PIXELFORMAT_RGB444);
+   printf("SDL_PIXELFORMAT_RGB555: %d\n", SDL_PIXELFORMAT_RGB555);
+   printf("SDL_PIXELFORMAT_BGR555: %d\n", SDL_PIXELFORMAT_BGR555);
+   printf("SDL_PIXELFORMAT_ARGB4444: %d\n", SDL_PIXELFORMAT_ARGB4444);
+   printf("SDL_PIXELFORMAT_RGBA4444: %d\n", SDL_PIXELFORMAT_RGBA4444);
+   printf("SDL_PIXELFORMAT_ABGR4444: %d\n", SDL_PIXELFORMAT_ABGR4444);
+   printf("SDL_PIXELFORMAT_BGRA4444: %d\n", SDL_PIXELFORMAT_BGRA4444);
+   printf("SDL_PIXELFORMAT_ARGB1555: %d\n", SDL_PIXELFORMAT_ARGB1555);
+   printf("SDL_PIXELFORMAT_RGBA5551: %d\n", SDL_PIXELFORMAT_RGBA5551);
+   printf("SDL_PIXELFORMAT_ABGR1555: %d\n", SDL_PIXELFORMAT_ABGR1555);
+   printf("SDL_PIXELFORMAT_BGRA5551: %d\n", SDL_PIXELFORMAT_BGRA5551);
+   printf("SDL_PIXELFORMAT_RGB565: %d\n", SDL_PIXELFORMAT_RGB565);
+   printf("SDL_PIXELFORMAT_BGR565: %d\n", SDL_PIXELFORMAT_BGR565);
+   printf("SDL_PIXELFORMAT_RGB24: %d\n", SDL_PIXELFORMAT_RGB24);
+   printf("SDL_PIXELFORMAT_BGR24: %d\n", SDL_PIXELFORMAT_BGR24);
+   printf("SDL_PIXELFORMAT_RGB888: %d\n", SDL_PIXELFORMAT_RGB888);
+   printf("SDL_PIXELFORMAT_RGBX8888: %d\n", SDL_PIXELFORMAT_RGBX8888);
+   printf("SDL_PIXELFORMAT_BGR888: %d\n", SDL_PIXELFORMAT_BGR888);
+   printf("SDL_PIXELFORMAT_BGRX8888: %d\n", SDL_PIXELFORMAT_BGRX8888);
+   printf("SDL_PIXELFORMAT_ARGB8888: %d\n", SDL_PIXELFORMAT_ARGB8888);
+   printf("SDL_PIXELFORMAT_RGBA8888: %d\n", SDL_PIXELFORMAT_RGBA8888);
+   printf("SDL_PIXELFORMAT_ABGR8888: %d\n", SDL_PIXELFORMAT_ABGR8888);
+   printf("SDL_PIXELFORMAT_BGRA8888: %d\n", SDL_PIXELFORMAT_BGRA8888);
+   printf("SDL_PIXELFORMAT_ARGB2101010: %d\n", SDL_PIXELFORMAT_ARGB2101010);
+   //	      printf("SDL_PIXELFORMAT_RGBA32: %d\n", SDL_PIXELFORMAT_RGBA32);
+   //	      printf("SDL_PIXELFORMAT_ARGB32: %d\n", SDL_PIXELFORMAT_ARGB32);
+   //	      printf("SDL_PIXELFORMAT_BGRA32: %d\n", SDL_PIXELFORMAT_BGRA32);
+   //	      printf("SDL_PIXELFORMAT_ABGR32: %d\n", SDL_PIXELFORMAT_ABGR32);
+   printf("SDL_PIXELFORMAT_YV12: %d\n", SDL_PIXELFORMAT_YV12);
+   printf("SDL_PIXELFORMAT_IYUV: %d\n", SDL_PIXELFORMAT_IYUV);
+   printf("SDL_PIXELFORMAT_YUY2: %d\n", SDL_PIXELFORMAT_YUY2);
+   printf("SDL_PIXELFORMAT_UYVY: %d\n", SDL_PIXELFORMAT_UYVY);
+   printf("SDL_PIXELFORMAT_YVYU: %d\n", SDL_PIXELFORMAT_YVYU);
+   printf("SDL_PIXELFORMAT_NV12: %d\n", SDL_PIXELFORMAT_NV12);
+   printf("SDL_PIXELFORMAT_NV21: %d\n", SDL_PIXELFORMAT_NV21);
 #endif
 }
 
@@ -606,6 +663,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    // screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
 
    screen = create_bitmap(w,h);
+//   SDL_SetSurfaceBlendMode(screen,SDL_BLENDMODE_BLEND);
 //   printf("SHH:%d\n",SDL_MapRGBA(screen->format,0x11,0x22,0x33,0x44));
    // copied straight from the docs
    if ( screen == NULL ) {
@@ -733,6 +791,7 @@ SDL_Surface *create_bitmap(int width, int height) {
    // might need theis for compatability
    //   new_surface=SDL_ConvertSurface(xyz, const SDL_PixelFormat* fmt, 0);
    //   SDL_FreeSurface(xyz);
+   SDL_SetSurfaceBlendMode(new_surface,SDL_BLENDMODE_BLEND);
    SDL_SetSurfaceAlphaMod(new_surface, 255);
    //  SDL_SetAlpha(new_surface,0,255);
 #endif
