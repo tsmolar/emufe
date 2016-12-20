@@ -972,8 +972,8 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 
 	      // debug info follows for surfaces, uncomment to help debug
 	      // sa_surface_info(screen, "screen");
-	      // sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
-	      // sa_debug_info();
+	      sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
+	      sa_debug_info();
 	      
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
@@ -1164,6 +1164,9 @@ void draw_imgbx(int boxno) {
    // load background bitmaps for the image boxes, and draw them
    int bgcol;
    char pathname[255];
+#ifdef SDL2
+   SDL_Surface *junkit;
+#endif
    PALETTE p; 
 
 #ifdef DEBUG
@@ -1185,7 +1188,14 @@ void draw_imgbx(int boxno) {
 	sprintf(debugtxt,"IMGBOX #%d: %s\n",boxno,pathname);
 	debug(3,debugtxt);
 #endif
+#ifdef SDL2
+	junkit=load_bitmap(pathname,p);
+	imgbx_bmp[boxno]=SDL_ConvertSurfaceFormat(junkit,SDL_PIXELFORMAT_ABGR8888,0);
+	destroy_bitmap(junkit);
+//	sa_debug_info();
+#else
 	imgbx_bmp[boxno]=load_bitmap(pathname,p);
+#endif
      }
       if(imgbx_bmp[boxno])
 	blit(imgbx_bmp[boxno], screen,0,0,imgbx[boxno].x+rx0,imgbx[boxno].y+ry0,imgbx[boxno].w,imgbx[boxno].h);

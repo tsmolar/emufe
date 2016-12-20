@@ -34,6 +34,8 @@ FX9. CRITICAL! Frequently goes into infinate loop.
                  screen surface format is SDL_PIXELFORMAT_ABGR8888
 		 the overlay seems to have no alpha component (Amask is 0)
        TRY: Converting the surfaces after loading the overlays
+       PROBLEM SDL_ConvertSurface() and SDL_ConvertSurfaceFormat()
+           aren't converting
      
 New SDL1 issues:
   SDL1 and SDL2 are not defined for emufe!  We can either define them
