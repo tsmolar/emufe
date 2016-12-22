@@ -970,15 +970,20 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 	      
 	      sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
 
+//	      printf("XFMT: alpha: %d\n",(25500/(10000/imgbx[i].ovpct)));
 	      // debug info follows for surfaces, uncomment to help debug
 	      // sa_surface_info(screen, "screen");
-	      sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
-	      sa_debug_info();
+//	      sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
+//	      sa_debug_info();
 	      
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
 	      masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
 	      sa_setalpha(imgbx_ovl[i], 255);
+//	      printf("HEBLO?\n");
+//	      printf("screen XFMT: %d\n",screen->format->format);
+//	      printf("imgbx_bmp[] XFMT: %d\n",imgbx_ovl[i]->format->format);
+
 //	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 255);
 	     }
 	} else {
@@ -1164,9 +1169,9 @@ void draw_imgbx(int boxno) {
    // load background bitmaps for the image boxes, and draw them
    int bgcol;
    char pathname[255];
-#ifdef SDL2
-   SDL_Surface *junkit;
-#endif
+//#ifdef SDL2
+//   SDL_Surface *junkit;
+//#endif
    PALETTE p; 
 
 #ifdef DEBUG
@@ -1188,14 +1193,7 @@ void draw_imgbx(int boxno) {
 	sprintf(debugtxt,"IMGBOX #%d: %s\n",boxno,pathname);
 	debug(3,debugtxt);
 #endif
-#ifdef SDL2
-	junkit=load_bitmap(pathname,p);
-	imgbx_bmp[boxno]=SDL_ConvertSurfaceFormat(junkit,SDL_PIXELFORMAT_ABGR8888,0);
-	destroy_bitmap(junkit);
-//	sa_debug_info();
-#else
 	imgbx_bmp[boxno]=load_bitmap(pathname,p);
-#endif
      }
       if(imgbx_bmp[boxno])
 	blit(imgbx_bmp[boxno], screen,0,0,imgbx[boxno].x+rx0,imgbx[boxno].y+ry0,imgbx[boxno].w,imgbx[boxno].h);
@@ -1213,11 +1211,13 @@ void draw_imgbx(int boxno) {
 	sprintf(pathname,"%s%c%s",picsdir,mysep,imgbx[boxno].ovname);
       else
 	sprintf(pathname,"%s%c%s",gthemedir,mysep,imgbx[boxno].ovname);
+
 #ifdef DEBUG
-	sprintf(debugtxt,"Overlay: #%d: %s\n",boxno,pathname);
-	debug(3,debugtxt);
+      sprintf(debugtxt,"Overlay: #%d: %s\n",boxno,pathname);
+      debug(3,debugtxt);
 #endif
       imgbx_ovl[boxno]=load_bitmap(pathname,p);
+      SDL_SetSurfaceBlendMode(imgbx_ovl[boxno],SDL_BLENDMODE_BLEND);
    }
 }
 
