@@ -458,6 +458,7 @@ int poll_mouse() {
    for( i = 0; i<count;++i) {
       if(events[i].wheel.direction == SDL_MOUSEWHEEL_NORMAL)
 	{ mouse_z=mouse_z-events[i].wheel.y; }
+      printf("MOUSEZ=%d\n",mouse_z);
    }
    // Is this needed (to flush the buffer maybe?)
    // SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL );
@@ -587,7 +588,7 @@ int s2a_flip(SDL_Surface* mysurface) {
 //   SDL_RenderClear(sdlRenderer);
    SDL_RenderCopy(sdlRenderer,TXscreen,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
-   
+   printf("PRESENT!  s2a_flip()\n");
    return(0);
 }
 
@@ -604,7 +605,8 @@ int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 
 //   SDL_RenderClear(sdlRenderer);  
    SDL_RenderCopy(sdlRenderer,mytexture,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
-   
+   printf("PRESENT!  s2a_updaterect()\n");
+
    return(0);
 }
 #endif 
@@ -658,6 +660,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
    SDL_RenderClear(sdlRenderer);
    SDL_RenderPresent(sdlRenderer); // like SDL Flip?
+   printf("PRESENT!  set_gfx_mode()\n");
    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
    SDL_RenderSetLogicalSize(sdlRenderer, w, h);   
    // screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
@@ -840,6 +843,7 @@ int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy
 //	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
+	 printf("PRESENT!  blit()\n");
 #endif
       }
    }
@@ -882,6 +886,7 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
 //	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
+	 printf("PRESENT!  masked_blit()\n");
 #endif
       }
    }
@@ -997,6 +1002,7 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
 //	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&dst_r,&dst_r);
 	 SDL_RenderPresent(sdlRenderer);
+	 printf("PRESENT!  stretch_blit()\n");
 #endif
       }      
    }

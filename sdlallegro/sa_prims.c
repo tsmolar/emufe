@@ -117,6 +117,7 @@ void rectfill(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
    SDL_RenderPresent(sdlRenderer);
+   printf("PRESENT!  rectfill()\n");
 #endif
 }
 
@@ -151,6 +152,7 @@ void rect(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
    SDL_RenderPresent(sdlRenderer);
+   printf("PRESENT!  rect()\n");
 #endif   
 }
 
@@ -170,6 +172,7 @@ void hline(SDL_Surface *bmp, int x1, int y, int x2, int color) {
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
    SDL_RenderPresent(sdlRenderer);
+   printf("PRESENT!  hline()\n");
 #endif   
 }
 
@@ -187,6 +190,7 @@ void vline(BITMAP *bmp, int x, int y1, int y2, int color) {
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
    SDL_RenderPresent(sdlRenderer);
+   printf("PRESENT!  vline()\n");
 #endif   
 }
 
@@ -258,6 +262,7 @@ void fastline(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
 #ifdef SDL2
 	 SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
 	 SDL_RenderPresent(sdlRenderer);
+	 printf("PRESENT!  fastline()\n");
 #endif   
       } /* hline */
    } /* vline */
