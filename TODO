@@ -1,6 +1,26 @@
 It's now working in SDL2!  But there are a number of bugs noticed
+
+Open Issues:
+  2. Mouse Navigate isn't hitting the exact right spot - 
+     This is actually a problem in SDL1 to, at least in window mode
+     So fix for one should fix both
+  3. The hilight around the text still doesn't actually happen
+  4. You can see too many screen updates, is RendererPresent getting
+     called too frequently?  May need to use the autoupdate flag to
+     reduce.
+     28 Screen updates before the first user interaction!
+      Only one is required.
+  6. It fails with 16-bit depth, but not 32.  SDL1 always used 16.  
+     I don't necessarily need 16 to work, but just want to understand it
+     better.  (reports invalid pixel format)
+       MORE INFO: 24 fails as well.   This could be nice to have as I 
+         suspect the ints used everywhere are signed 32-bit integers
+	 when they probably should be Uint32s
+ 11. PAGE_UP/PAGE_DOWN aren't working in SDL2
+ 12. Joystick Navigation probably not working
+
+Fixed issues:
 FX1. Keyboard navigation doesn't work (key mapping issue?)
-  2. Mouse Navigate isn't hitting the exact right spot
 FX3. menu hilighter doesn't seem to be working
      MORE INFO!  This is because the BG color for the fnt_print_screen
        is coming up negative.  It needs to be positive to draw the font 
@@ -10,16 +30,9 @@ FX3. menu hilighter doesn't seem to be working
        ** update: unsigned it, Uint32 neither fixed the problem, using
           longs instead makes hilighting work, but now the background
 	  is white--  need to fix.
-  4. You can see too many screen updates, is RendererPresent getting
-     called too frequently?  May need to use the autoupdate flag to
-     reduce.
-  5. Mouse wheel works in one direction only, and the wheel is reversed
-  6. It fails with 16-bit depth, but not 32.  SDL1 always used 16.  
-     I don't necessarily need 16 to work, but just want to understand it
-     better.  (reports invalid pixel format)
-       MORE INFO: 24 fails as well.   This could be nice to have as I 
-         suspect the ints used everywhere are signed 32-bit integers
-	 when they probably should be Uint32s
+FX5. Mouse wheel works in one direction only, and the wheel is reversed
+     Had to add a special function to wrap simulate_keypress()
+     Something wonky here in SDL2
 FX7. Colors of some components are showing a cyan tint when they
      should be yellow.
         I suspect that the ENDIANESS is wrong or being detected wrong.

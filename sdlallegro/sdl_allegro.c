@@ -265,6 +265,40 @@ void simulate_keypress(int key) {
    SDL_PushEvent(&event);
 }
 
+void s2a_sim_keypress(Uint32 key) {
+   // do above without the key shifting
+#ifdef SDL1
+   simulate_keypress(key << 8);
+#endif
+#ifdef SDL2
+   SDL_Event event;
+   int rkey;
+   
+   // Since I'm having issues with the up/down arrow mapping
+   switch(key) {	
+    case KEY_DOWN:
+      rkey=273;
+      break;
+    case KEY_UP:
+      rkey=272;
+      break;
+    default:
+      rkey=key;
+   }
+   
+   event.type=SDL_KEYDOWN;
+   event.key.type=SDL_KEYDOWN;
+//   event.key.state=SDL_PRESSED;
+   event.key.keysym.sym=rkey;
+   SDL_PushEvent(&event);
+   event.type=SDL_KEYUP;
+   event.key.type=SDL_KEYUP;
+//   event.key.state=SDL_RELEASED;
+   SDL_PushEvent(&event);
+#endif  
+}
+
+
 int keypressed() {
    SDL_Event event;
    poll_mouse();

@@ -1650,16 +1650,23 @@ int main(int argc, char* argv[]) {
 	   mp=1;
       }
       
-
       /* Wheel support up */
       if (mouse_z < zpos) {
+#ifdef USESDL
+	 s2a_sim_keypress(KEY_UP);
+#else
 	 simulate_keypress(KEY_UP << 8);
+#endif
 	 zpos=mouse_z;
       }
 
       /* Wheel support down */
       if (mouse_z > zpos) {
+#ifdef USESDL
+	 s2a_sim_keypress(KEY_DOWN);
+#else
 	 simulate_keypress(KEY_DOWN << 8);
+#endif
 	 zpos=mouse_z;
       }
       
