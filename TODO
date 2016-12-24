@@ -16,8 +16,6 @@ Open Issues:
        MORE INFO: 24 fails as well.   This could be nice to have as I 
          suspect the ints used everywhere are signed 32-bit integers
 	 when they probably should be Uint32s
- 11. PAGE_UP/PAGE_DOWN aren't working in SDL2
- 12. Joystick Navigation probably not working
 
 Fixed issues:
 FX1. Keyboard navigation doesn't work (key mapping issue?)
@@ -49,6 +47,9 @@ FX10. The TV screens that go over the screen shots are supposed to be
        TRY: Converting the surfaces after loading the overlays
       Problem wasn't the surface formats, but blend mode wasn't being
       set for loaded bitmaps 
+FX11. PAGE_UP/PAGE_DOWN aren't working in SDL2- 
+       Note: feels laggy,  hopefully due to too many screen updates (#4)
+FX12. Joystick Navigation probably not working
 
 New SDL1 issues:
   SDL1 and SDL2 are not defined for emufe!  We can either define them

@@ -1575,14 +1575,22 @@ int main(int argc, char* argv[]) {
 	   
 	   /* Joystick Up */
 	   if(joy[0].stick[0].axis[1].d1 && jflag==0) {
+#ifdef USESDL
+	      s2a_sim_keypress(KEY_UP);
+#else
 	      simulate_keypress(KEY_UP << 8);
+#endif
 	      jflag=1;
 	   }
 	   if(joy[0].stick[0].axis[1].d1==0) jup=0; 
 	     
 	   /* Joystick Down */
 	   if(joy[0].stick[0].axis[1].d2 && jflag==0) {
+#ifdef USESDL
+	      s2a_sim_keypress(KEY_DOWN);
+#else
 	      simulate_keypress(KEY_DOWN << 8);
+#endif
 	      jflag=1;
 	   }
 	   if(!joy[0].stick[0].axis[1].d2) jdn=0; 
