@@ -66,15 +66,15 @@ menuload=0;
 menudisp=0;
 */
 
-#ifdef USESDL
-gfx_sdlflip() {
-# ifdef SDL1
-   SDL_Flip(screen);
-# else 
-   s2a_flip(screen);
-# endif
-}
-#endif
+// #ifdef USESDL
+//gfx_sdlflip() {
+// # ifdef SDL1
+//   SDL_Flip(screen);
+//# else 
+//   s2a_flip(screen);
+//# endif
+//}
+//#endif
 
 void debug(int level,char *text) {
    // log debugging in a way that can be switched off at ru
@@ -158,7 +158,8 @@ int menu_uhlight(int index, int slct) {
      rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*rc.font_h)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*rc.font_h)+ry0, fnfgcol);
    }
 #ifdef USESDL
-   gfx_sdlflip();
+//   gfx_sdlflip();
+   s2a_flip(screen);
 #endif
   unscare_mouse();
 } // menu_uhlight
@@ -192,7 +193,8 @@ int menu_hlight(int index, int slct) {
      rectfill(screen,(rc.mb_x+6)+rx0,(rc.mb_y-7)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
    }
 #ifdef USESDL
-   gfx_sdlflip();
+   //gfx_sdlflip();
+   s2a_flip(screen);
 #endif
    unscare_mouse();
 }
@@ -225,7 +227,8 @@ int menu_uhlight2(int index, int slct) {
      rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*rc.font_h)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*rc.font_h)+ry0, fnfgcol);
    }
 #ifdef USESDL
-   gfx_sdlflip();
+//   gfx_sdlflip();
+   s2a_flip(screen);
 #endif
   unscare_mouse();
 } // menu_uhlight
@@ -255,7 +258,8 @@ int menu_hlight2(int index, int slct) {
 //     rectfill(screen,(rc.mb_x+6)+rx0,(rc.mb_y-7)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
 //   }
 #ifdef USESDL
-   gfx_sdlflip();
+//   gfx_sdlflip();
+   s2a_flip(screen);
 #endif
    unscare_mouse();
 }
@@ -300,7 +304,8 @@ int display_menu(int index) {
 /*     printf("here:%d,%s\n",i,names[i]); */
    }   
 #ifdef USESDL
-   gfx_sdlflip();
+//   gfx_sdlflip();
+   s2a_flip(screen);
 #endif
    unscare_mouse();
 //   fnt_setactive(LoadedFont);
@@ -459,7 +464,8 @@ show_desc2(char *desc) {
       }
       fclose(fp);
 #ifdef USESDL
-      gfx_sdlflip();
+   //   gfx_sdlflip();
+      s2a_flip(screen);
 #endif
    }
 }
@@ -513,7 +519,8 @@ show_desc(char *desc) {
       fclose(fp);
 //      fnt_setactive(LoadedFont);
 #ifdef USESDL
-      gfx_sdlflip();
+//      gfx_sdlflip();
+   s2a_flip(screen);
 #endif
    }
 }
@@ -1420,14 +1427,14 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
       if(b==screen) {
 	 if(ActiveFont->type<2)
 	   SDL_UnlockSurface(b);
-# ifdef SDL1
-	 if(SA_AUTOUPDATE==1)
-	   SDL_UpdateRect(screen,x,y,sl,16);
-# endif
-# ifdef SDL2
+//# ifdef SDL1
+//	 if(SA_AUTOUPDATE==1)
+//	   SDL_UpdateRect(screen,x,y,sl,16);
+//# endif
+//# ifdef SDL2
 	 if(SA_AUTOUPDATE==1)
 	   s2a_updaterect(screen,x,y,sl,16);
-# endif
+//# endif
 	 //      printf("hokee: %d %d %d\n",x,y,sl);
       }
 #endif

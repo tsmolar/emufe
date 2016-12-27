@@ -115,9 +115,11 @@ void rectfill(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
    SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
 #endif
 #ifdef SDL2
-   SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
-   SDL_RenderPresent(sdlRenderer);
-   printf("PRESENT!  rectfill()\n");
+   if (SA_AUTOUPDATE == 1) {	
+      SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
+      SDL_RenderPresent(sdlRenderer);
+      printf("PRESENT!  rectfill()\n");
+   }
 #endif
 }
 

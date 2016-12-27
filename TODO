@@ -5,11 +5,6 @@ Open Issues:
      This is actually a problem in SDL1 to, at least in window mode
      So fix for one should fix both
   3. The hilight around the text still doesn't actually happen
-  4. You can see too many screen updates, is RendererPresent getting
-     called too frequently?  May need to use the autoupdate flag to
-     reduce.
-     28 Screen updates before the first user interaction!
-      Only one is required.
   6. It fails with 16-bit depth, but not 32.  SDL1 always used 16.  
      I don't necessarily need 16 to work, but just want to understand it
      better.  (reports invalid pixel format)
@@ -28,6 +23,13 @@ FX3. menu hilighter doesn't seem to be working
        ** update: unsigned it, Uint32 neither fixed the problem, using
           longs instead makes hilighting work, but now the background
 	  is white--  need to fix.
+FX4. You can see too many screen updates, is RendererPresent getting
+     called too frequently?  May need to use the autoupdate flag to
+     reduce.
+     28 Screen updates before the first user interaction!
+      Only one is required.
+     ** Reduced it from 28 -> 3.  Still works as expected, but if things
+        don't display, more updates may be needed
 FX5. Mouse wheel works in one direction only, and the wheel is reversed
      Had to add a special function to wrap simulate_keypress()
      Something wonky here in SDL2

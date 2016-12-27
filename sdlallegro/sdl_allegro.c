@@ -191,7 +191,11 @@ int allegro_init() {
    char driver[21];
    int rv;
 //   printf("sdl_allegro version: %s  header: %s \n",SDL_ALLEGRO_VERS_C,SDL_ALLEGRO_VERS_H);
+#ifdef SDL2
+   SA_AUTOUPDATE=0;
+#else
    SA_AUTOUPDATE=1;
+#endif
    strcpy(sa_win_title,"sdlallegro App");
    rv=SDL_Init(SDL_INIT_EVERYTHING);
 #ifdef SDL1 
@@ -205,6 +209,10 @@ int allegro_init() {
 //   SDL_VideoDriverName(driver,20);
 #ifdef DEBUG
    printf("Video driver in use is %s\n",sdldriver);
+   printf("SA_AUTOUPDATE=%d,  if this is 0, you will need to do your own\n",SA_AUTOUPDATE);
+   printf("screen flip calls, or override this to 1 in your code.  In SDL2,\n");
+   printf("this is now set to 0 by default because there is more overhead\n");
+   printf("for old SDL style programs to do screen updates.\n");
 #endif
 #ifdef ZAURUS
    // Aparently, only the bvdd SDL suffers this problem
@@ -608,9 +616,12 @@ int sa_setalpha(SDL_Surface *surf, Uint8 alpha) {
    return rv;
 }
 
-#ifdef SDL2
 // replacement for SDL_Flip() (which shouldn't be used)
 int s2a_flip(SDL_Surface* mysurface) {
+#ifdef SDL1
+   SDL_Flip(mysurface);
+#endif
+#ifdef SDL2
    SDL_Rect frect;
    
    frect.x=0;
@@ -623,10 +634,15 @@ int s2a_flip(SDL_Surface* mysurface) {
    SDL_RenderCopy(sdlRenderer,TXscreen,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
    printf("PRESENT!  s2a_flip()\n");
+#endif
    return(0);
 }
 
 int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
+#ifdef SDL1
+   SDL_UpdateRect(mysurface, x, y, w, h);
+#endif
+#ifdef SDL2
    SDL_Rect frect;
    SDL_Texture *mytexture; 
  
@@ -640,10 +656,10 @@ int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 
    SDL_RenderCopy(sdlRenderer,mytexture,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
    printf("PRESENT!  s2a_updaterect()\n");
+#endif 
 
    return(0);
 }
-#endif 
 
 /* Modes */
 int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
@@ -877,7 +893,7 @@ int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy
 //	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
-	 printf("PRESENT!  blit()\n");
+	 printf("PRESENT!  blit() SAAU: %d\n",SA_AUTOUPDATE);
 #endif
       }
    }
@@ -922,7 +938,7 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
 	 SDL_RenderPresent(sdlRenderer);
 	 printf("PRESENT!  masked_blit()\n");
 #endif
-      }
+      }  
    }
 //     SDL_Flip(dest);
    //#endif
