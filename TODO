@@ -4,13 +4,15 @@ Open Issues:
   2. Mouse Navigate isn't hitting the exact right spot - 
      This is actually a problem in SDL1 to, at least in window mode
      So fix for one should fix both
-  3. The hilight around the text still doesn't actually happen
   6. It fails with 16-bit depth, but not 32.  SDL1 always used 16.  
      I don't necessarily need 16 to work, but just want to understand it
      better.  (reports invalid pixel format)
        MORE INFO: 24 fails as well.   This could be nice to have as I 
          suspect the ints used everywhere are signed 32-bit integers
 	 when they probably should be Uint32s
+ 13. Is setup broken?
+ 14. My image scaling function also seems to run poorly for SDL1,
+     perhaps it should be eliminated for box art at least?
 
 Fixed issues:
 FX1. Keyboard navigation doesn't work (key mapping issue?)
@@ -20,9 +22,8 @@ FX3. menu hilighter doesn't seem to be working
        bg.  Is this bad value coming from makecol?   Do we need to use
        more unsigned ints, or Uint32s since we are using a bigger bit
        depth. 
-       ** update: unsigned it, Uint32 neither fixed the problem, using
-          longs instead makes hilighting work, but now the background
-	  is white--  need to fix.
+       *** No matter what I do, it is negative, so I made the check
+           look for -1 explicitely instead of any negative number
 FX4. You can see too many screen updates, is RendererPresent getting
      called too frequently?  May need to use the autoupdate flag to
      reduce.

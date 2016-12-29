@@ -174,18 +174,22 @@ int menu_hlight(int index, int slct) {
    set_font_fcolor(textsdr,textsdg,textsdb);
 /*   set_font_bcolor(0,0,0); */
    set_font_bcolor(texthlr,texthlg,texthlb);
-   printf("VONG: fcolor: %d,%d,%d\n",textsdr,textsdg,textsdb);
-   printf("VONG: bcolor: %d,%d,%d\n",texthlr,texthlg,texthlb);
-   printf("VONG: mk:%ld\n",makecol(texthlr,texthlg,texthlb));
+//   printf("VONG: fcolor: %d,%d,%d\n",textsdr,textsdg,textsdb);
+//   printf("VONG: bcolor: %d,%d,%d\n",texthlr,texthlg,texthlb);
+//   printf("VONG: mk:%ld\n",makecol(texthlr,texthlg,texthlb));
    scare_mouse();
 //   solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
-   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
+//   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
+   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),fnbgcol,-1);
    rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
+//   rect(screen,(rc.mb_x)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+60)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
+//printf("VONG: pos %d,%d,%d,%d\n",rc.mb_x+2,rc.mb_y-13+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0);
+   
    
    if(menu[slct].type=='f' || menu[slct].type=='d') {
       rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
-      printf("dmr::x=%d;w=%d\n",(rc.mb_x+3)+rx0,(rc.mb_x+8)+rx0);
-      printf("dmr::y=%d;h=%d\n",(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_y+2)+(offset*rc.font_h)+ry0);
+//      printf("dmr::x=%d;w=%d\n",(rc.mb_x+3)+rx0,(rc.mb_x+8)+rx0);
+//      printf("dmr::y=%d;h=%d\n",(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_y+2)+(offset*rc.font_h)+ry0);
    }
    if(menu[slct].type=='s') {
 /*       rect(screen,37,88+(offset*16),44,95+(offset*16), fnbgcol); */
@@ -289,7 +293,7 @@ int display_menu(int index) {
       st_txt_col(menu[i].type);
       if(menu[i].type=='m' || menu[i].type=='d') {
 /*	 set_font_fcolor(80,0,80); */
-	 printf("fontprt: passing -1 to fnt_print_screen\n");
+//	 printf("fontprt: passing -1 to fnt_print_screen\n");
 	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name,fnfgcol,-1,shdcol);
 //	show_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name);
 	rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(io*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(io*rc.font_h)+ry0, fnfgcol);
@@ -1224,7 +1228,7 @@ void draw_imgbx(int boxno) {
       debug(3,debugtxt);
 #endif
       imgbx_ovl[boxno]=load_bitmap(pathname,p);
-      SDL_SetSurfaceBlendMode(imgbx_ovl[boxno],SDL_BLENDMODE_BLEND);
+//      SDL_SetSurfaceBlendMode(imgbx_ovl[boxno],SDL_BLENDMODE_BLEND);
    }
 }
 

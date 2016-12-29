@@ -295,7 +295,9 @@ fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long sd) 
    } else {
       // bg is now a 'long', and -1 maps to a positive number
       // so I added a cast
-      if((int)bg>-1)
+      // changed >-1 to != -1 since no matter what I do, these show up as 
+      // negative signed in 32 bit depth
+      if((int)bg!=-1)
 	 rectfill(b,x,y,x+sl,y+fh,bg);
       
 #ifdef USESDL
