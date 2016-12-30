@@ -10,9 +10,16 @@ Open Issues:
        MORE INFO: 24 fails as well.   This could be nice to have as I 
          suspect the ints used everywhere are signed 32-bit integers
 	 when they probably should be Uint32s
- 13. Is setup broken?
- 14. My image scaling function also seems to run poorly for SDL1,
-     perhaps it should be eliminated for box art at least?
+ 13. Is setup broken? 
+     Yes:  "Run Setup" crashes on SDL2, works on SDL1.  "* Setup"
+       crashes on both, it is probably outdated and should be 
+       removed from the menu
+ 15. Some of the screen shots don't scale on the new scaler, probably 
+     need to fix the screenshots, (or use my old code)
+     ** example: Barnstorming org is 304x190.   If I scale it to 320x192
+        it seems to work, even though it actually got scaled to 307x192
+	does h need to be correct?
+ 16. HOME and END keys aren't mapped in SDL2
 
 Fixed issues:
 FX1. Keyboard navigation doesn't work (key mapping issue?)
@@ -53,6 +60,10 @@ FX10. The TV screens that go over the screen shots are supposed to be
 FX11. PAGE_UP/PAGE_DOWN aren't working in SDL2- 
        Note: feels laggy,  hopefully due to too many screen updates (#4)
 FX12. Joystick Navigation probably not working
+FX14. My image scaling function also seems to run poorly for SDL1,
+     perhaps it should be eliminated for box art at least?
+     ** Was due to printing out lots of paramters, once I removed the 
+        debug statements, it worked
 
 New SDL1 issues:
   SDL1 and SDL2 are not defined for emufe!  We can either define them

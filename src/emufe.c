@@ -923,7 +923,7 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
        debug(3,debugtxt);
 #endif
        bitmap=load_bitmap(picname,p);
-       if(imgbx_bmp[i] && i!=B_KEYBOARD)
+       if(imgbx_bmp[i] && i!=B_KEYBOARD) 
 	 masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
        else 
 	 printf("do_imgbox_scale(): I HAVE NO BG!\n");
@@ -934,80 +934,82 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 	  //  note: stretching isn't working atm
 	  //
 	  
-        if(bitmap->w != imgbx[i].w || bitmap->h != imgbx[i].h) {
-//        if(bitmap->w == 4 || bitmap->h == 5) {
-	   // downscale
-	   // compute scale factor, need to use floats here
-	   // This will keep aspect and works for both down and upscaling
-	   fow=bitmap->w;foh=bitmap->h;fdw=imgbx[i].w;fdh=imgbx[i].h;
-	   xf=fow/fdw;
-	   yf=foh/fdh;
-	   if(xf>yf) uf=xf; else uf=yf;
-	   new_w=fow/uf;
-	   new_h=foh/uf;
-	   // mask the dest with black bars
-	   //   or bitmap!
-	   x2=imgbx[i].x + imgbx[i].w;
-	   y2=imgbx[i].y + imgbx[i].h;
-
+	  if(bitmap->w != imgbx[i].w || bitmap->h != imgbx[i].h) {
+	     //        if(bitmap->w == 4 || bitmap->h == 5) {
+	     // downscale
+	     // compute scale factor, need to use floats here
+	     // This will keep aspect and works for both down and upscaling
+	     fow=bitmap->w;foh=bitmap->h;fdw=imgbx[i].w;fdh=imgbx[i].h;
+	     xf=fow/fdw;
+	     yf=foh/fdh;
+	     if(xf>yf) uf=xf; else uf=yf;
+	     new_w=fow/uf;
+	     new_h=foh/uf;
+	     // mask the dest with black bars
+	     //   or bitmap!
+	     x2=imgbx[i].x + imgbx[i].w;
+	     y2=imgbx[i].y + imgbx[i].h;
+	     
 #ifdef DEBUG
-       sprintf(debugtxt,"rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2);
-       debug(3,debugtxt);
+	     sprintf(debugtxt,"rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2);
+	     debug(3,debugtxt);
 #endif
-	   // Figure out how to mask this (if masktype==0 then ignore)
-	   // bitmap
-	   // black bars
-	   if(imgbx[i].masktype==2)
-	     rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
-	   // blit (need to fix dest w/h)
-	   // uncomment to center:
-	   dsx=((imgbx[i].w-new_w)/2)+imgbx[i].x+rx0;
-	   dsy=((imgbx[i].h-new_h)/2)+imgbx[i].y+ry0;
-//	   dsx=((imgbx[i].w-sc_bitmap->w)/2)+imgbx[i].x+rx0;
-//	   dsy=((imgbx[i].h-sc_bitmap->h)/2)+imgbx[i].y+ry0;
-//	   dsx=imgbx[i].x+rx0;
-//	   dsy=imgbx[i].y+ry0;
-
-	   stretch_blit(bitmap,screen,0,0,bitmap->w,bitmap->h,dsx,dsy,new_w,new_h);
-	   
-//	   sc_bitmap=sa_scale_bm(bitmap,new_w,new_h);
-//	   blit(sc_bitmap,screen,0,0,dsx,dsy,sc_bitmap->w,sc_bitmap->h);
-//	   destroy_bitmap(sc_bitmap);
-
-	   destroy_bitmap(bitmap);
-	   // draw overlay
-	   if(imgbx[i].ovpct>0) {
-	      
-	      
-	      sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
-
-//	      printf("XFMT: alpha: %d\n",(25500/(10000/imgbx[i].ovpct)));
-	      // debug info follows for surfaces, uncomment to help debug
-	      // sa_surface_info(screen, "screen");
-//	      sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
-//	      sa_debug_info();
-	      
-//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
-//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
-	      masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
-	      sa_setalpha(imgbx_ovl[i], 255);
-//	      printf("HEBLO?\n");
-//	      printf("screen XFMT: %d\n",screen->format->format);
-//	      printf("imgbx_bmp[] XFMT: %d\n",imgbx_ovl[i]->format->format);
-
-//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 255);
+	     // Figure out how to mask this (if masktype==0 then ignore)
+	     // bitmap
+	     // black bars
+	     if(imgbx[i].masktype==2)
+	       rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
+	     // blit (need to fix dest w/h)
+	     // uncomment to center:
+	     dsx=((imgbx[i].w-new_w)/2)+imgbx[i].x+rx0;
+	     dsy=((imgbx[i].h-new_h)/2)+imgbx[i].y+ry0;
+	     //	   dsx=((imgbx[i].w-sc_bitmap->w)/2)+imgbx[i].x+rx0;
+	     //	   dsy=((imgbx[i].h-sc_bitmap->h)/2)+imgbx[i].y+ry0;
+	     //	   dsx=imgbx[i].x+rx0;
+	     //	   dsy=imgbx[i].y+ry0;
+	     
+//	     printf("CC0:----------------------\n");
+//	     printf("CC0: bitmap->w=%d   bitmap->h=%d\n",bitmap->w,bitmap->h);
+//	     printf("CC0: new_w=%d   new_h=%d\n",new_w,new_h);
+	     stretch_blit(bitmap,screen,0,0,bitmap->w,bitmap->h,dsx,dsy,new_w,new_h);
+	     //	   sc_bitmap=sa_scale_bm(bitmap,new_w,new_h);
+	     //	   blit(sc_bitmap,screen,0,0,dsx,dsy,sc_bitmap->w,sc_bitmap->h);
+	     //	   destroy_bitmap(sc_bitmap);
+	     
+	     destroy_bitmap(bitmap);
+	     // draw overlay
+	     if(imgbx[i].ovpct>0) {
+		
+		
+		sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
+		
+		//	      printf("XFMT: alpha: %d\n",(25500/(10000/imgbx[i].ovpct)));
+		// debug info follows for surfaces, uncomment to help debug
+		// sa_surface_info(screen, "screen");
+		//	      sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
+		//	      sa_debug_info();
+		
+		//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
+		//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
+		masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
+		sa_setalpha(imgbx_ovl[i], 255);
+		//	      printf("HEBLO?\n");
+		//	      printf("screen XFMT: %d\n",screen->format->format);
+		//	      printf("imgbx_bmp[] XFMT: %d\n",imgbx_ovl[i]->format->format);
+		
+		//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 255);
 	     }
-	} else {
+	  } else {
 	   // no scaling
-	   dsx=imgbx[i].x+rx0;
-	   dsy=imgbx[i].y+ry0;
-	   blit(bitmap,screen,0,0,dsx,dsy,bitmap->w,bitmap->h);
-	   destroy_bitmap(bitmap);
-	}
+	     dsx=imgbx[i].x+rx0;
+	     dsy=imgbx[i].y+ry0;
+	     blit(bitmap,screen,0,0,dsx,dsy,bitmap->w,bitmap->h);
+	     destroy_bitmap(bitmap);
+	  }
 #ifdef DEBUG
-	debug(3,"do_imgbox_scale():loaded bitmap\n");
+	  debug(3,"do_imgbox_scale():loaded bitmap\n");
 #endif
-      } // endif
+       } // endif (if bitmap)
     } // endif
 } // do_imgbox_scale
 
@@ -1228,7 +1230,10 @@ void draw_imgbx(int boxno) {
       debug(3,debugtxt);
 #endif
       imgbx_ovl[boxno]=load_bitmap(pathname,p);
+      sa_setalphablendmode(imgbx_ovl[boxno]);
+//#ifdef SDL_BLENDMODE_BLEND
 //      SDL_SetSurfaceBlendMode(imgbx_ovl[boxno],SDL_BLENDMODE_BLEND);
+//#endif
    }
 }
 

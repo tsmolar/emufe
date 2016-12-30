@@ -4,7 +4,7 @@
 #include<SDL.h>
 #include"sdl_allegro.h"
 
-#define SDL_ALLEGRO_VERS_C "0.6.99"
+#define SDL_ALLEGRO_VERS_C "0.7.00"
 
 SDL_PixelFormat *sdlpixfmt;
 SDL_Surface *screen;
@@ -543,24 +543,24 @@ unsigned int makecol(int r, int g, int b) {
 
 unsigned int makecol16(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
-   printf("16 breaks here? %d,%d,%d\n",r,g,b);
-   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
+//   printf("16 breaks here? %d,%d,%d\n",r,g,b);
+//   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
 
 unsigned int makecol24(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
-   printf("24 breaks here? %d,%d,%d\n",r,g,b);
-   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
+//   printf("24 breaks here? %d,%d,%d\n",r,g,b);
+//   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
 
 unsigned int makecol32(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
-   printf("32 breaks here? %d,%d,%d\n",r,g,b);
-   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
+//   printf("32 breaks here? %d,%d,%d\n",r,g,b);
+//   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
@@ -614,6 +614,14 @@ int sa_setalpha(SDL_Surface *surf, Uint8 alpha) {
    rv=SDL_SetSurfaceAlphaMod(surf, alpha);
 #endif
    return rv;
+}
+
+int sa_setalphablendmode(SDL_Surface* mysurface) {
+#ifdef SDL2
+   // This is kind of a hack, needed for SDL2, but doesn't working in
+   //   SDL1
+   SDL_SetSurfaceBlendMode(mysurface,SDL_BLENDMODE_BLEND);
+#endif
 }
 
 // replacement for SDL_Flip() (which shouldn't be used)
@@ -969,9 +977,9 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
 
    // uf is the factor to scale by
    nw=fow/uf;
-   nh=foh/uf;     
-   printf("original size: %f x %f\n",fow,foh);
-   printf("scale to:  %dx%d\n",nw,nh);
+   nh=foh/uf;
+   printf("CCX:original size: %f x %f\n",fow,foh);
+   printf("CCX:scale to:  %dx%d\n",nw,nh);
    newbm=create_bitmap(nw,nh);
    
    yf=0;
@@ -981,11 +989,11 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
        ox=xf;oy=yf;
 //       if(xf>nw) ox=nw;
 //       if(yf>nh) oy=nh;
-printf ("x1\n");
+//printf ("x1\n");
        pc=getpixel(orgbm,ox,oy);
-printf ("x2\n");
+//printf ("x2\n");
        SDL_GetRGB(pc,orgbm->format,&rrr,&ggg,&bbb);
-printf ("x3\n");
+//printf ("x3\n");
 	
 	// I don't understand why upscaling (uf<1) reverses
 	// the red and blue pixels, but not always!
@@ -995,11 +1003,11 @@ printf ("x3\n");
 	  putpixel(newbm,px,py,makecol(rrr,ggg,bbb));
 
        xf=xf+uf;
-       printf("X4: %f\n",xf);
+//       printf("X4: %f\n",xf);
      }
      yf=yf+uf;
    }
-printf("x5\n");
+//printf("x5\n");
 #endif 
 #ifdef SDL2
    SDL_Rect src_r, dst_r;
@@ -1011,8 +1019,8 @@ printf("x5\n");
    dst_r.w=dw;
    dst_r.h=dh;
 
-   printf("original size: %d x %d\n",src_r.w,src_r.h);
-   printf("scale to:  %d x %d\n",dst_r.w,dst_r.h);
+   printf("CCX: original size: %d x %d\n",src_r.w,src_r.h);
+   printf("CCX: scale to:  %d x %d\n",dst_r.w,dst_r.h);
    newbm=create_bitmap(dst_r.w,dst_r.h);
    
    SDL_BlitScaled(orgbm, &src_r, newbm, &dst_r);
@@ -1023,24 +1031,34 @@ printf("x5\n");
 
 void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h) {
 
-   // SDL1 method
-
-   BITMAP *newbm;   
    SDL_Rect src_r, dst_r;
-   
+
    src_r.x = src_x;
    src_r.y = src_y;
-   src_r.w = dst_w;
-   src_r.h = dst_h;
    dst_r.x = dst_x;
    dst_r.y = dst_y;
    dst_r.w = dst_w;
    dst_r.h = dst_h;
 
+#ifdef SDL1
+   BITMAP *newbm;   
+   
+   src_r.w = dst_w;
+   src_r.h = dst_h;
+
+//   printf("CCA:  w:%d,  h:%d\n",dst_w,dst_h);
    newbm=sa_scale_bm(src, dst_w, dst_h);
    SDL_BlitSurface(newbm, &src_r, dst, &dst_r);
    destroy_bitmap(newbm);
-// end SDL1 method
+#endif
+#ifdef SDL2
+   src_r.w = src_w;
+   src_r.h = src_h;
+
+//   printf("CCS:  x:%d  y:%d  w:%d,  h:%d\n",src_r.x,src_r.y,src_r.w,src_r.h);
+//   printf("CCD:  x:%d  y:%d  w:%d,  h:%d\n",dst_r.x,dst_r.y,dst_r.w,dst_r.h);
+   SDL_BlitScaled(src,&src_r, dst, &dst_r);
+#endif
    
    if(SA_AUTOUPDATE==1) {	
       if(dst == screen) {
