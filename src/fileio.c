@@ -38,6 +38,12 @@ int fileio_dir_exists(const char *mydir) {
 #endif
 }
 
+int fileio_file_exists(char *myfile) {
+   // This may need to be different under Windows or some unixes
+   struct stat buffer;
+   return (stat (myfile, &buffer) == 0);
+}
+
 int fileio_dirname(char *dname, char *fpath) {
    int i,li=0;
    for(i=0;i<strlen(fpath);i++) {

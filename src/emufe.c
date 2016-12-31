@@ -340,7 +340,7 @@ void rem_info_bar()
      blit(descmap,screen, 0,rc.db_h-20,rc.db_x+rx0,rc.db_y+rc.db_h-20+ry0,rc.db_w,20);
 }
 
-write_option(int selected) 
+void write_option(int selected) 
 {
    // used by old-style setup, depricated
    FILE *fp;
@@ -360,7 +360,7 @@ write_option(int selected)
    }
 }
 
-desc_wrapa(char* rstr, char *istr, int len) {
+void desc_wrapa(char* rstr, char *istr, int len) {
 
 // Word wrap for show_desc2,  this breaks and returns the left side of 
 // a break
@@ -380,7 +380,7 @@ desc_wrapa(char* rstr, char *istr, int len) {
   rstr[i]=0;
 }
 
-desc_wrapb(char* rstr, char *istr, int len) {
+void desc_wrapb(char* rstr, char *istr, int len) {
 
 // Word wrap for show_desc2,  this breaks and returns the right side of 
 // a break
@@ -400,7 +400,7 @@ desc_wrapb(char* rstr, char *istr, int len) {
   rstr[i-(lastspc+1)]=0;
 }
 
-show_desc2(char *desc) {
+void show_desc2(char *desc) {
    FILE *fp;
    char line[300], nxline[300], descffname[90], *ww;
    char title[128], year[12], company[70];
@@ -474,7 +474,7 @@ show_desc2(char *desc) {
    }
 }
 
-show_desc(char *desc) {
+void show_desc(char *desc) {
    FILE *fp;
    char line[72], descffname[90], *ww;
    int lineno, white, black;
@@ -529,8 +529,37 @@ show_desc(char *desc) {
    }
 }
 
-display_info(int slc)  {
+int AddPicExt(char *outpath, char *inpath) {
+   /* In order to support other image types besides pcx, we should
+    * allow arbitrary types to be used,  this function will check
+    * to see which extenstion exists and returns the full path name
+    * with the correct extension */
+   int i,c,rv=1;
+   // disabled to prevent too much checking (not that it was a problem)
+   //   char* extlist = "pcx,png,jpg,bmp,gif,PCX,PNG,JPG,BMP,GIF";
+   char* extlist = "pcx,png,jpg,gif";
+   char testpath[355],ext[8];
+   
+   c = hss_count(extlist, ',');
+   for(i=0;i<c;i++) {
+      hss_index(ext, extlist, i,',');
+      sprintf(testpath, "%s.%s", inpath, ext);
+      printf("JIO: testing path: %s\n",testpath);
+      if (fileio_file_exists(testpath)) {
+	 strcpy(outpath,testpath);
+	 rv=0;
+	 printf("JIO: selected: %s\n",testpath);
+	 break;
+      }
+      if(rv!=0) strcpy(outpath,"null");
+   }
+   return(rv);
+}
+
+
+void display_info(int slc)  {
    char picname[300];
+   // is this still used here???
    sprintf(picname, "%s%c%s.pcx", picsdir, mysep, menu[slc].rom);
 
 #ifdef DEBUG
@@ -909,7 +938,7 @@ load_dfltimg(char *fname) {
 do_imgbox_scale(int i, char *imgdir, char *iname) {
   // Use this if scaling is enabled
   PALETTE p;
-  char picname[350];
+  char picname[350],picnoext[346];
   int dsx,dsy,new_w,new_h,x2,y2;
   float fow,foh,fdw,fdh,xf,yf,uf;
   BITMAP *sc_bitmap;
@@ -917,7 +946,9 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
   get_palette(p);
 //  for(i=0;i<12;i++) {
     if(imgbx[i].enabled==1) {
-      sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
+//      sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
+       sprintf(picnoext,"%s%c%s%s",imgdir,mysep,imgbx[i].pfx,iname);
+       AddPicExt(picname,picnoext);
 #ifdef DEBUG
        sprintf(debugtxt,"do_imgbox_scale(): looking for picname:%s\n",picname);
        debug(3,debugtxt);
@@ -1014,16 +1045,21 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 } // do_imgbox_scale
 
 do_imgbox(int i, char *imgdir, char *iname) {
+   // I added the new extension testing, but commented it out here
+   // because I want to make sure it works well elsewhere first
   PALETTE p;
   BITMAP *sc_bitmap;
   char picname[350];
+//  char picname[350],picnoext[346];
   int dsx,dsy;
 
   get_palette(p);
 //  for(i=0;i<12;i++) {
 printf("picname (jk) boxtype(%d) enabled:%d\n",i,imgbx[i].enabled);
     if(imgbx[i].enabled==1) {
-      sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
+       sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
+       //sprintf(picnoext,"%s%c%s%s",imgdir,mysep,imgbx[i].pfx,iname);
+       //AddPicExt(picname,picnoext);
       printf("NEW: boxtype(%d) looking for picname:%s\n",i,picname);
       bitmap=load_bitmap(picname,p);
       if(imgbx_bmp[i] && i!=B_KEYBOARD)
