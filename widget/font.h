@@ -32,6 +32,7 @@ extern fnt_t* ActiveFont;
 
 /* This is for displaying text in graphics modes */
 //extern fnt_t fnt_loadfont(char, int);
+//void fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long sd);
 
 #ifdef USE_FREETYPE
 #define RENDER_SIMPLE 0  /* No Antialiasing */

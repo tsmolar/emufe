@@ -135,7 +135,7 @@ void sa_surface_info(SDL_Surface *asurf, char *name) {
 #endif
 }
 
-sa_debug_info() {
+void sa_debug_info() {
    // help by dumping decimal values of SDL defined macros
 #ifdef SDL1
    printf("sa_debug_info() only supports SDL2 right now\n");

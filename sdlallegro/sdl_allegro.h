@@ -1,5 +1,5 @@
 #include "config.h"
-#define SDL_ALLEGRO_VERS_H "0.6.4"
+#define SDL_ALLEGRO_VERS_H "0.7.00"
 
 typedef SDL_Surface BITMAP;
 
@@ -79,6 +79,12 @@ void set_window_title(const char *name);
 
 void rest(unsigned int itime);
 
+// custom pcx functions
+int save_pcx_pf(FILE *pf, BITMAP *bm, RGB *pal);
+int save_pcx(const char *fname, BITMAP *bm, RGB *pal);
+BITMAP *sa_readpcx_pf(FILE *pf, RGB *pal);
+BITMAP *sa_readpcx(const char *filename, RGB *pal);
+
 #ifdef HAVE_LIBSDL_MIXER
 int install_sound(int digi, int midi, const char *cfg_path);
 SAMPLE *load_sample(const char *filename);
@@ -157,6 +163,8 @@ Uint16 key_shifts;
 #define KEY_DOWN SDLK_DOWN
 #define KEY_PGUP SDLK_PAGEUP
 #define KEY_PGDN SDLK_PAGEDOWN
+#define KEY_HOME SDLK_HOME
+#define KEY_END SDLK_END
 #else
 // Special handling because these don't work right in SDL2
 #define KEY_LEFT 276
@@ -165,10 +173,10 @@ Uint16 key_shifts;
 #define KEY_DOWN 274
 #define KEY_PGUP 280
 #define KEY_PGDN 281
+#define KEY_HOME 278
+#define KEY_END 279
 #endif
 // #define KEY_DOWN 274
-#define KEY_HOME SDLK_HOME
-#define KEY_END SDLK_END
 #define KEY_DEL SDLK_DELETE
 #define KEY_0 SDLK_0
 #define KEY_1 SDLK_1

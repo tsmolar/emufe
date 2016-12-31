@@ -19,7 +19,6 @@ Open Issues:
      ** example: Barnstorming org is 304x190.   If I scale it to 320x192
         it seems to work, even though it actually got scaled to 307x192
 	does h need to be correct?
- 16. HOME and END keys aren't mapped in SDL2
 
 Fixed issues:
 FX1. Keyboard navigation doesn't work (key mapping issue?)
@@ -64,6 +63,7 @@ FX14. My image scaling function also seems to run poorly for SDL1,
      perhaps it should be eliminated for box art at least?
      ** Was due to printing out lots of paramters, once I removed the 
         debug statements, it worked
+FX16. HOME and END keys aren't mapped in SDL2
 
 New SDL1 issues:
   SDL1 and SDL2 are not defined for emufe!  We can either define them
@@ -73,4 +73,4 @@ Code Issues:
 
 * masked blit currently has no SDL2 support
 * remove more warnings
-* Fix all the UpdateRects
+

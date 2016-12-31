@@ -12,6 +12,8 @@
 #include <time.h>
 #include "font.h"
 #include "font_legacy.h"
+#include "dfilepath.h"
+#include "fileio.h"
 #include "emufe.h"
 // #include "fileio.h"
 
@@ -715,7 +717,7 @@ int draw_screen() {
      draw_imgbx(i);
 }
 
-restore_screen(int index, int slc) {
+void restore_screen(int index, int slc) {
    // After changing gfx mode, call this
    set_font_fcolor(textfgr,textfgb,textfgg);
    set_font_scolor(shadowr,shadowg,shadowb);
@@ -727,7 +729,7 @@ restore_screen(int index, int slc) {
    menu_hlight(index,slc);
 }
 
-settxtmode() {
+void settxtmode() {
    int w;
    if(in_gfxmode==1) {
 #ifdef WIN32XXX
@@ -747,7 +749,7 @@ settxtmode() {
    in_gfxmode=0;
 }
 
-setgfxmode() {
+void setgfxmode() {
    int w=0;
    
 #ifdef DEBUG

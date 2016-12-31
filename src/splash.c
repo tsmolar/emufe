@@ -64,24 +64,6 @@ void ch_exit(BITMAP *x)
    unscare_mouse();
 }
 
-void init() {
-   int w;
-   allegro_init();
-   install_mouse();
-   install_keyboard();
-   set_color_depth(16);
-   
-   w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,300,400,0,0);
-   load_buttons();  /* Load buttons */
-//   w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,640,480,0,0);
-   if(w!=0) {
-#ifdef DEBUG
-      printf("Could not set graphics mode!\n");
-#endif
-      exit(34);
-   }
-}
-
 int load_buttons() {
    
    // These were written using an older version of dfixsep2() that
@@ -115,6 +97,24 @@ int load_buttons() {
    sprintf(tmpstr,"%s%cpics%cexit_bu.pcx", basedir,mysep,mysep);
    dfixsep2(pbmp,tmpstr,0);
    exibmp=load_bitmap(pbmp,p);
+}
+
+void init() {
+   int w;
+   allegro_init();
+   install_mouse();
+   install_keyboard();
+   set_color_depth(16);
+   
+   w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,300,400,0,0);
+   load_buttons();  /* Load buttons */
+//   w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,640,480,0,0);
+   if(w!=0) {
+#ifdef DEBUG
+      printf("Could not set graphics mode!\n");
+#endif
+      exit(34);
+   }
 }
 
 void ef_shutdown() {
