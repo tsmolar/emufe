@@ -87,6 +87,7 @@ int load_defaults() {
     rc.font_w=8; rc.font_h=16;
     for(i=0;i<12;i++) {
        imgbx[i].enabled=0;
+       imgbx[i].mgn=0;
        strcpy(imgbx[i].imgname,"na");
        imgbx[i].r=imgbx[i].g=imgbx[i].b=128;
        imgbx[i].masktype=0;
@@ -316,6 +317,11 @@ int load_rc(char *filen) {
 	 }
 	 if(strncmp(key, "B_BOXSCAN_BM", 12)==0) {
 	    strcpy(imgbx[B_BOXSCAN].imgname,value);
+	 }
+	 if(strncmp(key, "B_BOXSCAN_MG", 12)==0) {
+	    // new, margins!
+	    imgbx[B_BOXSCAN].mgn=atoi(value);
+	    printf("NWW: set margin to %d\n",imgbx[B_BOXSCAN].mgn);
 	 }
 	 if(strncmp(key, "B_BOXSCAN_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)

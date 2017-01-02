@@ -74,6 +74,7 @@ typedef struct imgbox_t {
    int x,y,w,h,x2,y2;
    char pfx[6];
    int r,g,b;
+   int mgn;
    char imgname[90];
    int masktype;   // for masking empty areas
    int ovpct;   // overlay pct  0=overlay off

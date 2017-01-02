@@ -963,9 +963,6 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 		 
 
        if(bitmap) {
-	  //
-	  //  note: stretching isn't working atm
-	  //
 	  
 	  if(bitmap->w != imgbx[i].w || bitmap->h != imgbx[i].h) {
 	     //        if(bitmap->w == 4 || bitmap->h == 5) {
@@ -977,7 +974,7 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     yf=foh/fdh;
 	     if(xf>yf) uf=xf; else uf=yf;
 	     new_w=fow/uf;
-	     new_h=foh/uf;
+	     new_h=foh/uf; 
 	     // mask the dest with black bars
 	     //   or bitmap!
 	     x2=imgbx[i].x + imgbx[i].w;
@@ -994,13 +991,17 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 	       rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
 	     // blit (need to fix dest w/h)
 	     // uncomment to center:
-	     dsx=((imgbx[i].w-new_w)/2)+imgbx[i].x+rx0;
-	     dsy=((imgbx[i].h-new_h)/2)+imgbx[i].y+ry0;
+	     dsx=((imgbx[i].w-new_w)/2)+imgbx[i].x+rx0 + imgbx[i].mgn;
+	     dsy=((imgbx[i].h-new_h)/2)+imgbx[i].y+ry0 + imgbx[i].mgn;
 	     //	   dsx=((imgbx[i].w-sc_bitmap->w)/2)+imgbx[i].x+rx0;
 	     //	   dsy=((imgbx[i].h-sc_bitmap->h)/2)+imgbx[i].y+ry0;
 	     //	   dsx=imgbx[i].x+rx0;
 	     //	   dsy=imgbx[i].y+ry0;
-	     
+
+	     // implement bottom/right  margins
+	     new_w=new_w - (imgbx[i].mgn*2);
+	     new_h=new_h - (imgbx[i].mgn*2);
+
 //	     printf("CC0:----------------------\n");
 //	     printf("CC0: bitmap->w=%d   bitmap->h=%d\n",bitmap->w,bitmap->h);
 //	     printf("CC0: new_w=%d   new_h=%d\n",new_w,new_h);

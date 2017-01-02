@@ -16,9 +16,9 @@ Open Issues:
        removed from the menu
  15. Some of the screen shots don't scale on the new scaler, probably 
      need to fix the screenshots, (or use my old code)
-     ** example: Barnstorming org is 304x190.   If I scale it to 320x192
-        it seems to work, even though it actually got scaled to 307x192
-	does h need to be correct?
+     ** Seems like every screenshot that's <320 on 2600 fails, and one
+        at 320 that is too tall.  Don't know why it can't upscale
+	screenshots but can upscale box scans.  Seems like an SDL bug
 
 Fixed issues:
 FX1. Keyboard navigation doesn't work (key mapping issue?)
