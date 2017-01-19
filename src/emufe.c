@@ -2009,7 +2009,6 @@ int main(int argc, char* argv[]) {
 	    }
 		 
 	    if( type=='i' ) {
-//	       printf("SHIGGY\n");
 	       if(por==0) {
 		  display_info(slc);
 		  por=1;
@@ -2046,26 +2045,32 @@ int main(int argc, char* argv[]) {
 	       }
 	    }
 	    if( type=='a' ) {
-//	       printf("SHAGGY\n");
 	       if(imenu.mode>=1) {
 		  // might need to do a basename here.
 		  strcpy(imenu.sysbase,dirname);
-		  strcpy(imenu.emulator,menu[slc].rom);
+
+		  // New profile support 
+		  if ( menu[slc].rom[strlen(menu[slc].rom)-2] == '#' ) {
+		     imenu.profile=menu[slc].rom[strlen(menu[slc].rom)-1] -48;
+		     printf("found a profile: %d\n",imenu.profile);
+		     hss_index(imenu.emulator,menu[slc].rom,0,'#');
+		  } else  {
+		     imenu.profile=0;
+		     strcpy(imenu.emulator,menu[slc].rom);
+		  }
 //		  printf("imenu.sysbase: %s\n",imenu.sysbase);
 //		  printf("imenu.emulator: %s\n",imenu.emulator);
 //		  sprintf(imenu.emulator,"%s%s",dirname,roms[slc]);
 		  imenu.mode++;
 		  // Expand this!!!
 //		  sprintf(imenu.menu,"%s%s.menu",dirname,roms[slc]);
-		  sprintf(imenu.rc,"%s%c%setc%c%s.rc",basedir,mysep,dirname,mysep,menu[slc].rom);
+		  sprintf(imenu.rc,"%s%c%setc%c%s.rc",basedir,mysep,dirname,mysep,imenu.emulator);
 		  load_rc(imenu.rc);
 		  sprintf(imenu.menu,"%s%c%s%s",basedir,mysep,dirname,menuname);
 		  // HERE IS THE BUG
 //		  sprintf(imenu.lastmenu,"%s.menu",menu[slc].rom);
 		  strcpy(imenu.lastmenu,menuname);
-//		  printf("imenu.menu: %s\n",imenu.menu);
-//		  printf("imenu.lastmenu: %s\n",imenu.lastmenu);
-//		  printf("menu:%s\n",imenu.menu);
+
 		  menuitems=load_menu(imenu.menu);
 		  index=1;slc=1;
 		  if(menuitems==2 && imenu.autosel==1) {

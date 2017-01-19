@@ -18,6 +18,10 @@
 #ifdef WIN32
 #include <process.h>
 #endif
+
+#define NO_OVERWRITE 1
+#define OVERWRITE 0
+
 typedef struct emuopts_t {
    char cmd_patt[512];
    char cmd_line[1536];
@@ -48,9 +52,9 @@ typedef struct romarc_t {
 //} env_t;
 
 typedef struct cmdpatt_t {
-   char optname[30];
-   char envpat[60];
-   char cmdopt[150];
+   char optname[40];
+   char envpat[70];
+   char cmdopt[200];
 } cmdpatt_t;
 
 #define ENV_EQ 0
@@ -361,8 +365,8 @@ int p_customcfg() {
 //   mkdir(emuopt.diskloc); // do a check
 }
 
-int dealwithzip() {
-   char zipexe[50], zipcmd[160],tmpfl[80],lb[120],ext[6];
+int dealwithzip(int keep) {
+   char zipexe[50], zipcmd[160],tmpfl[80],tmpfl2[120],lb[120],ext[6];
    int romcnt=0,i;
    FILE *fp;
    
@@ -419,6 +423,11 @@ int dealwithzip() {
    // need to set to conf dir in some cases
    chdir(emuopt.diskloc);
    for(i=0;i<romcnt;i++) {
+      if(keep == OVERWRITE) {
+	 sprintf(tmpfl2,"rm -f %s", arc[i].name);
+	 printf("DELETING:: %s\n",tmpfl2);
+	 system(tmpfl2);
+      }
       if(file_exists(arc[i].name)) {
 #ifdef DEBUG
 	 printf("EXISTS: %s\n",arc[i].name);
@@ -776,7 +785,7 @@ int cmd_scanvar(char *strout, const char *strin) {
    // recursively
    // The recursion is broken if input + output matches.  Might be buggy
    // may need a no/var flag
-   char currvar[22],currl[70],cmdline[1536];
+   char currvar[32],currl[300],cmdline[1536];
    int i,i2;
    
    for(i=0;i<strlen(strin);i++) {
@@ -1171,15 +1180,24 @@ int mod_loademucfg() {
      sprintf(etc,"etc%c%s",mysep,emuopt.osname);
 //   printf("ETC is now %s\n",etc);
       
- //  printf("GETT: %s->%s<-\n",cfgfile,emuver);
-   sprintf(cfgfile,"%s%c%s%s%cemu_%s.cfg",basedir,mysep,imenu.sysbase,etc,mysep,emuver);
+  // Mew -- attempt to load alternate profiles
+   if(imenu.profile == 0 ) {
+      sprintf(cfgfile,"%s%c%s%s%cemu_%s.cfg",basedir,mysep,imenu.sysbase,etc,mysep,emuver);
+   } else {
+      sprintf(cfgfile,"%s%c%s%s%cemu_%s_prf%d.cfg",basedir,mysep,imenu.sysbase,etc,mysep,emuver,imenu.profile);	
+   }
 #ifdef DEBUG
    printf("TRYING version-specifc CFG File: %s\n",cfgfile);
 #endif
    if(file_exists(cfgfile)) {
       mod_loadcfg(cfgfile);
    } else {
-      sprintf(cfgfile,"%s%c%s%s%cemu_%s.cfg",basedir,mysep,imenu.sysbase,etc,mysep,imenu.emulator);
+      // Fallback, should it default to alternate profile or main?
+      if(imenu.profile == 0 )
+	sprintf(cfgfile,"%s%c%s%s%cemu_%s.cfg",basedir,mysep,imenu.sysbase,etc,mysep,imenu.emulator);
+      else 
+	sprintf(cfgfile,"%s%c%s%s%cemu_%s_prf%d.cfg",basedir,mysep,imenu.sysbase,etc,mysep,imenu.emulator,imenu.profile);
+      
 #ifdef DEBUG
       printf("TRYING CFG File: %s\n",cfgfile);
 #endif
@@ -1370,13 +1388,18 @@ int mod_getbintype(char *btype) {
 }
 
 int bin2disk() {
+   // This is used to put loose .bin files onto (xfd) disk images for 
+   // emulators that can't load .bins directly.  Currently that means any 
+   // emulator EXCEPT atari 800
+   // 
+   // New: dosdisk.xfd needs to be removed prior to running this
    char diskzip[20], util[20],fpath[120],cmd[200],tmpp[120];
    hss_index(diskzip,emuopt.cmd_patt,1,':');
    hss_index(util,emuopt.cmd_patt,2,':');
-   sprintf(tmpp,"%s%cetc%c%s",imenu.sysbase,mysep,mysep,diskzip);
+   sprintf(tmpp,"%s%c%s%cetc%c%s",basedir,mysep,imenu.sysbase,mysep,mysep,diskzip);
    strcpy(fpath,emuopt.fqrom);
    dfixsep2(emuopt.fqrom,tmpp);
-   dealwithzip();
+   dealwithzip(OVERWRITE);
    if(strcmp(util,"xfd_write")==0) {
       dfixsep2(tmpp,"tools/xfd/xfd_write",1);
       sprintf(cmd,"%s %s AUTORUN.SYS <%s",tmpp,arc[0].name,fpath);
@@ -1425,7 +1448,7 @@ int process_cmd(char *cmd) {
    
    if(strcmp(cmd,"CMDnewdisk")==0) {
       printf("Create new disk\n");
-      dealwithzip();
+      dealwithzip(NO_OVERWRITE);
       emu_basename(tmpp,arc[0].name);
       hss_index(ext,tmpp,1,'.');
       for(nd=1;nd<12;nd++) {
@@ -1508,7 +1531,7 @@ int emumodule_computer() {
    
    if(strcmp(emuopt.bintype,"zip")==0) {
       didcp=1;
-      dealwithzip();
+      dealwithzip(NO_OVERWRITE);
       // Disk is sorta assumed, this is to deal with other things that may
       // be in the zip
 //      printf("testtttt: %s\n",arc[0].type);
@@ -1520,7 +1543,7 @@ int emumodule_computer() {
    
    if(strcmp(emuopt.bintype,"dzip")==0) {
       if (emuopt.cplocal=='Y') { 
-	 dealwithzip();
+	 dealwithzip(NO_OVERWRITE);
 	 if(arc[0].inserted==1) {
 	    // Best practice?   if we change the type to zip, we can
 	    // take advantage of features like multiple disks

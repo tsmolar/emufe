@@ -51,6 +51,7 @@ typedef struct menuinfo_t {
    char title[44];
    int no_launch;
    int autosel;
+   int profile;
 } menuinfo_t;
 
 typedef struct env_t {
