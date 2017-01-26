@@ -516,6 +516,13 @@ int load_rc(char *filen) {
 /*	    printf("textbgg=%c %c\n",value[2], value[3]); */
 /*	    printf("textbgg=%d %d %d\n",textbgr, textbgg, textbgb);  */
 	 }
+	 if(strncmp(key, "TEXTDS", 6)==0) {
+	    // text description color
+	    rc.txdesc_r=hextod(value[0],value[1]);
+	    rc.txdesc_g=hextod(value[2],value[3]);
+	    rc.txdesc_b=hextod(value[4],value[5]);
+/*	    printf("textbgg=%d %d %d\n",textfgr, textfgg, textfgb);  */
+	 }
 	 if(strncmp(key, "TEXTFG", 6)==0) {
 	    textfgr=hextod(value[0],value[1]);
 	    textfgg=hextod(value[2],value[3]);

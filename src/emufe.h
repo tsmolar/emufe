@@ -36,10 +36,12 @@ typedef struct prop_t {
   int pb_x, pb_y, pb_w, pb_h, pb_x2, pb_y2; // pic box                         
   int db_x, db_y, db_w, db_h, db_x2, db_y2; // desc box                                      
   int font_w, font_h;  // these should be in the font lib
+  int txdesc_r,txdesc_g,txdesc_b;
 } prop_t;
 
 typedef struct menuinfo_t {
    int mode;
+   int level;
    int noexec;
    char system[20];
    char sysbase[40];

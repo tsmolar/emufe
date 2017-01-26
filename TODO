@@ -19,6 +19,9 @@ Open Issues:
      ** Seems like every screenshot that's <320 on 2600 fails, and one
         at 320 that is too tall.  Don't know why it can't upscale
 	screenshots but can upscale box scans.  Seems like an SDL bug
+ 17. When in full screen mode, emufe doesn't recover properly when
+     switching back from text or windowed.   Find out how to switch from
+     full_screen to windowed cleanly
 
 Fixed issues:
 FX1. Keyboard navigation doesn't work (key mapping issue?)

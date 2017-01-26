@@ -520,7 +520,8 @@ void show_desc(char *desc) {
 	   break;
 //	 printf("desc: %s\n",line);
 //	 show_string(rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line);
-	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
+//	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(rc.txdesc_r,rc.txdesc_g,rc.txdesc_b),-1,-1);
       }
       fclose(fp);
 //      fnt_setactive(LoadedFont);
@@ -742,8 +743,8 @@ void settxtmode() {
    // if using GFX_TEXT causes trouble, use GFX_AUTODETECT_WINDOWED to
    // put this app into a window
       
-//      w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
-      w=set_gfx_mode(GFX_TEXT,usex,usey,0,0);
+      w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
+//      w=set_gfx_mode(GFX_TEXT,usex,usey,0,0);
 #endif
    }
    in_gfxmode=0;
@@ -753,7 +754,7 @@ void setgfxmode() {
    int w=0;
    
 #ifdef DEBUG
-   sprintf(debugtxt,"setgfxmode() fullscr=%c  usex=%d  usey=%d\n",fullscr,usex,usey);
+   sprintf(debugtxt,"setgfxmode() fullscr=%c  usex=%d  usey=%d, in_gfxmode:%d\n",fullscr,usex,usey,in_gfxmode);
    debug(3,debugtxt);
 #endif
    if(in_gfxmode==0) {
@@ -1889,7 +1890,17 @@ int main(int argc, char* argv[]) {
 	    menu_hlight(index,slc);
 	 }
 
-	 if(keyp==KEY_ENTER || keyp==KEY_ENTER_PAD) {
+	 if(keyp==KEY_LEFT) {
+	    // hand left key as back, except at top level
+	    keyp=KEY_ESC;
+	    for(tmpc=0;tmpc<8;tmpc++){
+	       if(menu[tmpc].type=='u')
+		 keyp=KEY_ENTER;
+	    }
+	 }
+	 
+	 
+	 if(keyp==KEY_ENTER || keyp==KEY_ENTER_PAD || keyp==KEY_RIGHT) {
 	    cdclock=0;
 	    type=menu[slc].type;
 #ifdef DEBUG

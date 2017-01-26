@@ -1360,6 +1360,7 @@ int mod_exportvars() {
 //	    printf("env_setxp: %s=%s\n",var,value);
 #ifndef WIN32
 	    // how do you do this in windows?
+	    printf("SETENV: setenv(%s,%s,1)\n",var,value);
 	    setenv(var,value,1);
 #endif
 	    break;
