@@ -32,6 +32,7 @@ SDL_Renderer *sdlRenderer;
 #define GFX_AUTODETECT_FULLSCREEN 2
 #define GFX_SAFE 4
 #define GFX_TEXT 8
+#define GFX_HIDE 16
 
 /* Mouse */
 int mouse_x, mouse_y, mouse_z, mouse_b;

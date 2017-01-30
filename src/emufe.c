@@ -80,9 +80,18 @@ menudisp=0;
 
 void debug(int level,char *text) {
    // log debugging in a way that can be switched off at ru
+   // Should switch to new macro
    if (level <= DEBUG_LEVEL)
-     printf("log(%d): %s\n",level,text);
+     printf("XLOG(%d): %s\n",level,text);
 }
+
+// debug print macro
+#ifdef DEBUG
+//# define LOG(level, x) ( level <= DEBUG_LEVEL ) ? 0 : printf x
+# define LOG(level, x) do { if ( level <= DEBUG_LEVEL ) { printf("log(%d): ",level); printf x;} } while(0)
+#else
+# define LOG(level, x)
+#endif
 
 int st_txt_col(char etype) {
    /* Return menu txt color based on entry type,  colors can eventually
@@ -176,12 +185,11 @@ int menu_hlight(int index, int slct) {
    set_font_fcolor(textsdr,textsdg,textsdb);
 /*   set_font_bcolor(0,0,0); */
    set_font_bcolor(texthlr,texthlg,texthlb);
-//   printf("VONG: fcolor: %d,%d,%d\n",textsdr,textsdg,textsdb);
-//   printf("VONG: bcolor: %d,%d,%d\n",texthlr,texthlg,texthlb);
-//   printf("VONG: mk:%ld\n",makecol(texthlr,texthlg,texthlb));
    scare_mouse();
 //   solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
 //   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
+//   
+   
    fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),fnbgcol,-1);
    rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
 //   rect(screen,(rc.mb_x)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+60)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
@@ -461,7 +469,10 @@ void show_desc2(char *desc) {
 // word wrap
              strcat(nxline,line);
              desc_wrapa(line,nxline,box_cw);
-      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
+//      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
+//           shadow
+      	     fnt_print_string(screen,rc.db_x+5+rx0,(rc.db_y-14)+(lineno*16)+1+ry0,line,makecol(22,22,22),-1,-1);
+      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(texthlr,texthlg,texthlb),-1,-1);
              desc_wrapb(line,nxline,box_cw);
 	     strcpy(nxline,line);
 
@@ -547,11 +558,11 @@ int AddPicExt(char *outpath, char *inpath) {
    for(i=0;i<c;i++) {
       hss_index(ext, extlist, i,',');
       sprintf(testpath, "%s.%s", inpath, ext);
-      printf("JIO: testing path: %s\n",testpath);
+      LOG(1, ("JIO: testing path: %s\n",testpath));
       if (fileio_file_exists(testpath)) {
 	 strcpy(outpath,testpath);
 	 rv=0;
-	 printf("JIO: selected: %s\n",testpath);
+	 LOG(1, ("JIO: selected: %s\n",testpath));
 	 break;
       }
       if(rv!=0) strcpy(outpath,"null");
@@ -693,11 +704,10 @@ int load_menu(char *lmenu) {
    
    menulength=i-2;
    fclose(fp);
-#ifdef DEBUG
-   debug(3,"done\n");
-   printf(debugtxt,"menulength: %d\n",menulength);
-   debug(3,debugtxt);
-#endif
+
+   LOG(3,("done\n"));
+   LOG(3,(debugtxt,"menulength: %d\n",menulength));
+
    return i-2;
 }
 
@@ -838,28 +848,28 @@ init() {
    // init font here
    fnt_init();
 #ifdef BLITFONT
-printf("BLITFONT status: enabled\n");
-   printf("blitfont.font.load\n");
+   LOG(3, ("BLITFONT status: enabled\n"));
+   LOG(3, ("blitfont.font.load\n"));
    if(strncmp(tfontbmp, "na", 2) == 0)
      font_load(tfont);
    else
      bmp_font_load(tfontbmp);
 #else
-printf("BLITFONT status: disabled\n");
+   LOG(3, ("BLITFONT status: disabled\n"));
 # ifdef USE_FREETYPE
    if(strncmp(rc.ttfont, "na", 2) != 0) {
      fnt_destroy(myttf);
      sprintf(fullpath,"%s%c%s",fontdir,mysep,rc.ttfont);
-printf("ttf.font.load\n");
+      LOG(3,("ttf.font.load\n"));
       myttf=fnt_loadfont(fullpath,TTF);
- printf("ttf.font.load done\n");
+      LOG(3, ("ttf.font.load done\n"));
       
       fnt_setactive(myttf);
       myttf->scale_w=12; myttf->scale_h=16;
    } else {
      fnt_destroy(LoadedFont);
      sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
-printf("bitmap.font.load\n");
+      LOG(3, ("bitmap.font.load\n"));
      LoadedFont=fnt_loadfont(fullpath,BIOS_8X16);
      fnt_setactive(LoadedFont);
    }
@@ -872,8 +882,7 @@ printf("bitmap.font.load\n");
    debug(3,debugtxt);
 #  endif
    // so font_load is messing up descbox!!!
-   printf("afnt loading: %s\n",fullpath);
-printf("bitmap.font.load (no freetype)\n");
+   LOG(3, ("bitmap.font.load (no freetype)\n"));
    font_load(fullpath);
 # endif
 #endif
@@ -1003,9 +1012,6 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     new_w=new_w - (imgbx[i].mgn*2);
 	     new_h=new_h - (imgbx[i].mgn*2);
 
-//	     printf("CC0:----------------------\n");
-//	     printf("CC0: bitmap->w=%d   bitmap->h=%d\n",bitmap->w,bitmap->h);
-//	     printf("CC0: new_w=%d   new_h=%d\n",new_w,new_h);
 	     stretch_blit(bitmap,screen,0,0,bitmap->w,bitmap->h,dsx,dsy,new_w,new_h);
 	     //	   sc_bitmap=sa_scale_bm(bitmap,new_w,new_h);
 	     //	   blit(sc_bitmap,screen,0,0,dsx,dsy,sc_bitmap->w,sc_bitmap->h);
@@ -1084,7 +1090,7 @@ printf("picname (jk) boxtype(%d) enabled:%d\n",i,imgbx[i].enabled);
         dsx=((imgbx[i].w-sc_bitmap->w)/2)+imgbx[i].x+rx0;
         dsy=((imgbx[i].h-sc_bitmap->h)/2)+imgbx[i].y+ry0;
 
-	printf("loaded bitmap\n");
+	LOG(2, ("loaded bitmap\n"));
         blit(sc_bitmap,screen,0,0,dsx,dsy,sc_bitmap->w,sc_bitmap->h);
         if(sc_bitmap==bitmap) 
 	  sc_bitmap=NULL;
@@ -1894,8 +1900,14 @@ int main(int argc, char* argv[]) {
 	    // hand left key as back, except at top level
 	    keyp=KEY_ESC;
 	    for(tmpc=0;tmpc<8;tmpc++){
-	       if(menu[tmpc].type=='u')
-		 keyp=KEY_ENTER;
+	       // if there is a back function in this menu
+	       // change to enter key and move menu to the
+	       // u back function
+	       if(menu[tmpc].type=='u') {
+		  keyp=KEY_ENTER;
+		  slc=tmpc;
+		  break;
+	       }
 	    }
 	 }
 	 
@@ -1951,7 +1963,7 @@ int main(int argc, char* argv[]) {
                menu_hlight(index,slc);
 	    }
 	    
-	    if( type=='u' ) {
+	    if( type=='u' && keyp != KEY_RIGHT ) {
 	       sprintf(usemenu,"index.menu");
 	       
 	       if(strlen(dirname)==0) {

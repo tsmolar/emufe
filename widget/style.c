@@ -56,13 +56,16 @@ style_rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int color,int ba) {
 #endif
 
    br=getr(color); bg=getg(color); bb=getb(color);
-   printf("I am called with trans:%d  red:%d\n",ba,br);
+   printf("NEW: I am called with trans:%d  red:%d\n",ba,br);
    if(ba==255 || bmp!=screen) {
-      printf("Do it the old way!\n");
+      printf("NEW: Do it the old way!\n");
       rectfill(bmp, x1, y1, x2, y2, makecol(br,bg,bb));
    } else {
+      printf("NEW: Do it the new way!\n");
 #ifdef USESDL
+# ifdef SDL1
       if(SDL_LockSurface(screen) < 0) return;
+# endif
 #endif
       sa=255-ba;
       
@@ -77,13 +80,13 @@ style_rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int color,int ba) {
 	    nb=(((sb*sa)+(bb*ba))/255);
 	    putpixel(screen,x,y,makecol(nr,ng,nb));
 //	    if(nr>255)
-//	      printf("uhoh!  %d + %d\n",sr,br);
+//	      printf("NEW uhoh!  %d + %d\n",sr,br);
 	 }
       }
       
 #ifdef USESDL
-      SDL_UnlockSurface(screen);
 # ifdef SDL1
+      SDL_UnlockSurface(screen);
       SDL_UpdateRect(screen,x1,y1,(x2-x1),(y2-y1));
 # endif
 # ifdef SDL2
@@ -91,6 +94,7 @@ style_rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int color,int ba) {
       srect.y = y1;
       srect.w = x2-x1;
       srect.h = y2-y1;
+      printf("NEW RECT:  %d,%d - %d,%d\n",srect.x, srect.y, srect.w, srect.h);
       SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
       SDL_RenderPresent(sdlRenderer);
 # endif

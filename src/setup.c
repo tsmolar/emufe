@@ -789,6 +789,7 @@ int run_setup(char *n_setup) {
       swin.startx=sx;
       swin.starty=sy;
       new_window(sx,sy,sx+swin.width,sy+swin.height);
+      printf("New WINdow: %d,%d %d,%d\n", sx, sy, sx+swin.width, sy+swin.height); 
       gfx_windecor(sx,sy,swin.width,swin.height,makecol(182,170,170));
       
       for(i=0;i<swin.numlines;i++) {
@@ -961,6 +962,9 @@ int setup_go() {
    int didx=0,i,sflag, iflag=0;
    FILE *fp, *fpw;
 
+#ifdef SDL2
+   SA_AUTOUPDATE=1;
+#endif
    printf("SETUP: setup_go\n");
 //   setup_getlocalcfgname(lc);
    setup_getflashcfgname(lc);
@@ -1063,4 +1067,7 @@ int setup_go() {
 	 fileio_mv(gc,lc);
       }
    }
+#ifdef SDL2
+   SA_AUTOUPDATE=1;
+#endif
 }

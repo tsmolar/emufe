@@ -676,14 +676,21 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 
    switch(card) {
 #ifdef SDL2
+      // ideally this should use SDL_WINDOW_FULLSCREEN_DESKTOP instead
+      // of SDL_WINDOW_FULLSCREEN,  but it can't seem to switch back into
+      // fullscreen after exiting emulators when I use that
     case GFX_AUTODETECT_WINDOWED:
       sdlflag=SDL_WINDOW_SHOWN; break;
+    case GFX_HIDE:
+      sdlflag=SDL_WINDOW_HIDDEN; break;
     case GFX_AUTODETECT:
-      sdlflag=SDL_WINDOW_FULLSCREEN_DESKTOP; break;
+      sdlflag=SDL_WINDOW_FULLSCREEN; break;
     case GFX_AUTODETECT_FULLSCREEN:
-      sdlflag=SDL_WINDOW_FULLSCREEN_DESKTOP; break;
+      sdlflag=SDL_WINDOW_FULLSCREEN; break;
 #else
     case GFX_AUTODETECT_WINDOWED:
+      sdlflag=SDL_ANYFORMAT|SDL_DOUBLEBUF; break;
+    case GFX_HIDE:
       sdlflag=SDL_ANYFORMAT|SDL_DOUBLEBUF; break;
     case GFX_AUTODETECT:
       sdlflag=SDL_ANYFORMAT; break;
