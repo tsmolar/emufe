@@ -190,7 +190,10 @@ int menu_hlight(int index, int slct) {
 //   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
 //   
    
-   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),fnbgcol,-1);
+   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,
+	   (rc.mb_x+2)+rc.mb_w-4+rx0,(rc.mb_y)+2+(offset*rc.font_h)+ry0,fnbgcol);
+// fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),fnbgcol,-1);
+   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),-1,-1);
    rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
 //   rect(screen,(rc.mb_x)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+60)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
 //printf("VONG: pos %d,%d,%d,%d\n",rc.mb_x+2,rc.mb_y-13+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0);
