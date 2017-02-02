@@ -290,6 +290,7 @@ int dialog_openselect(Widget *w, int x, int y, int m) {
 	 }
       }
       rest(0);
+      s2a_flip(screen);
       event_loop(JUST_ONCE);
       kbd_loop(JUST_ONCE);
    }
@@ -886,6 +887,7 @@ printf("ERRG: %s %s\n",swin.widget[i].text,nw->id);
       if(wintype==WDG_WIN_FIXED) {
 	 while(swin.active==1) {
 	    rest(0);
+	    s2a_flip(screen);
 	    event_loop(JUST_ONCE);
 	    kbd_loop(JUST_ONCE);
 	 }

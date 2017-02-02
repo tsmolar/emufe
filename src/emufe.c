@@ -1771,6 +1771,7 @@ int main(int argc, char* argv[]) {
 	 if(keyp==KEY_F2) {
 //	    run_setup("setup1");
 	    setup_go();
+//	    setup_test();
 	 }
 	 if(keyp==KEY_F11) {
 	    if(fullscr=='n') {
@@ -2013,8 +2014,8 @@ int main(int argc, char* argv[]) {
 		 display_menu(index);
 		 menu_hlight(index,slc);
 	      }
-	    if( type=='N' )
-	      setup_go();
+//	    if( type=='N' )
+//	      setup_go();
 	    if( type=='s' )
 	      {
 	       if(por==0) {

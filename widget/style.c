@@ -68,6 +68,8 @@ style_rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int color,int ba) {
 # endif
 #endif
       sa=255-ba;
+
+      rectfill(screen, x1, y1, x2, y2, makecol(br,bg,bb));
       
       for(y=y1;y<=y2;y++) {
 	 for(x=x1;x<=x2;x++) {
@@ -116,7 +118,9 @@ void style_hline(BITMAP *bmp, int x1, int y, int x2, int color,int ba) {
       hline(bmp,x1,y,x2,makecol(br,bg,bb));
    } else {
 #ifdef USESDL
+# ifdef SDL1
       if(SDL_LockSurface(screen) < 0) return;
+# endif
 #endif
       
    sa=255-ba;
@@ -133,8 +137,8 @@ void style_hline(BITMAP *bmp, int x1, int y, int x2, int color,int ba) {
    }
      
 #ifdef USESDL
-   SDL_UnlockSurface(screen);
 # ifdef SDL1
+   SDL_UnlockSurface(screen);
    SDL_UpdateRect(screen,x1,y,(x2-x1),y);
 # endif
 # ifdef SDL2
@@ -163,7 +167,9 @@ void style_vline(BITMAP *bmp, int x, int y1, int y2, int color,int ba) {
       vline(bmp,x,y1,y2,makecol(br,bg,bb));
    } else {
 #ifdef USESDL
+# ifdef SDL1
    if(SDL_LockSurface(screen) < 0) return;
+# endif
 #endif
 
    sa=255-ba;
@@ -180,8 +186,8 @@ void style_vline(BITMAP *bmp, int x, int y1, int y2, int color,int ba) {
    }
    
 #ifdef USESDL
-   SDL_UnlockSurface(screen);
 # ifdef SDL1
+   SDL_UnlockSurface(screen);
    SDL_UpdateRect(screen,x,y1,x,(y2-y1));
 # endif
 # ifdef SDL2

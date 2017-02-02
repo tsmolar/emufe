@@ -262,6 +262,7 @@ int wcb_openselect(Widget *w, int x, int y, int m) {
 	    li=ci;
 	 }
       }
+      s2a_flip(screen);
       event_loop(JUST_ONCE);
       kbd_loop(JUST_ONCE);
    }
@@ -414,6 +415,7 @@ int gfx_alert(char *text,int k1, char *b1,int k2, char *b2,int k3,char *b3) {
 #ifdef GFXBITMAP
    masked_blit(widgetbmp,screen,64,0,x+8,y+17+tyoff,32,32);
 #endif
+   s2a_flip(screen);
    while(alert_button==0) {
       event_loop(JUST_ONCE);
       kbd_loop(JUST_ONCE);
@@ -481,7 +483,7 @@ int setup_getflashcfgname(char *cfgname) {
 
    printf("SETUP: setup_getflashcfgname\n");
    sprintf(cfgname,"%s%cuser_config%ccfg1%cemucd.env",basedir,mysep,mysep,mysep);
-
+   printf("SETUP: cfgname=%s\n", cfgname);
 }
 
 int setup_getglobalcfgname(char *cfgname) {
@@ -509,13 +511,15 @@ int setup_envset(const char *var, const char *val) {
    int i,cc=0;
    //   printf("%s==%s\n",var,val);
 
-   printf("SETUP: setup_envset\n");
+   printf("SETUP: setup_envset:  var=%s  val=%s\n",var,val);
+   // printf("SETUP: setup_envset:  envcidx=%d  MAX_ENVC=%d\n",envcidx,MAX_ENVC);
 
    for(i=0;i<envcidx;i++) {
+      // printf(" envc[%d]: %s=%s\n",i,envc[i].var,envc[i].value);
       if(strcmp(envc[i].var,var)==0) {
 	 strcpy(envc[i].value,val);
 	 cc=1;
-	 // printf("set_env: replaced\n");
+	 printf("set_env: replaced var\n");
       }
    }
    if(cc==0) {
@@ -524,7 +528,7 @@ int setup_envset(const char *var, const char *val) {
       } else {
 	 strcpy(envc[envcidx].var,var);
 	 strcpy(envc[envcidx].value,val);
-	 // printf("set_env: added #%d\n",envidx);
+	 // printf("set_env: inserted  var %s=%s at %d\n",envc[envcidx].var,envc[envcidx].value,envcidx);
 	 envcidx++;
       }
    }
@@ -759,6 +763,7 @@ int run_setup(char *n_setup) {
    int sx,sy,i,sxo,syo,l;
    Widget *nw;
 
+//   fnt_print_string(screen,10,532,"run_setup()   ",makecol(255,255,25),makecol(50,30,0),-1);
    printf("in--setup: %s\n",n_setup);
    wdgst_default();
    setup_mystyle(); 
@@ -777,10 +782,12 @@ int run_setup(char *n_setup) {
    swin.width=swin.height=swin.numwidget=0;
 //   sprintf(fname,"c:\\cygwin\\usr\\src\\emufe-2.5.3\\src\\%s.def",n_setup);
    sprintf(fname,"%s%cset-up%c%s.def",basedir,mysep,mysep,n_setup);
-//   printf("Gloading %s\n",fname);
+   printf("Gloading %s\n",fname);
    if(!load_setup_fl(fname))
      return 0;
+   printf("SETUP: run_setup()  file loaded: %s\n", fname);
 //   printf("Width:%d  Height:%d\n",swin.width,swin.height);
+
    if(swin.width>0 && swin.height>0) {
       widget_init();
       widget_clear_level();
@@ -795,6 +802,7 @@ int run_setup(char *n_setup) {
       for(i=0;i<swin.numlines;i++) {
 	 setup_parse_line(swin.line[i].str,i);
 	 fnt_print_string(screen,sx,sy+((i+1)*16),swin.line[i].str,makecol(240,240,240),-1,-1);
+	 printf("-> %s\n",swin.line[i].str);
       }
       // render buttons
       for(i=0;i<swin.numwidget;i++) {
@@ -849,6 +857,7 @@ int run_setup(char *n_setup) {
       printf("about to loop\n");
 #endif
       while(swin.active==1) {
+	 s2a_flip(screen);
 	 event_loop(JUST_ONCE);
 	 kbd_loop(JUST_ONCE);
       }
@@ -858,6 +867,7 @@ int run_setup(char *n_setup) {
 //      close_window();
 //     Another pop_level problem, what a surprise!
       pop_level();
+      s2a_flip(screen);
 #ifdef DEBUG
       printf("swin.active = %d\n",swin.active);
 #endif
@@ -962,9 +972,9 @@ int setup_go() {
    int didx=0,i,sflag, iflag=0;
    FILE *fp, *fpw;
 
-#ifdef SDL2
-   SA_AUTOUPDATE=1;
-#endif
+//#ifdef SDL2
+//   SA_AUTOUPDATE=0;
+//#endif
    printf("SETUP: setup_go\n");
 //   setup_getlocalcfgname(lc);
    setup_getflashcfgname(lc);
@@ -972,7 +982,7 @@ int setup_go() {
      setup_envset("int_insttype","Update Configuration");
    else
      setup_envset("int_insttype","(Re)Install Configuration");
-   run_setup("start");
+     run_setup("start");
    if(swin.lastbutton==B_CANCEL)
      return 0;
    setup_envget(val,"int_insttype");
@@ -990,6 +1000,7 @@ int setup_go() {
       hss_index(val,dlist,didx,' ');
       printf("I AM GOING TO: %s\n",val);
       run_setup(val);
+      s2a_flip(screen);
       if(swin.lastbutton==B_ADV) {
 	 sprintf(var,"%s_adv",val);
 	 run_setup(var);
@@ -1067,7 +1078,11 @@ int setup_go() {
 	 fileio_mv(gc,lc);
       }
    }
-#ifdef SDL2
-   SA_AUTOUPDATE=1;
-#endif
+//#ifdef SDL2
+//   SA_AUTOUPDATE=1;
+//#endif
+}
+
+int setup_test() {
+   // something is screwy
 }

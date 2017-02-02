@@ -94,6 +94,6 @@ void wdg_setlevel(int,Widget *w);
 /* Globals */
 extern int just_popped;
 extern style_t activestyle;
-extern wflag_clickprocessed;
+extern int wflag_clickprocessed;
 extern BITMAP *drawbmp;
 #endif /* widget.h */

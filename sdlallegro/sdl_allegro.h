@@ -166,6 +166,18 @@ Uint16 key_shifts;
 #define KEY_PGDN SDLK_PAGEDOWN
 #define KEY_HOME SDLK_HOME
 #define KEY_END SDLK_END
+#define KEY_F1 SDLK_F1
+#define KEY_F2 SDLK_F2
+#define KEY_F3 SDLK_F3
+#define KEY_F4 SDLK_F4
+#define KEY_F5 SDLK_F5
+#define KEY_F6 SDLK_F6
+#define KEY_F7 SDLK_F7
+#define KEY_F8 SDLK_F8
+#define KEY_F9 SDLK_F9
+#define KEY_F10 SDLK_F10
+#define KEY_F11 SDLK_F11
+#define KEY_F12 SDLK_F12
 #else
 // Special handling because these don't work right in SDL2
 #define KEY_LEFT 276
@@ -176,6 +188,18 @@ Uint16 key_shifts;
 #define KEY_PGDN 281
 #define KEY_HOME 278
 #define KEY_END 279
+#define KEY_F1 282
+#define KEY_F2 283
+#define KEY_F3 284
+#define KEY_F4 285
+#define KEY_F5 286
+#define KEY_F6 287
+#define KEY_F7 288
+#define KEY_F8 289
+#define KEY_F9 290
+#define KEY_F10 291
+#define KEY_F11 292
+#define KEY_F12 293
 #endif
 // #define KEY_DOWN 274
 #define KEY_DEL SDLK_DELETE
@@ -215,18 +239,6 @@ Uint16 key_shifts;
 #define KEY_X SDLK_x
 #define KEY_Y SDLK_y
 #define KEY_Z SDLK_z
-#define KEY_F1 SDLK_F1
-#define KEY_F2 SDLK_F2
-#define KEY_F3 SDLK_F3
-#define KEY_F4 SDLK_F4
-#define KEY_F5 SDLK_F5
-#define KEY_F6 SDLK_F6
-#define KEY_F7 SDLK_F7
-#define KEY_F8 SDLK_F8
-#define KEY_F9 SDLK_F9
-#define KEY_F10 SDLK_F10
-#define KEY_F11 SDLK_F11
-#define KEY_F12 SDLK_F12
 
 /* Audio Related */
 #define DIGI_NONE 0

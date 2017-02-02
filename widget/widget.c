@@ -14,7 +14,7 @@
 #include <sys/types.h>
 #include "widget.h"
 
-#define WIDGETVER "2.1.8"
+#define WIDGETVER "2.1.9"
 
 #define in_box(x1,y1,x2,y2,mx,my) ((mx)>(x1) && (mx)<(x2) && (my)>(y1) && (my)<(y2))
 
@@ -91,7 +91,7 @@ void wdg_setlevel(int v,Widget* w) {
 //   printf("TAB NEXT WIDGET!!!!\n");
 //}
 
-scare_once() {
+void scare_once() {
    // For allegro, scares that come from different parts of the program 
    // Can make unscaring difficult, so we will only scare the mouse once
    if(is_scared==0) {
@@ -100,14 +100,14 @@ scare_once() {
    }
 }
 
-unscare_once() {
+void unscare_once() {
    if(is_scared) {
       unscare_mouse();
       is_scared=0;
    }
 }
 
-rem_pointer(int x, int y) {
+void rem_pointer(int x, int y) {
 //   printf("BEE: rem scare mouse:  BWAAAA!\n");
    scare_once();
 //   printf("wu1\n");
@@ -115,7 +115,7 @@ rem_pointer(int x, int y) {
 //   printf("wu2\n");
 }
 
-draw_pointer(int x, int y) {
+void draw_pointer(int x, int y) {
 //   printf("BEE: restore mouse:\n");
    unscare_once();
    wdg_hilight(0);
@@ -127,26 +127,26 @@ void widget_setbmp(BITMAP *newbmp) {
 
 void widget_init() /* Initializes the widget library */
 {
-//	printf("Initializing Widget library v. %s...\n",WIDGETVER);
+   printf("Initializing Widget library v. %s...\n",WIDGETVER);
    wdgst_default();
    drawbmp=screen;
    // only init once
    if(curr_level<0) {
-      // printf("about to push, curr level=%d\n",curr_level);
+      printf("about to push, curr level=%d\n",curr_level);
       push_level(0,0,0,0);
-      // printf("widget_init(): curr level: %d\n",curr_level);
+      printf("widget_init(): curr level: %d\n",curr_level);
    }
 }
 
 int widget_clear_level() {
-//   printf("widget_clear_level: about to pop \n");
+   printf("widget_clear_level: about to pop \n");
    pop_level();
-//   printf("pop ok\n");
+   printf("pop ok\n");
    push_level(0,0,0,0);
-//   printf("push ok\n");
+   printf("push ok\n");
 }
 
-wdg_adjust(int id, int ax, int ay) {
+void wdg_adjust(int id, int ax, int ay) {
 /*  This is for when the screen gets resized, and buttons need to
  * be moved.   Can accept an ID for special processing */
    
@@ -303,7 +303,7 @@ void wdg_destroy(Widget *w) {
 }
 
 
-wdg_scanlist() {
+void wdg_scanlist() {
    // for debugging widget linked list
    Widget *w1;
    
@@ -316,7 +316,7 @@ wdg_scanlist() {
    printf("------------\n");
 }
 
-wdg_tree_close(Widget *win) {
+void wdg_tree_close(Widget *win) {
    Widget *w1,*w2;
    
    wdg_scanlist();

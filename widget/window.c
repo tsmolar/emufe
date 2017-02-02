@@ -31,6 +31,7 @@ void style_newwindow(BITMAP *wn,int x1, int y1, int x2, int y2) {
    c252=activestyle.window.bg;
    c253=activestyle.window.hl;
    al=activestyle.window.al;
+   
 //   if(wn==screen) printf("AAAAACLK\n");
    style_rectfill(wn,x1,y1,x2-1,y2-1,c252,al);
    printf("style_rectfill(wn,%d,%d,%d,%d,c252,al);\n",x1,y1,x2-1,y2-1);
@@ -163,7 +164,9 @@ int wdg_alert(char *text,char *b1,char *b2,char *b3) {
         style_hline(screen,x,y+height,x+width,makecol(24,24,24),255);
         style_vline(screen,x+width,y,y+height,makecol(24,24,24),255);
    // End Decor
+        s2a_flip(); // update screen
 	event_loop(HALT_ON_POP);
+        s2a_flip(); // update screen
 	return alert_button;
 }
 
