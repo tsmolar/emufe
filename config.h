@@ -80,7 +80,7 @@
 #define PACKAGE_NAME "emufe"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "emufe 3.2.0"
+#define PACKAGE_STRING "emufe 3.5.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "emufe"
@@ -89,13 +89,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.2.0"
+#define PACKAGE_VERSION "3.5.0"
 
 /* Define if using FreeType */
 /* #undef USE_FREETYPE */
 
 /* Version number of package */
-#define VERSION "3.2.0"
+#define VERSION "3.5.0"
 
 /* Define curl_free() as free() if our version of curl lacks curl_free. */
 /* #undef curl_free */

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "emufe.h"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -109,7 +110,7 @@ int emu_basename(char *paath, char *bin) {
    }
 }
 
-find_datadir(char *ddir, char *bin) {
+void find_datadir(char *ddir, char *bin) {
    char path[160],dirname[160];
 
    abs_dirname(path,bin);
@@ -135,17 +136,17 @@ find_datadir(char *ddir, char *bin) {
    //   if(getenv("CDROOT"))
    //     sprintf(ddir,"%s/",getenv("CDROOT"));
 #ifdef DEBUG
-   printf("find_datadir() ddir is now: %s cdroot is >%s<\n",ddir,cdroot);
+   LOG(4, ("find_datadir() ddir is now: %s cdroot is >%s<\n",ddir,cdroot));
 #endif
    if(strcmp(cdroot,"") != 0)
      sprintf(ddir,"%s/",cdroot);
 #ifdef DEBUG
-   printf("find_datadir() ddir is now+: %s \n",ddir);
+   LOG(4, ("find_datadir() ddir is now+: %s \n",ddir));
 #endif
    //     strcpy(ddir,getenv("CDROOT"));
 }
 
-getnxtpath(char *opath, char *ipath) {
+void getnxtpath(char *opath, char *ipath) {
    // experimental recursive path straightener
    int i,nsep=0, fsep=0;
    char front[30],back[90],combo[120],tcomp[30];
@@ -191,13 +192,12 @@ getnxtpath(char *opath, char *ipath) {
    }   
 }
       
-dfixsep2(char *opath, char *ipath, int setfq) {
+void dfixsep2(char *opath, char *ipath, int setfq) {
    int i,i2,nsep;
 //#ifdef WIN32
    char tdir[122],tcomp[30];
 //   basename(tempd,ipath);
 //   basename(tdir,ipath);
-//   printf("ipath: %s   tdir: %s\n",ipath,tdir);
 //   abs_dirname(tempd,ipath);
 //   sprintf(opath,"%s%c%s",tempd,mysep,tdir);
    // not yet
@@ -206,7 +206,7 @@ dfixsep2(char *opath, char *ipath, int setfq) {
    else
       strcpy(tdir,ipath);
 #ifdef DEBUG
-   printf("tdir is %s\n",tdir);
+   LOG(2, ("tdir is %s\n",tdir));
 #endif
    //#else
 //   strcpy(opath,ipath);
@@ -226,6 +226,6 @@ dfixsep2(char *opath, char *ipath, int setfq) {
    // experimental
    getnxtpath(opath,tdir);
 #ifdef DEBUG
-   printf("**** opath: %s %s\n",opath,tdir);
+   LOG(2, ("**** opath: %s %s\n",opath,tdir));
 #endif
 }

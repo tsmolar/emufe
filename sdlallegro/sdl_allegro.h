@@ -1,11 +1,19 @@
 #include "config.h"
-#define SDL_ALLEGRO_VERS_H "0.7.00"
+#define SDL_ALLEGRO_VERS_H "0.7.10"
 
 typedef SDL_Surface BITMAP;
 
 #ifdef HAVE_LIBSDL_MIXER
 #include"SDL_mixer.h"
 typedef Mix_Chunk SAMPLE;
+#endif
+
+#define SDLA_DBG_LEVEL 1
+// debug macro
+#ifdef DEBUG
+# define SDLALOG(level, x) do { if ( level <= SDLA_DBG_LEVEL ) { printf("SDLAlog(%d): ",level); printf x;} } while(0)
+#else
+# define SDLALOG(level, x)
 #endif
 
 /* This was copied from allegro.h */
@@ -79,6 +87,8 @@ int file_select_ex(const char *message, char *path, const char *ext, int size, i
 void set_window_title(const char *name);
 
 void rest(unsigned int itime);
+
+int s2a_flip(SDL_Surface* mysurface);
 
 // custom pcx functions
 int save_pcx_pf(FILE *pf, BITMAP *bm, RGB *pal);

@@ -11,7 +11,9 @@ dfilepath.o: dfilepath.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/bits/string.h /usr/include/bits/string2.h \
  /usr/include/endian.h /usr/include/bits/endian.h \
  /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
- /usr/include/stdlib.h emufe.h ../config.h
+ /usr/include/stdlib.h /usr/include/unistd.h \
+ /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
+ /usr/include/bits/confname.h /usr/include/getopt.h emufe.h ../config.h
 
 /usr/include/stdc-predef.h:
 
@@ -64,6 +66,16 @@ dfilepath.o: dfilepath.c /usr/include/stdc-predef.h /usr/include/stdio.h \
 /usr/include/bits/byteswap-16.h:
 
 /usr/include/stdlib.h:
+
+/usr/include/unistd.h:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/bits/environments.h:
+
+/usr/include/bits/confname.h:
+
+/usr/include/getopt.h:
 
 emufe.h:
 

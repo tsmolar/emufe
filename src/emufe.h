@@ -15,6 +15,16 @@ extern int rx0, ry0, usex, usey;
 extern char fullscr;
 extern int joy_enable;
 
+// debug level can be 0-5
+#define DEBUG_LEVEL 1
+
+// debug print macro
+#ifdef DEBUG
+# define LOG(level, x) do { if ( level <= DEBUG_LEVEL ) { printf("log(%d): ",level); printf x;} } while(0)
+#else
+# define LOG(level, x)
+#endif
+
 typedef struct crgba_t {
    int r,g,b,a;
    char enable;
@@ -88,3 +98,10 @@ extern imgbox_t imgbx[12];
 extern menuinfo_t imenu;
 extern prop_t rc;
 extern char cdroot[220];
+
+void draw_desc(int fg, int bg);
+void draw_imgbx(int boxno);
+void draw_menubox(int fg, int bg);
+void draw_title(int fg, int bg);
+void set_bg();
+int title(int x1,int y1,char *s);

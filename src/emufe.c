@@ -19,8 +19,6 @@
 
 /* #include <allegro/internal/aintern.h> */
 
-// debug level can be 0-5
-#define DEBUG_LEVEL 3
 
 BITMAP *bitmap, *descmap;
 BITMAP *defbmp;
@@ -84,14 +82,6 @@ void debug(int level,char *text) {
    if (level <= DEBUG_LEVEL)
      printf("XLOG(%d): %s\n",level,text);
 }
-
-// debug print macro
-#ifdef DEBUG
-//# define LOG(level, x) ( level <= DEBUG_LEVEL ) ? 0 : printf x
-# define LOG(level, x) do { if ( level <= DEBUG_LEVEL ) { printf("log(%d): ",level); printf x;} } while(0)
-#else
-# define LOG(level, x)
-#endif
 
 int st_txt_col(char etype) {
    /* Return menu txt color based on entry type,  colors can eventually
@@ -318,7 +308,6 @@ int display_menu(int index) {
 /*	 set_font_fcolor(80,64,16); */
 	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name,fnfgcol,-1,shdcol);
       }
-/*     printf("here:%d,%s\n",i,names[i]); */
    }   
 #ifdef USESDL
 //   gfx_sdlflip();
@@ -532,8 +521,6 @@ void show_desc(char *desc) {
 	 lineno++;
 	 if(lineno > 10)
 	   break;
-//	 printf("desc: %s\n",line);
-//	 show_string(rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line);
 //	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(rc.txdesc_r,rc.txdesc_g,rc.txdesc_b),-1,-1);
       }
@@ -561,11 +548,11 @@ int AddPicExt(char *outpath, char *inpath) {
    for(i=0;i<c;i++) {
       hss_index(ext, extlist, i,',');
       sprintf(testpath, "%s.%s", inpath, ext);
-      LOG(1, ("JIO: testing path: %s\n",testpath));
+      LOG(1, ("AddPicExt(): testing path: %s\n",testpath));
       if (fileio_file_exists(testpath)) {
 	 strcpy(outpath,testpath);
 	 rv=0;
-	 LOG(1, ("JIO: selected: %s\n",testpath));
+	 LOG(1, ("AddPicExt(): selected: %s\n",testpath));
 	 break;
       }
       if(rv!=0) strcpy(outpath,"null");
@@ -619,7 +606,6 @@ int load_menu(char *lmenu) {
       fgets(rom, 25, fp);
       sl=strlen(rom);
       rom[sl-1]='\0';
-/*      printf("2:rom: %s, %d\n",rom, sl); */
       if( type != ' ' ) {
 	 switch (type) {
 	  case 't':
@@ -811,18 +797,9 @@ init() {
    sprintf(fullpath,"%s%c%s",basedir,mysep,rcfilename);
 //   printf("xdescbox: %s\n",descbox);
    if(imenu.mode>=1) {env_clear(); load_settings(); 
-//      env_get(tmpstr,"EMUFEwide");
-//      if ( tmpstr[0] == 'y' || tmpstr[0] == 'Y') {
-//	 widescreen=1;
-//	 if(usex==640) usex=800;
-//	 minx=640;
-//	 // usex=minx=800;
-//	 rx0=(usex-minx)/2;
-//      }
       strcpy(tmpstr,"");
       env_get(tmpstr,"EMUFEres");
       if(strcmp(tmpstr,"")!=0) {
-//	 printf("SHICK::%s\n",tmpstr);
 	 hss_index(tstr2,tmpstr,0,'x');
 	 usex=atoi(tstr2);
 	 hss_index(tstr2,tmpstr,1,'x');
@@ -839,13 +816,11 @@ init() {
      load_rc(imenu.rc); 
    else
      load_rc(fullpath);
-//   printf("ydescbox: %s\n",descbox);
    load_dfltimg(defimg);  /* Load Default Image */
 
    setgfxmode();
    set_font_bcolor(0,0,0);
    set_font_fcolor(textfgr,textfgb,textfgg);
-//   printf("Setting font shadow to %d,%d,%d\n",shadowr,shadowg,shadowb);
    set_font_scolor(shadowr,shadowg,shadowb);
 
    // init font here
@@ -950,7 +925,7 @@ load_dfltimg(char *fname) {
    defbmp=load_bitmap(picname,p);
 } // load_dfltimg()
 
-do_imgbox_scale(int i, char *imgdir, char *iname) {
+int do_imgbox_scale(int i, char *imgdir, char *iname) {
   // Use this if scaling is enabled
   PALETTE p;
   char picname[350],picnoext[346];
@@ -1027,21 +1002,8 @@ do_imgbox_scale(int i, char *imgdir, char *iname) {
 		
 		sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
 		
-		//	      printf("XFMT: alpha: %d\n",(25500/(10000/imgbx[i].ovpct)));
-		// debug info follows for surfaces, uncomment to help debug
-		// sa_surface_info(screen, "screen");
-		//	      sa_surface_info(imgbx_ovl[i], "imgbx_ovl");
-		//	      sa_debug_info();
-		
-		//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, (25500/(10000/imgbx[i].ovpct)));
-		//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 128);
 		masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
 		sa_setalpha(imgbx_ovl[i], 255);
-		//	      printf("HEBLO?\n");
-		//	      printf("screen XFMT: %d\n",screen->format->format);
-		//	      printf("imgbx_bmp[] XFMT: %d\n",imgbx_ovl[i]->format->format);
-		
-		//	      SDL_SetAlpha(imgbx_ovl[i], SDL_SRCALPHA, 255);
 	     }
 	  } else {
 	   // no scaling
@@ -1068,12 +1030,12 @@ do_imgbox(int i, char *imgdir, char *iname) {
 
   get_palette(p);
 //  for(i=0;i<12;i++) {
-printf("picname (jk) boxtype(%d) enabled:%d\n",i,imgbx[i].enabled);
+   LOG(5, ("picname (jk) boxtype(%d) enabled:%d\n",i,imgbx[i].enabled));
     if(imgbx[i].enabled==1) {
        sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
        //sprintf(picnoext,"%s%c%s%s",imgdir,mysep,imgbx[i].pfx,iname);
        //AddPicExt(picname,picnoext);
-      printf("NEW: boxtype(%d) looking for picname:%s\n",i,picname);
+      LOG(5, ("NEW: boxtype(%d) looking for picname:%s\n",i,picname));
       bitmap=load_bitmap(picname,p);
       if(imgbx_bmp[i] && i!=B_KEYBOARD)
         masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
@@ -1112,32 +1074,6 @@ do_imgboxes(char *imgdir, char *iname) {
 //   do_imgbox(i, imgdir, iname);
    do_imgbox_scale(i, imgdir, iname);
 }
-
-//disp_image(char *fname) {
-//   PALETTE p;
-//   get_palette(p);
-//   bitmap=load_bitmap(fname,p);
-//#ifdef DEBUG
-//   printf("Loading Image: %s\n",fname);
-//   printf("DBG: after load_bit\n");
-//#endif
-//   if(bitmap) {
-//     blit(bitmap,screen,0,0,rc.pb_x+2+rx0,rc.pb_y+2+ry0,rc.pb_w,rc.pb_h);
-//     destroy_bitmap(bitmap);
-//   } else {
-//#ifdef DEBUG
-//      printf("Copying default image\n");
-//#endif
-//   if(defbmp) 
-//	blit(defbmp,screen,0,0,rc.pb_x+2+rx0,rc.pb_y+2+ry0,rc.pb_w,rc.pb_h);
-////	blit(defbmp,screen,0,0,366+rx0,98+ry0,240,148);
-//   }
-//   
-//	
-//#ifdef DEBUG
-//   printf("DBG: after blit\n");
-//#endif
-//}
 
 gradient(int x1, int y1, int x2, int y2) {
    int r,g,b,cy,rc;
@@ -1205,7 +1141,7 @@ comp_load(int x1, int y1, int x2, int y2, char *picname) {
    }   
 }
 
-draw_title(int fg, int bg) {
+void draw_title(int fg, int bg) {
    if(strncmp(titlebox, "default", 7)==0) {
       bbox(rc.bb_x+rx0, rc.bb_y+ry0, rc.bb_x2+rx0, rc.bb_y2+ry0, fg, bg);
    } else {
@@ -1286,7 +1222,7 @@ void draw_imgbx(int boxno) {
    }
 }
 
-draw_menubox(int fg, int bg) {
+void draw_menubox(int fg, int bg) {
    
    if(strncmp(menubox, "default", 7)==0) {
       bbox(rc.mb_x+rx0, rc.mb_y+ry0, rc.mb_x2+rx0, rc.mb_y2+ry0, fg, bg);
@@ -1315,7 +1251,7 @@ draw_menubox(int fg, int bg) {
    }
 }
 
-draw_desc(int fg, int bg) {
+void draw_desc(int fg, int bg) {
    if(strncmp(descbox, "default", 7)==0) {
       bbox(rc.db_x+rx0, rc.db_y+ry0, rc.db_x2+rx0, rc.db_y2+ry0, fg, bg);
       printf("drawdesc: %d,%d\n",rc.db_x2,rc.db_y2);
@@ -1331,21 +1267,21 @@ draw_desc(int fg, int bg) {
    }
 }
 
-updir_old(char *s) {
-   char *c;
+// void updir_old(char *s) {
+//    char *c;
+//
+//   c=strrchr(s,'/');
+//   c[0]='\0';
+//   c=strrchr(s,'/');
+//   if(!c) {
+//      s[0]='\0';
+//   } else {
+//      c[0]='/';
+//      c[1]='\0';
+//   }
+//}
 
-   c=strrchr(s,'/');
-   c[0]='\0';
-   c=strrchr(s,'/');
-   if(!c) {
-      s[0]='\0';
-   } else {
-      c[0]='/';
-      c[1]='\0';
-   }
-}
-
-updir(char *s) {
+void updir(char *s) {
    char *c;
 
    c=strrchr(s,mysep);
@@ -1359,7 +1295,7 @@ updir(char *s) {
    }
 }
 
-updir_safer(char *dirstr) {
+void updir_safer(char *dirstr) {
    char c[250];
    int i, sl=0;
    strcpy(c,dirstr);
@@ -1680,7 +1616,8 @@ int main(int argc, char* argv[]) {
 
       
       if (mouse_b & 1 && mouse_x > (rc.mb_x+rx0) && mouse_x < (rc.mb_x2+rx0) && my > (rc.mb_y+ry0) && my < (rc.mb_y2+ry0) && mp==0) {
-	 entidx=(my-100)/16;
+//	 entidx=(my-100)/16;
+	 entidx=(my-rc.mb_y+ry0)/16;
 	 if (entidx < (menuitems-index+1) )  {
 	    menu_uhlight(index,slc);
 	    pslc=slc;

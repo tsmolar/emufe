@@ -500,25 +500,11 @@ int poll_mouse() {
    for( i = 0; i<count;++i) {
       if(events[i].wheel.direction == SDL_MOUSEWHEEL_NORMAL)
 	{ mouse_z=mouse_z-events[i].wheel.y; }
-      printf("MOUSEZ=%d\n",mouse_z);
+      SDLALOG(3,("MOUSEZ=%d\n",mouse_z));
    }
    // Is this needed (to flush the buffer maybe?)
    // SDL_PeepEvents(events, num, SDL_GETEVENT, SDL_MOUSEWHEEL, SDL_MOUSEWHEEL );
 #endif
-   
-//   if(SDL_PollEvent(&event) && event.type==SDL_MOUSEBUTTONDOWN) {
-//      if(event.type!=SDL_MOUSEBUTTONDOWN && event.type!=SDL_MOUSEBUTTONUP) SDL_PushEvent(&event);
-//      // Mouse Wheel
-//      if (event.type==SDL_MOUSEBUTTONDOWN) {
-//	 if(event.button.button & SDL_BUTTON_WHEELUP)
-//	   mouse_z--;
-//	 if(event.button.button & SDL_BUTTON_WHEELDOWN)
-//	   mouse_z++;
-//      }
-////      if (event.type==SDL_MOUSEBUTTONUP)
-////	break;
-//}
-   //     printf("Mouse Button 1(left) is pressed.\n");
 }
 
 // Graphics Section
@@ -543,24 +529,18 @@ unsigned int makecol(int r, int g, int b) {
 
 unsigned int makecol16(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
-//   printf("16 breaks here? %d,%d,%d\n",r,g,b);
-//   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
 
 unsigned int makecol24(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
-//   printf("24 breaks here? %d,%d,%d\n",r,g,b);
-//   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
 
 unsigned int makecol32(Uint8 r, Uint8 g, Uint8 b) {
    Uint32 pixel;
-//   printf("32 breaks here? %d,%d,%d\n",r,g,b);
-//   printf("s->f,r,g,b=%d,%d,%d,%d\n",screen->format->BitsPerPixel,r,g,b);
    pixel=SDL_MapRGB(screen->format,r,g,b);
    return(pixel);
 }
@@ -568,21 +548,18 @@ unsigned int makecol32(Uint8 r, Uint8 g, Uint8 b) {
 unsigned int makeacol16(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
    Uint32 pixel;
    pixel=SDL_MapRGBA(screen->format,r,g,b,a);
-//   printf("returning %d\n",pixel);
    return(pixel);
 }
 
 unsigned int makeacol24(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
    Uint32 pixel;
    pixel=SDL_MapRGBA(screen->format,r,g,b,a);
-//   printf("returning %d\n",pixel);
    return(pixel);
 }
 
 unsigned int makeacol32(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
    Uint32 pixel;
    pixel=SDL_MapRGBA(screen->format,r,g,b,a);
-//   printf("returning %d\n",pixel);
    return(pixel);
 }
 
@@ -641,7 +618,7 @@ int s2a_flip(SDL_Surface* mysurface) {
 //   SDL_RenderClear(sdlRenderer);
    SDL_RenderCopy(sdlRenderer,TXscreen,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
-   printf("PRESENT!  s2a_flip()\n");
+   SDLALOG(2, ("s2a_flip() -> Render Present!\n"));
 #endif
    return(0);
 }
@@ -663,7 +640,7 @@ int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 
 //   SDL_RenderClear(sdlRenderer);  
    SDL_RenderCopy(sdlRenderer,mytexture,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
-   printf("PRESENT!  s2a_updaterect()\n");
+   SDLALOG(2, ("s2a_updaterect() Render Present\n"));
 #endif 
 
    return(0);
@@ -725,7 +702,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
    SDL_RenderClear(sdlRenderer);
    SDL_RenderPresent(sdlRenderer); // like SDL Flip?
-   printf("PRESENT!  set_gfx_mode()\n");
+   SDLALOG(2, ("set_gfx_mode() Render Present! \n"));
    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
    SDL_RenderSetLogicalSize(sdlRenderer, w, h);   
    // screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
@@ -854,7 +831,7 @@ SDL_Surface *create_bitmap(int width, int height) {
 //   // even thought Intel/AMD is little
 //   rmask = 0x00ff0000; gmask = 0x0000ff00; bmask = 0x000000ff; amask = 0xff000000;   
    
-   printf("SDL2 w:%d h:%d d:%d\n", width, height, sa_depth);
+   SDLALOG(3, ("SDL2 w:%d h:%d d:%d\n", width, height, sa_depth));
    new_surface = SDL_CreateRGBSurface(0,width,height,sa_depth,rmask,gmask,bmask,amask);
    // might need theis for compatability
    //   new_surface=SDL_ConvertSurface(xyz, const SDL_PixelFormat* fmt, 0);
@@ -908,7 +885,7 @@ int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy
 //	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
-	 printf("PRESENT!  blit() SAAU: %d\n",SA_AUTOUPDATE);
+	 SDLALOG(2, ("blit() RenderPresent!  SAAU: %d\n",SA_AUTOUPDATE));
 #endif
       }
    }
@@ -951,7 +928,7 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
 //	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&drect,&drect);
 	 SDL_RenderPresent(sdlRenderer);
-	 printf("PRESENT!  masked_blit()\n");
+	 SDLALOG(2, ("masked_blit() RenderPresent\n"));
 #endif
       }  
    }
@@ -985,8 +962,8 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    // uf is the factor to scale by
    nw=fow/uf;
    nh=foh/uf;
-   printf("CCX:original size: %f x %f\n",fow,foh);
-   printf("CCX:scale to:  %dx%d\n",nw,nh);
+   SDLALOG(4, ("sa_scale_bitmap() :original size: %f x %f\n",fow,foh));
+   SDLALOG(4, ("sa_scale_bitmap() :scale to:  %dx%d\n",nw,nh));
    newbm=create_bitmap(nw,nh);
    
    yf=0;
@@ -996,11 +973,8 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
        ox=xf;oy=yf;
 //       if(xf>nw) ox=nw;
 //       if(yf>nh) oy=nh;
-//printf ("x1\n");
        pc=getpixel(orgbm,ox,oy);
-//printf ("x2\n");
        SDL_GetRGB(pc,orgbm->format,&rrr,&ggg,&bbb);
-//printf ("x3\n");
 	
 	// I don't understand why upscaling (uf<1) reverses
 	// the red and blue pixels, but not always!
@@ -1010,11 +984,9 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
 	  putpixel(newbm,px,py,makecol(rrr,ggg,bbb));
 
        xf=xf+uf;
-//       printf("X4: %f\n",xf);
      }
      yf=yf+uf;
    }
-//printf("x5\n");
 #endif 
 #ifdef SDL2
    SDL_Rect src_r, dst_r;
@@ -1026,8 +998,8 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    dst_r.w=dw;
    dst_r.h=dh;
 
-   printf("CCX: original size: %d x %d\n",src_r.w,src_r.h);
-   printf("CCX: scale to:  %d x %d\n",dst_r.w,dst_r.h);
+   SDLALOG(3, ("sa_scale_bm: original size: %d x %d\n",src_r.w,src_r.h));
+   SDLALOG(3, ("sa_scale_bm: scale to:  %d x %d\n",dst_r.w,dst_r.h));
    newbm=create_bitmap(dst_r.w,dst_r.h);
    
    SDL_BlitScaled(orgbm, &src_r, newbm, &dst_r);
@@ -1053,7 +1025,6 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
    src_r.w = dst_w;
    src_r.h = dst_h;
 
-//   printf("CCA:  w:%d,  h:%d\n",dst_w,dst_h);
    newbm=sa_scale_bm(src, dst_w, dst_h);
    SDL_BlitSurface(newbm, &src_r, dst, &dst_r);
    destroy_bitmap(newbm);
@@ -1062,8 +1033,6 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
    src_r.w = src_w;
    src_r.h = src_h;
 
-//   printf("CCS:  x:%d  y:%d  w:%d,  h:%d\n",src_r.x,src_r.y,src_r.w,src_r.h);
-//   printf("CCD:  x:%d  y:%d  w:%d,  h:%d\n",dst_r.x,dst_r.y,dst_r.w,dst_r.h);
    SDL_BlitScaled(src,&src_r, dst, &dst_r);
 #endif
    
@@ -1077,7 +1046,7 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
 //	 SDL_RenderClear(sdlRenderer);
 	 SDL_RenderCopy(sdlRenderer,TXscreen,&dst_r,&dst_r);
 	 SDL_RenderPresent(sdlRenderer);
-	 printf("PRESENT!  stretch_blit()\n");
+	 SDLALOG(3, ("stretch_blit() RenderPresent!\n"));
 #endif
       }      
    }

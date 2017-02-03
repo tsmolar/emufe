@@ -34,7 +34,7 @@ void style_newwindow(BITMAP *wn,int x1, int y1, int x2, int y2) {
    
 //   if(wn==screen) printf("AAAAACLK\n");
    style_rectfill(wn,x1,y1,x2-1,y2-1,c252,al);
-   printf("style_rectfill(wn,%d,%d,%d,%d,c252,al);\n",x1,y1,x2-1,y2-1);
+//   printf("style_rectfill(wn,%d,%d,%d,%d,c252,al);\n",x1,y1,x2-1,y2-1);
    style_hline(wn,x1+1,y2,x2,c253,al);
    style_vline(wn,x2,y1+1,y2,c253,al);
 }
@@ -43,7 +43,7 @@ wdg_window_move(Widget *win,int x, int y) {
    win->x2=(win->x2-win->x1)+x;
    win->y2=(win->y2-win->y1)+y;
    win->x1=x; win->y1=y;
-   printf("Window moved to %d,%d\n",win->x1,win->y1);
+//   printf("Window moved to %d,%d\n",win->x1,win->y1);
 }
 
 wdg_window_refresh(Widget *win) {
@@ -82,7 +82,7 @@ Widget* widget_newwindow(int x1, int y1, int x2, int y2) {
    w->refresh=1;
    w->press=NULL;
    w->extra=wn;
-   printf("why crash?\n");
+//   printf("why crash?\n");
    strcpy(w->id,"WINF"); // id for floating window
 //   c252=activestyle.window.bg;
 //   c253=activestyle.window.hl;
@@ -164,9 +164,9 @@ int wdg_alert(char *text,char *b1,char *b2,char *b3) {
         style_hline(screen,x,y+height,x+width,makecol(24,24,24),255);
         style_vline(screen,x+width,y,y+height,makecol(24,24,24),255);
    // End Decor
-        s2a_flip(); // update screen
+        s2a_flip(screen); // update screen
 	event_loop(HALT_ON_POP);
-        s2a_flip(); // update screen
+        s2a_flip(screen); // update screen
 	return alert_button;
 }
 

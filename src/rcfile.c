@@ -8,6 +8,9 @@
 extern char mysep;
 extern char dirname[120];
 
+extern int env_get(char *val, const char *var);
+extern void dfixsep2(char *opath, char *ipath, int setfq);
+
 int hss_count(const char *ostr, const char del) {
    int rv=1,i;
    for(i=0;i<strlen(ostr);i++) {
@@ -153,7 +156,7 @@ int load_rc(char *filen) {
 	joy_enable=0;
    }
 #ifdef DEBUG
-   printf("!!!RC loading: %s\n", filen);
+   LOG(1, ("!!!RC loading: %s\n", filen));
 #endif
    if ((fp = fopen(filen,"rb"))==NULL)  {
       printf("Error opening rc file %s",filen);
@@ -171,13 +174,13 @@ int load_rc(char *filen) {
 	 v[0]=0;
 	 key=line;
 #ifdef DEBUG
-	 printf("* Processing Directive: %s\n", key);
+	 LOG(3, ("* Processing Directive: %s\n", key));
 #endif
 	 if(strncmp(key, "FONTDIR", 7)==0) {
 //	    strcpy(fontdir,value);
 	    dfixsep2(fontdir,value,1);
 #ifdef DEBUG
-	    printf("**fontdir is %s\n",fontdir);
+	    LOG(2, ("**fontdir is %s\n",fontdir));
 #endif
 	 }
 	 if(strncmp(key, "TTFNAME", 7)==0) {
@@ -218,8 +221,8 @@ int load_rc(char *filen) {
 	    sprintf(tmpstr,"%s%s",dirname,value);
 	    dfixsep2(theme,tmpstr,1);
 #ifdef DEBUG
-	    printf("\nff:%s  %s\n",tmpstr,value);
-	    printf("ff2:%s\n",theme);
+	    LOG(5, ("\nff:%s  %s\n",tmpstr,value));
+	    LOG(5, ("ff2:%s\n",theme));
 #endif
 //	    abs_dirname(theme,value);
 	    load_rc(theme);
@@ -254,7 +257,7 @@ int load_rc(char *filen) {
 	   rc.mb_h=atoi(tmpstr);
 	   rc.mb_x2=rc.mb_x+rc.mb_w;
 	   rc.mb_y2=rc.mb_y+rc.mb_h;
-	   printf("MENUXY  :  %d,%d,%d,%d\n",rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h);
+	   LOG(2, ("MENUXY  :  %d,%d,%d,%d\n",rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h));
 	 }
 	 if(strncmp(key, "DESCXY", 6)==0) {
 	   hss_index(tmpstr,value,0,',');
@@ -267,8 +270,8 @@ int load_rc(char *filen) {
 	   rc.db_h=atoi(tmpstr);
 	   rc.db_x2=rc.db_x+rc.db_w;
 	   rc.db_y2=rc.db_y+rc.db_h;
-	   printf("DESCXY  :  %d,%d,%d,%d : %d,%d\n",rc.db_x,rc.db_y,rc.db_w,rc.db_h,
-		  rc.db_x2,rc.db_y2);
+	   LOG(2, ("DESCXY  :  %d,%d,%d,%d : %d,%d\n",rc.db_x,rc.db_y,rc.db_w,rc.db_h,
+		  rc.db_x2,rc.db_y2));
 	 }
 	 if(strncmp(key, "BANRXY", 6)==0) {
 	   hss_index(tmpstr,value,0,',');
@@ -321,7 +324,7 @@ int load_rc(char *filen) {
 	 if(strncmp(key, "B_BOXSCAN_MG", 12)==0) {
 	    // new, margins!
 	    imgbx[B_BOXSCAN].mgn=atoi(value);
-	    printf("NWW: set margin to %d\n",imgbx[B_BOXSCAN].mgn);
+	    LOG(4, ("NWW: set margin to %d\n",imgbx[B_BOXSCAN].mgn));
 	 }
 	 if(strncmp(key, "B_BOXSCAN_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)
@@ -331,7 +334,7 @@ int load_rc(char *filen) {
 	    if(strcmp(value,"bars")==0)
 	      imgbx[B_BOXSCAN].masktype=2;
 #ifdef DEBUG
-	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_BOXSCAN].masktype);
+	    LOG(4, ("dbg: Masktype:%s %d\n",value,imgbx[B_BOXSCAN].masktype));
 #endif
 	 }
 
@@ -414,7 +417,7 @@ int load_rc(char *filen) {
 	    if(strcmp(value,"bars")==0)
 	      imgbx[B_SSHOT1].masktype=2;
 #ifdef DEBUG
-	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT1].masktype);
+	    LOG(4, ("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT1].masktype));
 #endif
 	 }
 	 if(strncmp(key, "B_SSHOT2_XY", 12)==0) {
@@ -451,7 +454,7 @@ int load_rc(char *filen) {
 	    if(strcmp(value,"bars")==0)
 	      imgbx[B_SSHOT2].masktype=2;
 #ifdef DEBUG
-	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT2].masktype);
+	    LOG(4, ("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT2].masktype));
 #endif
 	 }
 	 if(strncmp(key, "B_SSHOT3_XY", 12)==0) {
@@ -488,7 +491,7 @@ int load_rc(char *filen) {
 	    if(strcmp(value,"bars")==0)
 	      imgbx[B_SSHOT3].masktype=2;
 #ifdef DEBUG
-	    printf("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT3].masktype);
+	    LOG(4, ("dbg: Masktype:%s %d\n",value,imgbx[B_SSHOT3].masktype));
 #endif
 	 }
 
@@ -513,8 +516,6 @@ int load_rc(char *filen) {
 	    textbgr=hextod(value[0],value[1]);
 	    textbgg=hextod(value[2],value[3]);
 	    textbgb=hextod(value[4],value[5]);
-/*	    printf("textbgg=%c %c\n",value[2], value[3]); */
-/*	    printf("textbgg=%d %d %d\n",textbgr, textbgg, textbgb);  */
 	 }
 	 if(strncmp(key, "TEXTDS", 6)==0) {
 	    // text description color
@@ -589,7 +590,7 @@ int load_rc(char *filen) {
 	    }
 		 
 #ifdef DEBUG
-	    printf("Fullscreen mode: %c",fullscr);
+	    LOG(3, ("Fullscreen mode: %c",fullscr));
 #endif
 	 }
 	 if(strncmp(key, "MENUNAME", 8)==0) {
@@ -615,5 +616,5 @@ int load_rc(char *filen) {
    fclose(fp);
    if(strncmp(gthemedir, "na", 2) != 0)  
      strcpy(fontdir, gthemedir);
-   printf("$$ fontdir is %s  g:%s\n",fontdir,gthemedir);
+   LOG(3, ("$$ fontdir is %s  g:%s\n",fontdir,gthemedir));
 }
