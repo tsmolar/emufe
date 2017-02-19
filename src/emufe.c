@@ -996,15 +996,6 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     //	   destroy_bitmap(sc_bitmap);
 	     
 	     destroy_bitmap(bitmap);
-	     // draw overlay
-	     if(imgbx[i].ovpct>0) {
-		
-		
-		sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
-		
-		masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
-		sa_setalpha(imgbx_ovl[i], 255);
-	     }
 	  } else {
 	   // no scaling
 	     dsx=imgbx[i].x+rx0;
@@ -1012,6 +1003,13 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     blit(bitmap,screen,0,0,dsx,dsy,bitmap->w,bitmap->h);
 	     destroy_bitmap(bitmap);
 	  }
+	  // draw overlay
+	  if(imgbx[i].ovpct>0) {
+	     sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
+	     masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
+	     sa_setalpha(imgbx_ovl[i], 255);
+	  }	  
+	  
 #ifdef DEBUG
 	  debug(3,"do_imgbox_scale():loaded bitmap\n");
 #endif
@@ -1153,16 +1151,6 @@ void draw_title(int fg, int bg) {
    title(-1,-1,"Emufe");
 }
 
-// Deprecated 
-//draw_picbox(int fg, int bg) {
-//   
-//   if(strncmp(picbox, "default", 7)==0) {
-//      bbox(rc.pb_x+rx0, rc.pb_y+ry0, rc.pb_x2+rx0, rc.pb_y2+ry0, fg, bg);
-//   } else {
-//      comp_load(rc.pb_x,rc.pb_y,rc.pb_w,rc.pb_h,picbox);
-//   }
-//}
-
 void draw_imgbx(int boxno) {
    // load background bitmaps for the image boxes, and draw them
    int bgcol;
@@ -1266,20 +1254,6 @@ void draw_desc(int fg, int bg) {
 	blit(descmap,screen, 0,0,rc.db_x+rx0,rc.db_y+ry0,rc.db_w,rc.db_h);
    }
 }
-
-// void updir_old(char *s) {
-//    char *c;
-//
-//   c=strrchr(s,'/');
-//   c[0]='\0';
-//   c=strrchr(s,'/');
-//   if(!c) {
-//      s[0]='\0';
-//   } else {
-//      c[0]='/';
-//      c[1]='\0';
-//   }
-//}
 
 void updir(char *s) {
    char *c;
@@ -1641,19 +1615,7 @@ int main(int argc, char* argv[]) {
 	 }
 	 
       }
-//      if (mouse_b & 1 && mouse_x > (rc.mb_x+rx0) && mouse_x < (rc.mb_x2+rx0) && my > (rc.mb_y+ry0) && my < (rc.mb_y+16+ry0) && mp==0) {
-//	 /* This is basically the same as pushing the up arrow, so we
-//	  * may as well force the pushing of the up arrow */
-////	    simulate_keypress(21504);
-//	    simulate_keypress(KEY_UP << 8);
-//      }
-//
-//      if (mouse_b & 1 && mouse_x > (32+rx0) && mouse_x < (348+rx0) && my > (ry0+243) && my < (ry0+260) && mp==0) {
-//	 /* This is basically the same as pushing the down arrow, so we
-//	  * may as well force the pushing of the up arrow */
-////	    simulate_keypress(21760);
-//	    simulate_keypress(KEY_DOWN << 8);
-//      }
+
       if (mouse_b & 4 && mp==0) {
 	 /* Middle button simulates an enter key press */
 	   simulate_keypress(KEY_ENTER << 8);
