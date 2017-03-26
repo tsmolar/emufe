@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 
 #ifdef USESDL
 #include <SDL.h>
@@ -36,6 +37,9 @@ typedef struct emuopts_t {
    char usecfg;
    char cfgfile[60];
    char osname[20];
+   char cddir[160];
+   char prevdir[160];
+   char docd;
    int exec;
 } emuopts_t;
 
@@ -226,20 +230,16 @@ int cplocaldisk() {
 }
 
 int customcfg() {
+   
+   // If a custom config file needs to be created from a template, this
+   // will get called
+   
    char icfgfile[120], ocfgfile[120],lbi[200],lbo[200];
    int n;
    FILE *fi, *fo;
 
-//   n=hss_count(emuopt.cfgfile,mysep);
- //  printf("num seprs: %d\n",n);
-//   basename(lbo,emuopt.cfgfile);
-   //   if(strcmp(lbo,emuopt.cfgfile)==0)
-//  printf("WHATFIVES? %s\n",emuopt.cfgfile);
+printf("!!!CUST 1: %s\n",emuopt.cfgfile);
    if(hss_count(emuopt.cfgfile,mysep)==1) {
-//      printf("BBBBBAS: %s: in etc dir\n",emuopt.cfgfile);
-//      sprintf(icfgfile,"%s%c%setc%c%s",basedir,mysep,imenu.sysbase,mysep,emuopt.cfgfile);
-//  I'm not sure why we build the cfg file here, rather than doing the scanvar
-//      sprintf(ocfgfile,"%s%c%s",emuopt.diskloc,mysep,emuopt.cfgfile);
       strcpy(ocfgfile,"");
       cmd_scanvar(ocfgfile,"%CFGFILE%");
       sprintf(icfgfile,"%s%c%setc%c%s",basedir,mysep,imenu.sysbase,mysep,emuopt.osname);
@@ -248,19 +248,14 @@ int customcfg() {
       else
 	sprintf(icfgfile,"%s%c%setc%c%s",basedir,mysep,imenu.sysbase,mysep,emuopt.cfgfile);
    } else {
-//      printf("BBgBBAS: %s: NOT! in etc dir\n",emuopt.cfgfile);
+printf("!!!CUST 2b: %s\n",emuopt.cfgfile);
       strcpy(icfgfile,emuopt.cfgfile);
-//      cmd_getvar(lbo,"CFGFILE");
       strcpy(ocfgfile,"");
       cmd_scanvar(ocfgfile,"%CFGFILE%");
-//      printf("CHRAEI: %s\n",lbo);
-//      sprintf(ocfgfile,"%s%c%s",emuopt.diskloc,mysep,lbo);
-//      strcpy(ocfgfile,lbo);
    }
    // Make sure the parent directory exists
    fileio_dirname(lbo,ocfgfile);
    if(!fileio_dir_exists(lbo)) {
-//      printf("RUHROH!  Dir doesn't exist!  %s:%s\n",lbo,ocfgfile);
       fileio_mkdir_p(lbo);
    }
 
@@ -269,6 +264,7 @@ int customcfg() {
    printf(" In File: %s\n",icfgfile);
    printf("Out File: %s\n",ocfgfile);
 #endif
+   printf("%COPY% %s to %s\n",icfgfile, ocfgfile);
    if(fi=fopen(icfgfile,"rb")) {
       fo=fopen(ocfgfile,"wb");
       while(!feof(fi)) {
@@ -866,6 +862,26 @@ int cmdtbl_replace(char *sopt,char *senv, char *scmd) {
      cmdtbl_new(sopt,senv,scmd);
 }
 
+int cmdtbl_alter(char *sopt,char *senv, char *scmd) {
+   // used to override an option by name, namely 'ovr' options
+   int i, inst=0;
+   
+   for(i=0;i<cmdtidx;i++) {
+      // IMPORTANT! this currently matches on optname.  To work
+      // properly it probably needs to match on optname and envpat
+      //printf("XXING: '%s' = '%s'?\n", sopt, cmdtbl[i].optname);
+      if(strcmp(cmdtbl[i].optname,sopt)==0) {
+	 strcpy(cmdtbl[i].optname,sopt);
+	 strcpy(cmdtbl[i].envpat,senv);
+	 strcpy(cmdtbl[i].cmdopt,scmd);
+	 inst=1;
+	 break;
+      }
+   }
+   if(inst==0)
+     cmdtbl_new(sopt,senv,scmd);
+}
+
 int cmdtbl_print() {
    int i;
    printf("print of cmdtbl\n");
@@ -1102,7 +1118,7 @@ int mod_loadcfg(const char *emucfg) {
 	    if(env_cmp(cond))
 	      env_set(value);
 	 }
-	 if(strcmp(var,"opt")==0) {
+	 if(strcmp(var,"opt")==0 || strcmp(var,"ovr")==0) {
 	    strcpy(envpat, cond);
 //	    hss_index(value,lb,2,'|');
 	    for(i=0;i<hss_count(value,';');i++) {
@@ -1110,7 +1126,11 @@ int mod_loadcfg(const char *emucfg) {
 //	       printf("eval i=%d  pval=%s\n",i,pval);
 	       hss_index(cmdopt,pval,1,'=');
 	       hss_index(optname,pval,0,'=');
-	       cmdtbl_new(optname,envpat,cmdopt);
+	       // ovr is to override a pre-populated option, such as CFGDIR
+	       if(strcmp(var, "ovr")==0)
+		 cmdtbl_alter(optname,envpat,cmdopt);
+	       else
+		 cmdtbl_new(optname,envpat,cmdopt);
 	    }
 	 }
 	 if(strcmp(var,"sfq")==0) {
@@ -1119,12 +1139,19 @@ int mod_loadcfg(const char *emucfg) {
 	 if(strcmp(var,"set")==0) {
 	    cmdtbl_new(value,"<",cond);
 	 }
+	 if(strcmp(var,"cdd")==0) {
+	    // CD to particular directory before execution
+	    strcpy(envpat,"");
+	    cmd_scanvar(envpat,value);
+	    strcpy(emuopt.cddir,envpat);
+	    emuopt.docd='Y';
+	    printf("ATTN: Using CD\n");
+	    printf("  CDDIR=%s\n", emuopt.cddir);
+	 }
 	 if(strcmp(var,"cfg")==0 || strcmp(var,"cfp")==0) {
-//	    sprintf(envpat,"CFGFILE=%s" ,value);
 	    strcpy(envpat,"");
 	    cmd_scanvar(envpat,value);
 	    strcpy(emuopt.cfgfile,envpat);
-//	    printf("WAHT? %s\n",emuopt.cfgfile);
             if(strcmp(var,"cfg")==0) {
 	       emuopt.usecfg='Y';
 	       strcpy(cmdopt,"%DISKLOC%%/%");
@@ -1143,19 +1170,12 @@ int mod_loadcfg(const char *emucfg) {
 		  fileio_mkdir_p(cmdopt);
 		  sprintf(cmdopt,"%s%ccfg%c",emuopt.tmpdir,mysep,mysep);
 	       }
-//   fileio_mkdir_p(emuopt.diskloc);
 	    }
-//	    sprintf(cmdopt,"\%DISKLOC\%\%/\%");
 	    if(strcmp(cond,"local")==0) {
-//	       basename(pval,envpat);
-//	       printf("basename(%s,%s)\n",pval,envpat);
 	       fileio_basename(pval,envpat);
-//	       printf("fileio_basename(%s,%s)\n",pval,envpat);
 	       strcat(cmdopt,pval);
-//	       printf("CFGi: %s::%s\n",cmdopt,pval);
 	    } else {
 	       strcat(cmdopt,cond);
-//	       printf("CFGi: %s\n",cmdopt);
 	    }
 	    cmdtbl_new("CFGFILE","*",cmdopt);
 	 }
@@ -1306,14 +1326,14 @@ int mod_getsystem(char *msys, char *msysbase) {
 	    if(var[i]=='/' || var[i]=='\\')
 	      var[i]=mysep;
 	 }
-#ifdef DEBUG
-	 printf("%s<->%s\n",msysbase,var);
-#endif
+// #ifdef DEBUG
+//	 printf("%s<->%s\n",msysbase,var);
+//#endif
 	 if(strcmp(var,msysbase)==0) {
 	    hss_index(value,lb,0,'=');
 	    hss_index(msys,lb,0,'_');
 #ifdef DEBUG
-	   printf("ding: %s\n",msys);
+	   printf("DEBUG:matched system \"%s\"\n",msys);
 #endif
 	 }
       }
@@ -1685,9 +1705,10 @@ int module_exec() {
       sysmodule_arcade();
       ransys=1;
    }
+   // These should not be hard-coded like this!!! 
    if(strcmp(imenu.system,"a800")==0 || strcmp(imenu.system,"ST")==0 || 
       strcmp(imenu.system,"Amiga")==0 || strcmp(imenu.system,"c64")==0 ||
-      strcmp(imenu.emulator,"gens")==0) {
+      strcmp(imenu.emulator,"gens")==0 || strcmp(imenu.emulator,"linapple")==0) {
       sysmodule_computer();
       ransys=1;
    }
@@ -1700,25 +1721,48 @@ int module_exec() {
       process_cmd(emuopt.uqrom);
       return(0);
    }
+   
 //   SDL_QuitSubSystem(SDL_INIT_VIDEO); // shutdown gfx
    settxtmode();
    cmd_getwd(cddir);
    build_cmd();
+
    if(emuopt.exec==1 && imenu.noexec<1) {
 //     set_gfx_mode(4,640,480,0,0);
+
       if(strcmp(cddir,"")!=0) {
+	 // I'm not sure what this accomplishes, cddir never gets set
+	 // except for a cwd, it's supposed to cd to itself?
 	 printf("CCHDIR:%s\n",cddir);
 	 chdir(cddir);
       }
+
+      if(emuopt.docd == 'Y' ) {
+	 // new way to do cddir
+	 getcwd(emuopt.prevdir, sizeof(emuopt.prevdir));
+	 printf("current dir is %s\n",emuopt.prevdir);
+	 printf("changing dirs to %s\n",emuopt.cddir);
+	 chdir(emuopt.cddir);
+      }
+
       mod_exportvars();
       printf("CUSECMD:%s\n", emuopt.cmd_line);
       system(emuopt.cmd_line);
       mod_cleantmp();
       strcpy(emuopt.cmd_line,"");
       emuopt.exec=0;
+      if(emuopt.docd == 'Y' ) {
+	 // CD to original directory, if needed
+	 printf("CD back to %s\n", emuopt.prevdir);
+	 chdir(emuopt.prevdir);
+	 emuopt.docd = 'N';
+      }      
+	   
    } else {
       if(strcmp(cddir,"")!=0) 
 	printf("CHDIR:%s\n",cddir);
+//      getcwd(cddir,sizeof(cddir));
+//      printf("I AM IN THIS DIR: %s\n", cddir);
       printf("USECMD:%s\n", emuopt.cmd_line);
 //     Think this was supposed to prevent bookmark writing in test mode
       if(imenu.noexec==1) {
