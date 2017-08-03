@@ -149,7 +149,7 @@ void find_datadir(char *ddir, char *bin) {
 void getnxtpath(char *opath, char *ipath) {
    // experimental recursive path straightener
    int i,nsep=0, fsep=0;
-   char front[30],back[90],combo[120],tcomp[30];
+   char front[90],back[190],combo[220],tcomp[90];
    
 ////   printf("getnxt: %s\n",ipath);
    for(i=0;i<strlen(ipath);i++) {
@@ -225,6 +225,7 @@ void dfixsep2(char *opath, char *ipath, int setfq) {
 //   printf("nsep: %d  %s\n",nsep,opath);
    // experimental
    getnxtpath(opath,tdir);
+
 #ifdef DEBUG
    LOG(2, ("**** opath: %s %s\n",opath,tdir));
 #endif

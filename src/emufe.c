@@ -926,7 +926,11 @@ load_dfltimg(char *fname) {
 } // load_dfltimg()
 
 int do_imgbox_scale(int i, char *imgdir, char *iname) {
-  // Use this if scaling is enabled
+   // note: There's a bug in this function, seems like longer paths
+   // cause issues.   picname has a size of 350, but the path doesn't
+   // have to be nearly that long to have an issue
+   
+   // Use this if scaling is enabled
   PALETTE p;
   char picname[350],picnoext[346];
   int dsx,dsy,new_w,new_h,x2,y2;
@@ -934,6 +938,7 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
   BITMAP *sc_bitmap;
    
   get_palette(p);
+//   printf("IMGBOX #%d\n",i);
 //  for(i=0;i<12;i++) {
     if(imgbx[i].enabled==1) {
 //      sprintf(picname,"%s%c%s%s.pcx",imgdir,mysep,imgbx[i].pfx,iname);
@@ -951,7 +956,7 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 		 
 
        if(bitmap) {
-	  
+
 	  if(bitmap->w != imgbx[i].w || bitmap->h != imgbx[i].h) {
 	     //        if(bitmap->w == 4 || bitmap->h == 5) {
 	     // downscale
@@ -1014,6 +1019,7 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	  debug(3,"do_imgbox_scale():loaded bitmap\n");
 #endif
        } // endif (if bitmap)
+
     } // endif
 } // do_imgbox_scale
 
@@ -1068,9 +1074,10 @@ do_imgbox(int i, char *imgdir, char *iname) {
 do_imgboxes(char *imgdir, char *iname) {
   int i;
   // only really need to go to 8, not 12
-  for(i=0;i<8;i++)
-//   do_imgbox(i, imgdir, iname);
-   do_imgbox_scale(i, imgdir, iname);
+   //   do_imgbox(i, imgdir, iname);
+   for(i=0;i<8;i++)
+     do_imgbox_scale(i, imgdir, iname);
+
 }
 
 gradient(int x1, int y1, int x2, int y2) {
