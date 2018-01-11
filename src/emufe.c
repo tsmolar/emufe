@@ -1598,7 +1598,7 @@ int main(int argc, char* argv[]) {
       
       if (mouse_b & 1 && mouse_x > (rc.mb_x+rx0) && mouse_x < (rc.mb_x2+rx0) && my > (rc.mb_y+ry0) && my < (rc.mb_y2+ry0) && mp==0) {
 //	 entidx=(my-100)/16;
-	 entidx=(my-rc.mb_y+ry0)/16;
+	 entidx=(my-rc.mb_y+ry0-4)/16;
 	 if (entidx < (menuitems-index+1) )  {
 	    menu_uhlight(index,slc);
 	    pslc=slc;

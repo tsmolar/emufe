@@ -1065,6 +1065,30 @@ int load_settings() {
       env_print();
 #endif
    }
+   // Auto joystick checking
+   //   Possible joystick states
+   // N = never use (real) joysticks
+   // Y = always use (real) joysticks
+   // A = Try joystick, but fallback to N if not present
+   // 
+   // Should we have a case for keyboard joystick?
+   // 0 = no joystick
+   // 1 = real joystick
+   // 2 = keyboard joystick
+   // 3 = real joystick, fallback to keyboard
+   // 4 = keyboard joystick fallback to real?
+   env_get(emuenv,"JOYSTICK");
+   if(emuenv[0] == 'A') {
+      if(SDL_NumJoysticks() == 0) {
+	 env_set("JOYSTICK=N");
+	 printf("Auto Joystick Detection Enabled: setting JOYSTICK=N\n");
+      } else {
+	 env_set("JOYSTICK=Y");
+	 printf("Auto Joystick Detection Enabled: setting JOYSTICK=Y\n");
+      }
+      env_print();
+   }
+   
    env_get(emuopt.tmpdir,"TMPDIR");
    // Check for wrong version
    // Check for wrong EMUHOME

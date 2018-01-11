@@ -165,8 +165,10 @@ fnt_ttf_draw_bitmap0( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y) {
       }	
    }   
 #ifdef USESDL
+//# ifdef SDL1
 //   if(b==screen)
      SDL_UpdateRect(b,x,y,x_max-x,y_max-y);
+//# endif
 #endif
 }
 

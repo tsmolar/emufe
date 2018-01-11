@@ -1,3 +1,9 @@
+3.3.0
+ * Added JOYSTICK=A support.  Emufe will autodetect joysticks when
+   this is enabled and re-set it to Y or N in memory accordingly 
+ * Mouse pointer was off before on the Y-axis.  It's much closer now
+   if not perfect
+
 3.2.0+
  * Rewrote configure.ac to support all three graphics libs; removed 
    Zaurus checks

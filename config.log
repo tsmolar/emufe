@@ -28,11 +28,18 @@ uname -v = #1 SMP Tue Jun 28 18:22:51 UTC 2016
 /bin/universe          = unknown
 
 PATH: /usr/lib64/qt-3.3/bin
-PATH: /usr/local/sbin
 PATH: /usr/local/bin
-PATH: /usr/sbin
 PATH: /usr/bin
-PATH: /root/bin
+PATH: /bin
+PATH: /usr/games
+PATH: /export/home/tsmolar/bin
+PATH: /usr/local/bin
+PATH: .
+PATH: /usr/local/sbin
+PATH: /usr/sbin
+PATH: /export/home/tsmolar/bin
+PATH: /usr/local/bin
+PATH: .
 
 
 ## ----------- ##
@@ -135,16 +142,14 @@ configure:3820: result: x86_64-unknown-linux-gnu
 configure:3840: checking target system type
 configure:3853: result: x86_64-unknown-linux-gnu
 configure:4351: checking for freetype-config
-configure:4382: result: no
+configure:4369: found /usr/bin/freetype-config
+configure:4382: result: /usr/bin/freetype-config
 configure:4392: checking for FreeType -- version >= 2.1.0
-configure:4494: result: no
-configure:4503: WARNING:
-
-  The freetype-config script installed by FreeType 2 could not be found.
-  If FreeType 2 was installed in PREFIX, make sure PREFIX/bin is in
-  your path, or set the FT2_CONFIG environment variable to the
-  full path to freetype-config.
-       
+configure:4473: gcc -o conftest -g -O2 -I/usr/include/freetype2   conftest.c -lfreetype  >&5
+configure:4473: $? = 0
+configure:4473: ./conftest
+configure:4473: $? = 0
+configure:4490: result: yes
 configure:4608: SDL2 check
 configure:4664: checking for pkg-config
 configure:4682: found /usr/bin/pkg-config
@@ -228,7 +233,7 @@ ac_cv_host=x86_64-unknown-linux-gnu
 ac_cv_lib_SDL2_image_IMG_Load=yes
 ac_cv_lib_SDL2_mixer_Mix_Linked_Version=yes
 ac_cv_objext=o
-ac_cv_path_FT2_CONFIG=no
+ac_cv_path_FT2_CONFIG=/usr/bin/freetype-config
 ac_cv_path_ac_pt_PKG_CONFIG=/usr/bin/pkg-config
 ac_cv_path_install='/usr/bin/install -c'
 ac_cv_path_mkdir=/usr/bin/mkdir
@@ -276,9 +281,9 @@ ECHO_T=''
 EXEEXT=''
 FREETYPE_FALSE=''
 FREETYPE_TRUE='#'
-FT2_CFLAGS=''
-FT2_CONFIG='no'
-FT2_LIBS=''
+FT2_CFLAGS='-I/usr/include/freetype2'
+FT2_CONFIG='/usr/bin/freetype-config'
+FT2_LIBS='-lfreetype'
 HSNET_FALSE=''
 HSNET_TRUE='#'
 INSTALL_DATA='${INSTALL} -m 644'
