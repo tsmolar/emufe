@@ -88,15 +88,21 @@ int load_defaults() {
     rc.db_y2=rc.db_y+rc.db_h;
     // font                                                                    
     rc.font_w=8; rc.font_h=16;
-    for(i=0;i<12;i++) {
-       imgbx[i].enabled=0;
-       imgbx[i].mgn=0;
-       strcpy(imgbx[i].imgname,"na");
-       imgbx[i].r=imgbx[i].g=imgbx[i].b=128;
-       imgbx[i].masktype=0;
+   for(i=0;i<12;i++) {
+      imgbx[i].enabled=0;
+      imgbx[i].mgn=0;
+      strcpy(imgbx[i].imgname,"na");
+      imgbx[i].r=imgbx[i].g=imgbx[i].b=128;
+      imgbx[i].masktype=0;
        imgbx[i].ovpct=0;
-       strcpy(imgbx[i].ovname,"na");
-    }
+      strcpy(imgbx[i].ovname,"na");
+   }
+   // Reset Text boxes
+   for(i=0;i<4;i++) {
+      strcpy(txtbx[i].font,"na");
+      txtbx[i].fonttype=-1;
+      txtbx[i].font_w=txtbx[i].font_h=0;
+   }
 }
 
 int hextod(char b, char l) {
@@ -240,6 +246,22 @@ int load_rc(char *filen) {
 	 if(strncmp(key, "MENUBOX", 7)==0) {
 	    strcpy(menubox,value);
 	 }
+	 if(strncmp(key, "MENUFONT", 7)==0) {
+	    strcpy(txtbx[B_MENU].font,value);
+//	    printf("GLOADED font: %s\n", txtbx[B_MENU].font);
+	 }
+	 if(strncmp(key, "MENUFTYP", 7)==0) {
+	    txtbx[B_MENU].fonttype=atoi(value);
+	 }
+	 if(strncmp(key, "MENUFSIZ", 7)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    txtbx[B_MENU].font_w=atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    txtbx[B_MENU].font_h=atoi(tmpstr);
+	    printf("GLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_MENU].font,txtbx[B_MENU].fonttype,txtbx[B_MENU].font_w,txtbx[B_MENU].font_h);
+	 }
+	 
+	 
 	 if(strncmp(key, "RESOLUTION", 10)==0) {
 	   hss_index(tmpstr,value,0,'x');
 	   usex=atoi(tmpstr);
@@ -512,6 +534,22 @@ int load_rc(char *filen) {
 	    strcpy(descdir,value);
 //	    dfixsep2(descdir,value,0);
 	 }
+	 if(strncmp(key, "DESCFONT", 7)==0) {
+	    strcpy(txtbx[B_DESC].font,value);
+//	    printf("GLOADED font: %s\n", txtbx[B_DESC].font);
+	 }
+	 if(strncmp(key, "DESCFTYP", 7)==0) {
+	    txtbx[B_DESC].fonttype=atoi(value);
+	 }
+	 if(strncmp(key, "DESCFSIZ", 7)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    txtbx[B_DESC].font_w=atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    txtbx[B_DESC].font_h=atoi(tmpstr);
+	    printf("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_DESC].font,txtbx[B_DESC].fonttype,txtbx[B_DESC].font_w,txtbx[B_DESC].font_h);
+	 }
+	 
+
 	 if(strncmp(key, "TEXTBG", 6)==0) {
 	    textbgr=hextod(value[0],value[1]);
 	    textbgg=hextod(value[2],value[3]);
@@ -571,6 +609,21 @@ int load_rc(char *filen) {
 	    rc.banr.bg.b=hextod(value[4],value[5]);
 //	    printf("rc.banr.bg.=%d %d %d\n",rc.banr.bg.r, rc.banr.bg.g, rc.banr.bg.b); 
 	 }
+       	 if(strncmp(key, "BANRFONT", 7)==0) {
+	    strcpy(txtbx[B_BANR].font,value);
+//	    printf("GLOADED font: %s\n", txtbx[B_MENU].font);
+	 }
+	 if(strncmp(key, "BANRFTYP", 7)==0) {
+	    txtbx[B_BANR].fonttype=atoi(value);
+	 }
+	 if(strncmp(key, "BANRFSIZ", 7)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    txtbx[B_BANR].font_w=atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    txtbx[B_BANR].font_h=atoi(tmpstr);
+	    printf("BLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_BANR].font,txtbx[B_BANR].fonttype,txtbx[B_BANR].font_w,txtbx[B_BANR].font_h);
+	 }
+
 	 if(strncmp(key, "SHDCOL", 6)==0) {
 	    shadowr=hextod(value[0],value[1]);
 	    shadowg=hextod(value[2],value[3]);

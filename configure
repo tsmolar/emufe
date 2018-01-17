@@ -4551,7 +4551,7 @@ $as_echo "$as_me: WARNING:
 
 
 
-if test "x$haveFT" = "xxyes"
+if test "$haveFT" = "yes"
 then
    if true; then
   FREETYPE_TRUE=

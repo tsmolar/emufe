@@ -216,7 +216,7 @@ AUTOMAKE = automake-1.15
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -D_REENTRANT -I/usr/include/SDL2 
+CFLAGS = -g -O2 -I/usr/include/freetype2 -D_REENTRANT -I/usr/include/SDL2 
 CPPFLAGS = 
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -237,7 +237,7 @@ LDFLAGS =
 LIBCURL = 
 LIBCURL_CPPFLAGS = 
 LIBOBJS = 
-LIBS = -lSDL2_mixer -lSDL2_image  -lSDL2 
+LIBS = -lSDL2_mixer -lSDL2_image  -lfreetype -lSDL2 
 LTLIBOBJS = 
 MAKEINFO = makeinfo
 MKDIR_P = /usr/bin/mkdir -p

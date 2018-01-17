@@ -265,3 +265,19 @@ Uint16 key_shifts;
 #define MIDI_DIGMID 3
 #define MIDI_ALSA 4
 #define MIDI_WIN32MAPPER 5
+
+// From sa_prims.c
+
+int getr(int c);
+int getg(int c);
+int getb(int c);
+int geta(int c);
+Uint32 getpixel(SDL_Surface *surface, int x, int y);
+void putpixel(SDL_Surface *bmp,int x, int y, Uint32 color);
+void rectfill(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color);
+void rect(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color);
+void hline(SDL_Surface *bmp, int x1, int y, int x2, int color);
+void vline(BITMAP *bmp, int x, int y1, int y2, int color);
+void fastline(BITMAP *bmp, int x1, int y1, int x2, int y2, int color);
+void line(BITMAP *bmp, int x1, int y1, int x2, int y2, int color);
+void triangle(BITMAP *bmp,int x1,int y1,int x2, int y2, int x3, int y3, int color);

@@ -42,7 +42,7 @@ fi
 
 # Freetype
 AC_CHECK_FT2([2.1.0], [haveFT=yes], [haveFT=no])
-if test "x$haveFT" = "xxyes"
+if test "$haveFT" = "yes"
 then
   AM_CONDITIONAL(FREETYPE,true)
   AC_DEFINE([USE_FREETYPE],[1],[Define if using FreeType])

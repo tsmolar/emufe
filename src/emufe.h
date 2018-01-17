@@ -94,7 +94,22 @@ typedef struct imgbox_t {
    char ovname[90];  // name of overlay
 } imgbox_t;
 
+#define B_BANR 0
+#define B_MENU 1
+#define B_DESC 2
+
+typedef struct txtbox_t {
+   int enabled;
+   char name[20];
+   int x,y,w,h,x2,y2;
+   char font[40];
+   int fonttype;
+   int font_w;
+   int font_h;
+} txtbox_t;
+
 extern imgbox_t imgbx[12];
+extern txtbox_t txtbx[4];
 extern menuinfo_t imenu;
 extern prop_t rc;
 extern char cdroot[220];

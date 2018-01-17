@@ -31,6 +31,7 @@ int in_gfxmode=0, jflag=0;
 
 fnt_t* LoadedFont;
 fnt_t* myttf;
+fnt_t* boxfont[4];
 
 // Note, this might ultimately be used for the menu, but not now
 typedef struct menu_t {
@@ -44,6 +45,7 @@ menuinfo_t imenu;
 char cdroot[220];
 prop_t rc;
 imgbox_t imgbx[12];
+txtbox_t txtbx[4];
 menu_t menu[600];
 char dirname[120], bgpic[90], titlebox[40], picsdir[90], menuname[20], rcfilename[20], defimg[20];
 char *commands[30], *lmenus[30];
@@ -843,7 +845,8 @@ init() {
       LOG(3, ("ttf.font.load done\n"));
       
       fnt_setactive(myttf);
-      myttf->scale_w=12; myttf->scale_h=16;
+      ///  TTF sizing 
+      myttf->scale_w=16; myttf->scale_h=16;
    } else {
      fnt_destroy(LoadedFont);
      sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
@@ -1383,20 +1386,31 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
 	if(SDL_LockSurface(b) < 0) return;
 #endif
       
-      while(*str) {
-	 if (*str == '\n'){
-	    l++;
-	    str++;
-	    c=0;
-	 } else {
-	    cx=x+(c++)*16;
-	    cy=y+l*9;
-	    if(sd>-1) // shadow
-	      display_char_16x32(b, cx+1, cy+1, *(str),sd);
-	    display_char_16x32(b, cx, cy, *(str++),fg);
+      if(ActiveFont->type == TTF) {
+	 // Use a TTF for the title
+	 cx=ActiveFont->scale_w; cy=ActiveFont->scale_h;
+	 ActiveFont->scale_w = ActiveFont->scale_w * 2;
+	 ActiveFont->scale_h = ActiveFont->scale_h * 2;
+	 
+	 fnt_print_string(screen,x-16,y-4,str,fg,bg,sd);
+
+	 ActiveFont->scale_w=cx; ActiveFont->scale_h=cy;
+      } else {
+	 while(*str) {
+	    if (*str == '\n'){
+	       l++;
+	       str++;
+	       c=0;
+	    } else {
+	       cx=x+(c++)*16;
+	       cy=y+l*9;
+	       if(sd>-1) // shadow
+		 display_char_16x32(b, cx+1, cy+1, *(str),sd);
+	       display_char_16x32(b, cx, cy, *(str++),fg);
+	    }
 	 }
       }
-      
+   
       
 #ifdef USESDL
       if(b==screen) {

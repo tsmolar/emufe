@@ -92,7 +92,7 @@
 #define PACKAGE_VERSION "3.2.0"
 
 /* Define if using FreeType */
-/* #undef USE_FREETYPE */
+#define USE_FREETYPE 1
 
 /* Version number of package */
 #define VERSION "3.2.0"
