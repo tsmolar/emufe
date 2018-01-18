@@ -6,7 +6,9 @@
  * Got TrueType working again
  * Added Title text display for TT
  * Allowed assigning different fonts to BANR, DESC and MENU boxes
-   (only in rcfile so far)  
+   (only BANR working so far)
+ * There was no reason to use two different font structures for ttf
+   and bitmapped fonts, combined them into DefaultFont
 
 3.2.0+
  * Rewrote configure.ac to support all three graphics libs; removed 

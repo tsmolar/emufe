@@ -19,7 +19,7 @@ extern int descbgr, descbgg, descbgb;
 extern int banrbgr, banrbgg, banrbgb;
 extern int banrfgr, banrfgg, banrfgb;
 extern int shadowr, shadowg, shadowb;
-extern fnt_t* LoadedFont;
+extern fnt_t* DefaultFont;
 
 // void font_load(char*);
 // void set_font_fcolor(int, int, int); // depricated

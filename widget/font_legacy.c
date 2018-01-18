@@ -27,7 +27,7 @@ int fshadow, cachefont, colortable[8];
  int shadowr, shadowg, shadowb;
  int banrbgr, banrbgg, banrbgb, banrfgr, banrfgg, banrfgb;
 
-  fnt_t* LoadedFont;
+  fnt_t* DefaultFont;
 extern fnt_t* ActiveFont;
 
 // Legacy Char Functions
@@ -35,19 +35,19 @@ font_load(char *filen) {
   //   fnt_t* nf;
    fnt_t* f2;
    PALETTE pal;
-   fnt_destroy(LoadedFont);
-   LoadedFont=fnt_loadfont(filen,BIOS_8X16);
-   printf("LoadedFont type %d\n", LoadedFont->type);
+   fnt_destroy(DefaultFont);
+   DefaultFont=fnt_loadfont(filen,BIOS_8X16);
+   printf("DefaultFont type %d\n", DefaultFont->type);
 #ifdef BLITFONT 
-      f2=fnt_convblit(LoadedFont);
-   fnt_destroy(LoadedFont);
-   LoadedFont=f2;
+      f2=fnt_convblit(DefaultFont);
+   fnt_destroy(DefaultFont);
+   DefaultFont=f2;
    if(cachefont == 1) {
       // get_palette(pal);
       // save_pcx("/tmp/fontbmp.pcx", ActiveFont->data, pal);
     }
 #endif
-   fnt_setactive(LoadedFont);
+   fnt_setactive(DefaultFont);
    printf("END font_load()\n");
 }
 

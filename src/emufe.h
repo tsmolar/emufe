@@ -97,6 +97,7 @@ typedef struct imgbox_t {
 #define B_BANR 0
 #define B_MENU 1
 #define B_DESC 2
+#define B_SETUP 3
 
 typedef struct txtbox_t {
    int enabled;

@@ -29,8 +29,9 @@ BITMAP *imgbx_bmp[12];
 BITMAP *imgbx_ovl[12];
 int in_gfxmode=0, jflag=0;
 
-fnt_t* LoadedFont;
-fnt_t* myttf;
+//fnt_t* LoadedFont;
+//fnt_t* myttf;
+fnt_t* DefaultFont;
 fnt_t* boxfont[4];
 
 // Note, this might ultimately be used for the menu, but not now
@@ -289,7 +290,7 @@ int display_menu(int index) {
 /*   int red=makecol16(240,16,0); */
    int i,io;
    
-//   fnt_setactive(myttf);
+//   fnt_setactive(DefaultFont);
    scare_mouse();
    for(i=index; i<index+(rc.mb_h/rc.font_h);i++) {
       io=i-index+1;
@@ -511,7 +512,7 @@ void show_desc(char *desc) {
    sprintf(debugtxt,"descffname=%s\n",descffname);
    debug(3,debugtxt);
 #endif
-//   fnt_setactive(myttf);
+//   fnt_setactive(DefaultFont);
    if ((fp=fopen(descffname, "r")) != NULL) {
       lineno=0;
 /*      set_font_fcolor(textier,textieg,textieb);*/
@@ -780,6 +781,7 @@ void setgfxmode() {
 
 init() {
    char tmpstr[20], tstr2[20];
+   int i;
 
    allegro_init();
 
@@ -838,22 +840,33 @@ init() {
    LOG(3, ("BLITFONT status: disabled\n"));
 # ifdef USE_FREETYPE
    if(strncmp(rc.ttfont, "na", 2) != 0) {
-     fnt_destroy(myttf);
+     fnt_destroy(DefaultFont);
      sprintf(fullpath,"%s%c%s",fontdir,mysep,rc.ttfont);
       LOG(3,("ttf.font.load\n"));
-      myttf=fnt_loadfont(fullpath,TTF);
+      DefaultFont=fnt_loadfont(fullpath,TTF);
       LOG(3, ("ttf.font.load done\n"));
       
-      fnt_setactive(myttf);
+      fnt_setactive(DefaultFont);
       ///  TTF sizing 
-      myttf->scale_w=16; myttf->scale_h=16;
+      DefaultFont->scale_w=16; DefaultFont->scale_h=16;
    } else {
-     fnt_destroy(LoadedFont);
+     fnt_destroy(DefaultFont);
      sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
       LOG(3, ("bitmap.font.load\n"));
-     LoadedFont=fnt_loadfont(fullpath,BIOS_8X16);
-     fnt_setactive(LoadedFont);
+     DefaultFont=fnt_loadfont(fullpath,BIOS_8X16);
+     fnt_setactive(DefaultFont);
    }
+   
+   // Load box fonts
+   for(i=0;i<4;i++) {
+      if(txtbx[i].fonttype>-1) {
+	 sprintf(fullpath,"%s%c%s",fontdir,mysep,txtbx[i].font);
+	 printf("VLOAD: %s  type: %d\n",fullpath,txtbx[i].fonttype);
+	 LOG(3, ("box font.load\n"));
+	 boxfont[i]=fnt_loadfont(fullpath,txtbx[i].fonttype);
+      }
+   }
+   
 # else
    sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
 #  ifdef DEBUG
@@ -1375,57 +1388,63 @@ int display_char_16x32(BITMAP *b,int x, int y, unsigned char chr,int fcolor) {
 int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int sd) {
    // New method that can draw on any bitmap, and hand solid, shadow and plain
    int c=0, l=0, cx,cy, sl=strlen(str)*16;
-   int fh=(ActiveFont->height*2)-1;
+   int fh;
 
+   if(txtbx[B_BANR].fonttype > -1)
+     fnt_setactive(boxfont[B_BANR]);
+   else
+     fnt_setactive(DefaultFont);
+   fh=(ActiveFont->height*2)-1;
+   
    if(bg>-1)
      rectfill(b,x,y,x+sl,y+fh,bg);
 #ifdef USESDL
-      // Put here for speed optimization
-      //   if(SDL_MUSTLOCK(screen)){
-      if(b==screen && ActiveFont->type<2)
-	if(SDL_LockSurface(b) < 0) return;
+   // Put here for speed optimization
+   //   if(SDL_MUSTLOCK(screen)){
+   if(b==screen && ActiveFont->type<2)
+     if(SDL_LockSurface(b) < 0) return;
 #endif
+   
+   if(ActiveFont->type == TTF) {
+      // Use a TTF for the title
+      cx=ActiveFont->scale_w; cy=ActiveFont->scale_h;
+      ActiveFont->scale_w = ActiveFont->scale_w * 2;
+      ActiveFont->scale_h = ActiveFont->scale_h * 2;
       
-      if(ActiveFont->type == TTF) {
-	 // Use a TTF for the title
-	 cx=ActiveFont->scale_w; cy=ActiveFont->scale_h;
-	 ActiveFont->scale_w = ActiveFont->scale_w * 2;
-	 ActiveFont->scale_h = ActiveFont->scale_h * 2;
-	 
-	 fnt_print_string(screen,x-16,y-4,str,fg,bg,sd);
-
-	 ActiveFont->scale_w=cx; ActiveFont->scale_h=cy;
-      } else {
-	 while(*str) {
-	    if (*str == '\n'){
-	       l++;
-	       str++;
-	       c=0;
-	    } else {
-	       cx=x+(c++)*16;
-	       cy=y+l*9;
-	       if(sd>-1) // shadow
-		 display_char_16x32(b, cx+1, cy+1, *(str),sd);
-	       display_char_16x32(b, cx, cy, *(str++),fg);
-	    }
+      fnt_print_string(screen,x-16,y-4,str,fg,bg,sd);
+      
+      ActiveFont->scale_w=cx; ActiveFont->scale_h=cy;
+   } else {
+      while(*str) {
+	 if (*str == '\n'){
+	    l++;
+	    str++;
+	    c=0;
+	 } else {
+	    cx=x+(c++)*16;
+	    cy=y+l*9;
+	    if(sd>-1) // shadow
+	      display_char_16x32(b, cx+1, cy+1, *(str),sd);
+	    display_char_16x32(b, cx, cy, *(str++),fg);
 	 }
       }
+   }
    
-      
+   
 #ifdef USESDL
-      if(b==screen) {
-	 if(ActiveFont->type<2)
-	   SDL_UnlockSurface(b);
-//# ifdef SDL1
-//	 if(SA_AUTOUPDATE==1)
-//	   SDL_UpdateRect(screen,x,y,sl,16);
-//# endif
-//# ifdef SDL2
-	 if(SA_AUTOUPDATE==1)
-	   s2a_updaterect(screen,x,y,sl,16);
-//# endif
-	 //      printf("hokee: %d %d %d\n",x,y,sl);
-      }
+   if(b==screen) {
+      if(ActiveFont->type<2)
+	SDL_UnlockSurface(b);
+      //# ifdef SDL1
+      //	 if(SA_AUTOUPDATE==1)
+      //	   SDL_UpdateRect(screen,x,y,sl,16);
+      //# endif
+      //# ifdef SDL2
+      if(SA_AUTOUPDATE==1)
+	s2a_updaterect(screen,x,y,sl,16);
+      //# endif
+      //      printf("hokee: %d %d %d\n",x,y,sl);
+   }
 #endif
    
 } // print_string_16x32

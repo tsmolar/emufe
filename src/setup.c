@@ -895,7 +895,7 @@ int run_setup(char *n_setup) {
       } // swin.active & P_SAVE
    }
    //   font_unset_builtin();
-   fnt_setactive(LoadedFont);
+   fnt_setactive(DefaultFont);
 }
 
 int setup_spvar(const char *var) {
