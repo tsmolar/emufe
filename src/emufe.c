@@ -141,6 +141,8 @@ int menu_uhlight(int index, int slct) {
    /* Unhilight the menu selection */
    
    int offset;
+
+   fnt_setactive(boxfont[B_MENU]);
    
    offset=(slct-index)+1;
 /*   set_font_fcolor(0,0,0); */
@@ -173,6 +175,8 @@ int menu_hlight(int index, int slct) {
    /* Hilight the menu selection */
    
    int offset;
+
+   fnt_setactive(boxfont[B_MENU]);
    
    offset=(slct-index)+1;
    set_font_fcolor(textsdr,textsdg,textsdb);
@@ -209,71 +213,6 @@ int menu_hlight(int index, int slct) {
    unscare_mouse();
 }
 
-int menu_uhlight2(int index, int slct) {
-
-   /* New, experimental version of menu_unlight */
-   
-   /* Unhilight the menu selection */
-   
-   int offset;
-   
-   offset=(slct-index)+1;
-/*   set_font_fcolor(0,0,0); */
-   st_txt_col(menu[slct].type);
-   set_font_bcolor(textbgr,textbgg,textbgb);
-   scare_mouse();
-   if(usembmap==1) {
-      blit(menumap, screen,0,(offset*rc.font_h)-13,rc.mb_x+rx0,ry0+rc.mb_y-13+(offset*rc.font_h),rc.mb_w,rc.font_h);
-      show_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
-   } else {
-      solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
-      rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,rc.mb_y+2+(offset*rc.font_h)+ry0, fnbgcol);
-   }
-   if(menu[slct].type=='f' || menu[slct].type=='d') {
-     rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
-   }
-   if(menu[slct].type=='s') {
-/*      rect(screen,37,88+(offset*16),44,95+(offset*16), fnbgcol); */
-     rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*rc.font_h)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*rc.font_h)+ry0, fnfgcol);
-   }
-#ifdef USESDL
-//   gfx_sdlflip();
-   s2a_flip(screen);
-#endif
-  unscare_mouse();
-} // menu_uhlight
-
-int menu_hlight2(int index, int slct) {
-
-   /* New, experimental version of menu_hlight */
-   /* Hilight the menu selection */
-   
-   int offset;
-
-   offset=(slct-index)+1;
-   scare_mouse();
-
-//   SDL_SetAlpha(selection, SDL_SRCALPHA, 128);
-   blit(selection,screen,0,0,rc.mb_x+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0);
-//   SDL_SetAlpha(selection, SDL_SRCALPHA, 255);
-
-//   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
-//   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
-//   
-//   if(menu[slct].type=='f' || menu[slct].type=='d') {
-//     rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
-//   }
-//   if(menu[slct].type=='s') {
-//     rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*rc.font_h)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*rc.font_h)+ry0, fnfgcol);
-//     rectfill(screen,(rc.mb_x+6)+rx0,(rc.mb_y-7)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
-//   }
-#ifdef USESDL
-//   gfx_sdlflip();
-   s2a_flip(screen);
-#endif
-   unscare_mouse();
-}
-
 int find_menu_e(char *rom) {
    int i,r;
    r=1;
@@ -292,6 +231,9 @@ int display_menu(int index) {
    
 //   fnt_setactive(DefaultFont);
    scare_mouse();
+   
+   fnt_setactive(boxfont[B_MENU]);
+
    for(i=index; i<index+(rc.mb_h/rc.font_h);i++) {
       io=i-index+1;
       if (i>menulength) break;
@@ -410,6 +352,8 @@ void show_desc2(char *desc) {
    char line[300], nxline[300], descffname[90], *ww;
    char title[128], year[12], company[70];
    int lineno, white, black, box_cw, box_ch,i;
+
+   fnt_setactive(boxfont[B_DESC]); 
    
    box_cw=(rc.db_w-8)/8;
    box_ch=(rc.db_h-8)/16;
@@ -482,59 +426,6 @@ void show_desc2(char *desc) {
    }
 }
 
-void show_desc(char *desc) {
-   FILE *fp;
-   char line[72], descffname[90], *ww;
-   int lineno, white, black;
-#ifdef DEBUG
-   sprintf(debugtxt,"Loading Description...%s\n",desc);
-   debug(1,debugtxt);
-#endif
-   if(imenu.mode==0)
-     sprintf(descffname, "%s/%s.desc",descdir,desc);
-   if(imenu.mode==1) {
-      sprintf(line, "%s/%s.desc",descdir,desc);
-      dfixsep2(descffname,line,1);
-   }
-   if(imenu.mode==2) {
-      sprintf(line, "%s%s/%s.desc",imenu.sysbase,descdir,desc);
-      dfixsep2(descffname,line,1);
-   }
-   white=makecol16(descbgr,descbgg,descbgb); 
-/* Probably should be set by a theme item instead */
-   black=makecol16(descbgr,descbgg,descbgb); 
-
-   if(usedbmap==0)
-     bbox(rc.db_x+rx0, rc.db_y+ry0, rc.db_x2+rx0, rc.db_y2+ry0, white, black);
-   else
-     blit(descmap,screen, 0,0,rc.db_x+rx0,rc.db_y+ry0,rc.db_w,rc.db_h);
-#ifdef DEBUG
-   sprintf(debugtxt,"descffname=%s\n",descffname);
-   debug(3,debugtxt);
-#endif
-//   fnt_setactive(DefaultFont);
-   if ((fp=fopen(descffname, "r")) != NULL) {
-      lineno=0;
-/*      set_font_fcolor(textier,textieg,textieb);*/
-//      set_font_fcolor(textfgr,textfgg,textfgb);
-      while( !feof(fp) ) {
-	 fgets(line, 72, fp);
-	 if(feof(fp))
-	   break;
-	 lineno++;
-	 if(lineno > 10)
-	   break;
-//	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
-	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(rc.txdesc_r,rc.txdesc_g,rc.txdesc_b),-1,-1);
-      }
-      fclose(fp);
-//      fnt_setactive(LoadedFont);
-#ifdef USESDL
-//      gfx_sdlflip();
-   s2a_flip(screen);
-#endif
-   }
-}
 
 int AddPicExt(char *outpath, char *inpath) {
    /* In order to support other image types besides pcx, we should
@@ -864,6 +755,12 @@ init() {
 	 printf("VLOAD: %s  type: %d\n",fullpath,txtbx[i].fonttype);
 	 LOG(3, ("box font.load\n"));
 	 boxfont[i]=fnt_loadfont(fullpath,txtbx[i].fonttype);
+
+	 boxfont[i]->scale_w=txtbx[i].font_w;
+//	 boxfont[i]->scale_h=txtbx[i].font_h;
+      } else {
+	 // else clause copying the font here?
+	 boxfont[i]=DefaultFont;
       }
    }
    
@@ -1390,10 +1287,10 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
    int c=0, l=0, cx,cy, sl=strlen(str)*16;
    int fh;
 
-   if(txtbx[B_BANR].fonttype > -1)
+//   if(txtbx[B_BANR].fonttype > -1)
      fnt_setactive(boxfont[B_BANR]);
-   else
-     fnt_setactive(DefaultFont);
+//   else
+//     fnt_setactive(DefaultFont);
    fh=(ActiveFont->height*2)-1;
    
    if(bg>-1)

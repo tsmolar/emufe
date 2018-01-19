@@ -5,8 +5,7 @@
    if not perfect
  * Got TrueType working again
  * Added Title text display for TT
- * Allowed assigning different fonts to BANR, DESC and MENU boxes
-   (only BANR working so far)
+ * Allowed assigning different fonts to BANR, DESC, SETUP  and MENU boxes
  * There was no reason to use two different font structures for ttf
    and bitmapped fonts, combined them into DefaultFont
 

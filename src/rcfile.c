@@ -261,6 +261,21 @@ int load_rc(char *filen) {
 	    printf("GLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_MENU].font,txtbx[B_MENU].fonttype,txtbx[B_MENU].font_w,txtbx[B_MENU].font_h);
 	 }
 	 
+	 // Setup Dialog Box
+	 if(strncmp(key, "SETUPFONT", 8)==0) {
+	    strcpy(txtbx[B_SETUP].font,value);
+	 }
+	 if(strncmp(key, "SETUPFTYP", 8)==0) {
+	    txtbx[B_SETUP].fonttype=atoi(value);
+	 }
+	 if(strncmp(key, "SETUPFSIZ", 8)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    txtbx[B_SETUP].font_w=atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    txtbx[B_SETUP].font_h=atoi(tmpstr);
+	    printf("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_SETUP].font,txtbx[B_SETUP].fonttype,txtbx[B_SETUP].font_w,txtbx[B_SETUP].font_h);
+	 }
+
 	 
 	 if(strncmp(key, "RESOLUTION", 10)==0) {
 	   hss_index(tmpstr,value,0,'x');

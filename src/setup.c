@@ -73,6 +73,8 @@ typedef struct setwin_t {
 } setwin_t;
 
 extern char mysep;
+extern fnt_t* boxfont[4];
+
 setwin_t swin;
 int envcidx,mapidx;
 env_t envc[MAX_ENVC];
@@ -975,6 +977,7 @@ int setup_go() {
 //#ifdef SDL2
 //   SA_AUTOUPDATE=0;
 //#endif
+   fnt_setactive(boxfont[B_SETUP]);
    printf("SETUP: setup_go\n");
 //   setup_getlocalcfgname(lc);
    setup_getflashcfgname(lc);
