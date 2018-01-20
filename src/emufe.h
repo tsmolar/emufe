@@ -106,7 +106,8 @@ typedef struct txtbox_t {
    char font[40];
    int fonttype;
    int font_w;
-   int font_h;
+   int font_h;   // height of font
+   int font_v;   // font vertical space, allows more space between lines
 } txtbox_t;
 
 extern imgbox_t imgbx[12];

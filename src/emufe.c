@@ -15,6 +15,8 @@
 #include "dfilepath.h"
 #include "fileio.h"
 #include "emufe.h"
+#include "modules.h"
+
 // #include "fileio.h"
 
 /* #include <allegro/internal/aintern.h> */
@@ -140,9 +142,10 @@ int menu_uhlight(int index, int slct) {
 
    /* Unhilight the menu selection */
    
-   int offset;
+   int offset, fontv;
 
    fnt_setactive(boxfont[B_MENU]);
+   fontv=txtbx[B_MENU].font_v;
    
    offset=(slct-index)+1;
 /*   set_font_fcolor(0,0,0); */
@@ -150,18 +153,18 @@ int menu_uhlight(int index, int slct) {
    set_font_bcolor(textbgr,textbgg,textbgb);
    scare_mouse();
    if(usembmap==1) {
-      blit(menumap, screen,0,(offset*rc.font_h)-13,rc.mb_x+rx0,ry0+rc.mb_y-13+(offset*rc.font_h),rc.mb_w,rc.font_h);
-      show_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
+      blit(menumap, screen,0,(offset*fontv)-13,rc.mb_x+rx0,ry0+rc.mb_y-13+(offset*fontv),rc.mb_w,fontv);
+      show_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name);
    } else {
-      solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
-      rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,rc.mb_y+2+(offset*rc.font_h)+ry0, fnbgcol);
+      solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name);
+      rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_x+9)+rx0,rc.mb_y+2+(offset*fontv)+ry0, fnbgcol);
    }
    if(menu[slct].type=='f' || menu[slct].type=='d') {
-     rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
+     rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*fontv)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*fontv)+ry0, fnfgcol);
    }
    if(menu[slct].type=='s') {
 /*      rect(screen,37,88+(offset*16),44,95+(offset*16), fnbgcol); */
-     rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*rc.font_h)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*rc.font_h)+ry0, fnfgcol);
+     rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*fontv)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*fontv)+ry0, fnfgcol);
    }
 #ifdef USESDL
 //   gfx_sdlflip();
@@ -174,44 +177,50 @@ int menu_hlight(int index, int slct) {
 
    /* Hilight the menu selection */
    
-   int offset;
+   int offset, fontv;
 
    fnt_setactive(boxfont[B_MENU]);
+   fontv=txtbx[B_MENU].font_v;
    
    offset=(slct-index)+1;
    set_font_fcolor(textsdr,textsdg,textsdb);
 /*   set_font_bcolor(0,0,0); */
    set_font_bcolor(texthlr,texthlg,texthlb);
    scare_mouse();
-//   solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name);
-//   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
+//   solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name);
+//   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
 //   
    
-   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,
-	   (rc.mb_x+2)+rc.mb_w-4+rx0,(rc.mb_y)+2+(offset*rc.font_h)+ry0,fnbgcol);
-// fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),fnbgcol,-1);
-   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),-1,-1);
-   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
-//   rect(screen,(rc.mb_x)+rx0,(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_x+60)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0, fnbgcol);
-//printf("VONG: pos %d,%d,%d,%d\n",rc.mb_x+2,rc.mb_y-13+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y+2)+(offset*rc.font_h)+ry0);
+//   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,
+//	   (rc.mb_x+2)+rc.mb_w-4+rx0,(rc.mb_y)+2+(offset*fontv)+ry0,fnbgcol);
+   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,
+	   (rc.mb_x+2)+rc.mb_w-4+rx0,(rc.mb_y)+(fontv-14)+(offset*fontv)+ry0,fnbgcol);
+   
+   
+   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),-1,-1);
+   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_x+9)+rx0,rc.mb_y+(fontv-14)+(offset*fontv)+ry0, fnbgcol);
+
+//   rect(screen,(rc.mb_x)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_x+60)+rx0,(rc.mb_y+2)+(offset*fontv)+ry0, fnbgcol);
    
    
    if(menu[slct].type=='f' || menu[slct].type=='d') {
-      rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
+      rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*fontv)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*fontv)+ry0, fnfgcol);
 //      printf("dmr::x=%d;w=%d\n",(rc.mb_x+3)+rx0,(rc.mb_x+8)+rx0);
-//      printf("dmr::y=%d;h=%d\n",(rc.mb_y-13)+(offset*rc.font_h)+ry0,(rc.mb_y+2)+(offset*rc.font_h)+ry0);
+//      printf("dmr::y=%d;h=%d\n",(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_y+2)+(offset*fontv)+ry0);
    }
    if(menu[slct].type=='s') {
 /*       rect(screen,37,88+(offset*16),44,95+(offset*16), fnbgcol); */
-     rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*rc.font_h)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*rc.font_h)+ry0, fnfgcol);
-     rectfill(screen,(rc.mb_x+6)+rx0,(rc.mb_y-7)+(offset*rc.font_h)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y-4)+(offset*rc.font_h)+ry0, fnfgcol);
+     rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(offset*fontv)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(offset*fontv)+ry0, fnfgcol);
+     rectfill(screen,(rc.mb_x+6)+rx0,(rc.mb_y-7)+(offset*fontv)+ry0,(rc.mb_x+9)+rx0,(rc.mb_y-4)+(offset*fontv)+ry0, fnfgcol);
    }
 #ifdef USESDL
    //gfx_sdlflip();
    s2a_flip(screen);
 #endif
    unscare_mouse();
-}
+} // menu_hlight()
+
+
 
 int find_menu_e(char *rom) {
    int i,r;
@@ -227,14 +236,17 @@ int find_menu_e(char *rom) {
    
 int display_menu(int index) {
 /*   int red=makecol16(240,16,0); */
-   int i,io;
+   int i,io, fontv;
+   
+//   fontv=rc.font_h;
+   fontv=txtbx[B_MENU].font_v;
    
 //   fnt_setactive(DefaultFont);
    scare_mouse();
    
    fnt_setactive(boxfont[B_MENU]);
 
-   for(i=index; i<index+(rc.mb_h/rc.font_h);i++) {
+   for(i=index; i<index+(rc.mb_h/fontv);i++) {
       io=i-index+1;
       if (i>menulength) break;
 /*     textout(screen,font,names[i],34,90+(i*8),red); */
@@ -242,16 +254,16 @@ int display_menu(int index) {
       if(menu[i].type=='m' || menu[i].type=='d') {
 /*	 set_font_fcolor(80,0,80); */
 //	 printf("fontprt: passing -1 to fnt_print_screen\n");
-	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name,fnfgcol,-1,shdcol);
-//	show_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name);
-	rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(io*rc.font_h)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(io*rc.font_h)+ry0, fnfgcol);
+	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*fontv)+ry0,menu[i].name,fnfgcol,-1,shdcol);
+//	show_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*fontv)+ry0,menu[i].name);
+	rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(io*fontv)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(io*fontv)+ry0, fnfgcol);
       } else {
 	 if(menu[i].type=='s') {
 /*	    rect(screen,37,88+(io*16),44,95+(io*16), fnbgcol); */
-	   rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(io*16)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(io*rc.font_h)+ry0, fnfgcol); 
+	   rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(io*16)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(io*fontv)+ry0, fnfgcol); 
 	 }	 
 /*	 set_font_fcolor(80,64,16); */
-	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*rc.font_h)+ry0,menu[i].name,fnfgcol,-1,shdcol);
+	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*fontv)+ry0,menu[i].name,fnfgcol,-1,shdcol);
       }
    }   
 #ifdef USESDL
@@ -670,7 +682,7 @@ void setgfxmode() {
    in_gfxmode=1;
 }
 
-init() {
+void init() {
    char tmpstr[20], tstr2[20];
    int i;
 
@@ -739,7 +751,7 @@ init() {
       
       fnt_setactive(DefaultFont);
       ///  TTF sizing 
-      DefaultFont->scale_w=16; DefaultFont->scale_h=16;
+//      DefaultFont->scale_w=16; DefaultFont->scale_h=16;
    } else {
      fnt_destroy(DefaultFont);
      sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
@@ -757,7 +769,7 @@ init() {
 	 boxfont[i]=fnt_loadfont(fullpath,txtbx[i].fonttype);
 
 	 boxfont[i]->scale_w=txtbx[i].font_w;
-//	 boxfont[i]->scale_h=txtbx[i].font_h;
+	 boxfont[i]->scale_h=txtbx[i].font_h;
       } else {
 	 // else clause copying the font here?
 	 boxfont[i]=DefaultFont;
@@ -819,13 +831,13 @@ int title(int x1,int y1,char *s) {
    }
 }
 
-bbox(int x1, int y1, int x2, int y2, int color, int bcolor) {
+void bbox(int x1, int y1, int x2, int y2, int color, int bcolor) {
    rectfill(screen, x1, y1, x2, y2, color);
    rect(screen, x1, y1, x2, y2, bcolor);
    rect(screen, x1+1, y1+1, x2-1, y2-1, bcolor);
 } // bbox()
 
-load_dfltimg(char *fname) {
+void load_dfltimg(char *fname) {
    PALETTE p; 
    char picname[180], *ww;
    get_palette(p);
@@ -936,14 +948,13 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
     } // endif
 } // do_imgbox_scale
 
-do_imgbox(int i, char *imgdir, char *iname) {
+void do_imgbox(int i, char *imgdir, char *iname) {
    // I added the new extension testing, but commented it out here
    // because I want to make sure it works well elsewhere first
-  PALETTE p;
-  BITMAP *sc_bitmap;
-  char picname[350];
-//  char picname[350],picnoext[346];
-  int dsx,dsy;
+   PALETTE p;
+   BITMAP *sc_bitmap;
+   char picname[350];
+   int dsx,dsy;
 
   get_palette(p);
 //  for(i=0;i<12;i++) {
@@ -954,7 +965,8 @@ do_imgbox(int i, char *imgdir, char *iname) {
        //AddPicExt(picname,picnoext);
       LOG(5, ("NEW: boxtype(%d) looking for picname:%s\n",i,picname));
       bitmap=load_bitmap(picname,p);
-      if(imgbx_bmp[i] && i!=B_KEYBOARD)
+
+       if(imgbx_bmp[i] && i!=B_KEYBOARD)
         masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
 
       if(bitmap) {
@@ -984,16 +996,15 @@ do_imgbox(int i, char *imgdir, char *iname) {
 //  } // end for
 } // do_imgbox
 
-do_imgboxes(char *imgdir, char *iname) {
+void do_imgboxes(char *imgdir, char *iname) {
   int i;
   // only really need to go to 8, not 12
    //   do_imgbox(i, imgdir, iname);
    for(i=0;i<8;i++)
      do_imgbox_scale(i, imgdir, iname);
-
 }
 
-gradient(int x1, int y1, int x2, int y2) {
+void gradient(int x1, int y1, int x2, int y2) {
    int r,g,b,cy,rc;
    
    g=0;
@@ -1005,7 +1016,7 @@ gradient(int x1, int y1, int x2, int y2) {
    }
 }
 
-set_bg() {
+void set_bg() {
    /* Set background
     * 
     * Either a default gradient or a 640x480 bitmap in any format
@@ -1041,7 +1052,7 @@ set_bg() {
    }   
 }
 
-comp_load(int x1, int y1, int x2, int y2, char *picname) {
+void comp_load(int x1, int y1, int x2, int y2, char *picname) {
    PALETTE p;
    char fname[90];
    get_palette(p);
@@ -1628,7 +1639,8 @@ int main(int argc, char* argv[]) {
 	    menu_uhlight(index,slc);
 	    if(slc < menuitems)
 	      slc++;
-	    if(slc>index+((rc.mb_h/rc.font_h)-1)) {
+//	    if(slc>index+((rc.mb_h/rc.font_h)-1))
+	    if(slc>index+((rc.mb_h/txtbx[B_MENU].font_v)-1)) {
 	       index++;
 	       restore_menuback();
 	       display_menu(index);

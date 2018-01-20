@@ -54,7 +54,7 @@ emufe.o: emufe.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_system.h \
  /usr/include/SDL2/SDL_timer.h /usr/include/SDL2/SDL_version.h \
  ../sdlallegro/sdl_allegro.h ../config.h ../widget/font.h \
- ../widget/font_legacy.h dfilepath.h fileio.h emufe.h
+ ../widget/font_legacy.h dfilepath.h fileio.h emufe.h modules.h
 
 /usr/include/stdc-predef.h:
 
@@ -279,3 +279,5 @@ dfilepath.h:
 fileio.h:
 
 emufe.h:
+
+modules.h:
