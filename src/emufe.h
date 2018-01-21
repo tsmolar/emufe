@@ -1,15 +1,12 @@
 char picsdir[90];
 char bgpic[90];
-char titlebox[40];
 char picbox[40];
-char menubox[40];
 char menuname[20];
 extern char defimg[20];
 extern char descdir[90];
 extern char gthemedir[96];
 extern char theme[200];
 extern char tfontbmp[30];
-extern char descbox[40];
 extern char basedir[160];
 extern int rx0, ry0, usex, usey;
 extern char fullscr;
@@ -102,6 +99,7 @@ typedef struct imgbox_t {
 typedef struct txtbox_t {
    int enabled;
    char name[20];
+   char box[40];  // bg filename or trans
    int x,y,w,h,x2,y2;
    char font[40];
    int fonttype;

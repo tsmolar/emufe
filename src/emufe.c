@@ -50,9 +50,9 @@ prop_t rc;
 imgbox_t imgbx[12];
 txtbox_t txtbx[4];
 menu_t menu[600];
-char dirname[120], bgpic[90], titlebox[40], picsdir[90], menuname[20], rcfilename[20], defimg[20];
+char dirname[120], bgpic[90], picsdir[90], menuname[20], rcfilename[20], defimg[20];
 char *commands[30], *lmenus[30];
-char descdir[90], descbox[40], menubox[40], picbox[40], theme[200], gthemedir[96], fullscr;
+char descdir[90], picbox[40], theme[200], gthemedir[96], fullscr;
 char tfontbmp[30],fullpath[120];
 char basedir[160], restr[20];
 char startdir[160], lastitem[160], *fname, debugtxt[300];
@@ -702,7 +702,7 @@ void init() {
    load_defaults();
    // probably need to adjust this
    sprintf(fullpath,"%s%c%s",basedir,mysep,rcfilename);
-//   printf("xdescbox: %s\n",descbox);
+//   printf("xdescbox: %s\n",txtbx[B_DESC].box);
    if(imenu.mode>=1) {env_clear(); load_settings(); 
       strcpy(tmpstr,"");
       env_get(tmpstr,"EMUFEres");
@@ -781,10 +781,10 @@ void init() {
 #  ifdef DEBUG
    sprintf(debugtxt,"Font: %s\n",fullpath);
    debug(3,debugtxt);
-   sprintf(debugtxt,"zdescbox: %s\n",descbox);
+   sprintf(debugtxt,"zdescbox: %s\n",txtbx[B_DESC].box);
    debug(3,debugtxt);
 #  endif
-   // so font_load is messing up descbox!!!
+   // so font_load is messing up txtbx[B_DESC].box!!!
    LOG(3, ("bitmap.font.load (no freetype)\n"));
    font_load(fullpath);
 # endif
@@ -1071,10 +1071,10 @@ void comp_load(int x1, int y1, int x2, int y2, char *picname) {
 }
 
 void draw_title(int fg, int bg) {
-   if(strncmp(titlebox, "default", 7)==0) {
+   if(strncmp(txtbx[B_BANR].box, "default", 7)==0) {
       bbox(rc.bb_x+rx0, rc.bb_y+ry0, rc.bb_x2+rx0, rc.bb_y2+ry0, fg, bg);
    } else {
-      comp_load(rc.bb_x,rc.bb_y,rc.bb_w,rc.bb_h,titlebox);
+      comp_load(rc.bb_x,rc.bb_y,rc.bb_w,rc.bb_h,txtbx[B_BANR].box);
    }
    if(!titlemap)
       titlemap=create_bitmap(rc.bb_w,rc.bb_h);
@@ -1143,10 +1143,10 @@ void draw_imgbx(int boxno) {
 
 void draw_menubox(int fg, int bg) {
    
-   if(strncmp(menubox, "default", 7)==0) {
+   if(strncmp(txtbx[B_MENU].box, "default", 7)==0) {
       bbox(rc.mb_x+rx0, rc.mb_y+ry0, rc.mb_x2+rx0, rc.mb_y2+ry0, fg, bg);
    }
-   if(strcmp(menubox, "trans")==0) {
+   if(strcmp(txtbx[B_MENU].box, "trans")==0) {
       menumap=create_bitmap(rc.mb_w,rc.mb_h);
 #ifdef USESDL
       //     SDL only
@@ -1161,8 +1161,8 @@ void draw_menubox(int fg, int bg) {
       blit(screen, menumap,rc.mb_x+rx0,rc.mb_y+ry0,0,0,rc.mb_w,rc.mb_h);
       usembmap=1;
    }
-   if(strncmp(menubox, "default", 7)!=0 && strcmp(menubox, "trans")!=0) {
-     comp_load(rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h,menubox);
+   if(strncmp(txtbx[B_MENU].box, "default", 7)!=0 && strcmp(txtbx[B_MENU].box, "trans")!=0) {
+     comp_load(rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h,txtbx[B_MENU].box);
       if(usembmap==0)
 	menumap=create_bitmap(rc.mb_w,rc.mb_h);
       blit(screen, menumap,rc.mb_x+rx0,rc.mb_y+ry0,0,0,rc.mb_w,rc.mb_h);
@@ -1171,13 +1171,13 @@ void draw_menubox(int fg, int bg) {
 }
 
 void draw_desc(int fg, int bg) {
-   if(strncmp(descbox, "default", 7)==0) {
+   if(strncmp(txtbx[B_DESC].box, "default", 7)==0) {
       bbox(rc.db_x+rx0, rc.db_y+ry0, rc.db_x2+rx0, rc.db_y2+ry0, fg, bg);
       printf("drawdesc: %d,%d\n",rc.db_x2,rc.db_y2);
    } else {
-//      printf("comp_load: %s\n",descbox);
+//      printf("comp_load: %s\n",txtbx[B_DESC].box);
     if(usedbmap==0) {
-       comp_load(rc.db_x, rc.db_y, rc.db_w, rc.db_h, descbox);
+       comp_load(rc.db_x, rc.db_y, rc.db_w, rc.db_h, txtbx[B_DESC].box);
        descmap=create_bitmap(rc.db_w,rc.db_h);
        blit(screen, descmap,rc.db_x+rx0,rc.db_y+ry0,0,0,rc.db_w,rc.db_h);
        usedbmap=1;

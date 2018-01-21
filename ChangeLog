@@ -8,6 +8,7 @@
  * Allowed assigning different fonts to BANR, DESC, SETUP  and MENU boxes
  * There was no reason to use two different font structures for ttf
    and bitmapped fonts, combined them into DefaultFont
+ * Move some global variables into appropriate type structures
 
 3.2.0+
  * Rewrote configure.ac to support all three graphics libs; removed 

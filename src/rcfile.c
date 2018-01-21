@@ -52,9 +52,10 @@ int load_defaults() {
     int i;
     strcpy(descdir, "./desc");
     strcpy(bgpic, "default");
-    strcpy(titlebox, "default");
-    strcpy(menubox, "default");
-    strcpy(descbox, "default");
+    strcpy(txtbx[B_MENU].box, "default");
+    strcpy(txtbx[B_BANR].box, "default");
+    strcpy(txtbx[B_DESC].box, "default");
+    strcpy(txtbx[B_SETUP].box, "default");
     strcpy(picbox, "default");
     strcpy(theme, "default");
     strcpy(rc.ttfont, "na");
@@ -239,14 +240,13 @@ int load_rc(char *filen) {
 	    strcpy(bgpic,value);
 	 }
 	 if(strncmp(key, "TITLEBOX", 8)==0) {
-	    strcpy(titlebox,value);
+	    strcpy(txtbx[B_BANR].box,value);
 	 }
 	 if(strncmp(key, "DESCBOX", 7)==0) {
-	    strcpy(descbox,value);
-//	    printf("setting descbox: %s\n",descbox);
+	    strcpy(txtbx[B_DESC].box,value);
 	 }
 	 if(strncmp(key, "MENUBOX", 7)==0) {
-	    strcpy(menubox,value);
+	    strcpy(txtbx[B_MENU].box,value);
 	 }
 	 if(strncmp(key, "MENUFONT", 7)==0) {
 	    strcpy(txtbx[B_MENU].font,value);
@@ -288,17 +288,17 @@ int load_rc(char *filen) {
 	   usey=atoi(tmpstr);
 	}	
 	 if(strncmp(key, "MENUXY", 6)==0) {
-	   hss_index(tmpstr,value,0,',');
-	   rc.mb_x=atoi(tmpstr);
-	   hss_index(tmpstr,value,1,',');
-	   rc.mb_y=atoi(tmpstr);
-	   hss_index(tmpstr,value,2,',');
-	   rc.mb_w=atoi(tmpstr);
-	   hss_index(tmpstr,value,3,',');
-	   rc.mb_h=atoi(tmpstr);
-	   rc.mb_x2=rc.mb_x+rc.mb_w;
-	   rc.mb_y2=rc.mb_y+rc.mb_h;
-	   LOG(2, ("MENUXY  :  %d,%d,%d,%d\n",rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h));
+	    hss_index(tmpstr,value,0,',');
+	    rc.mb_x=atoi(tmpstr);
+	    hss_index(tmpstr,value,1,',');
+	    rc.mb_y=atoi(tmpstr);
+	    hss_index(tmpstr,value,2,',');
+	    rc.mb_w=atoi(tmpstr);
+	    hss_index(tmpstr,value,3,',');
+	    rc.mb_h=atoi(tmpstr);
+	    rc.mb_x2=rc.mb_x+rc.mb_w;
+	    rc.mb_y2=rc.mb_y+rc.mb_h;
+	    LOG(2, ("MENUXY  :  %d,%d,%d,%d\n",rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h));
 	 }
 	 if(strncmp(key, "DESCXY", 6)==0) {
 	   hss_index(tmpstr,value,0,',');
