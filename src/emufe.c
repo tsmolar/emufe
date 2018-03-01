@@ -406,17 +406,31 @@ void show_desc2(char *desc) {
 	 fgets(line, box_cw-strlen(nxline), fp);
 	 if(feof(fp))
 	   break;
-         if( strncmp(line,"Name|",5)==0 || strncmp(line,"Year|",5)==0 || strncmp(line,"Company|",8)==0 ) {
-           if(strncmp(line,"Name|",5)==0) hss_index(title,line,1,'|'); 
-           if(strncmp(line,"Year|",5)==0) hss_index(year,line,1,'|'); 
-           if(strncmp(line,"Company|",8)==0) hss_index(company,line,1,'|'); 
+         if( strncmp(line,"Name|",5)==0 || strncmp(line,"Year|",5)==0 || strncmp(line,"Company|",8)==0 || strncmp(line,"Company:",8)==0 ||
+	     strncmp(line,"Name:",5)==0 || strncmp(line,"Released:",9)==0 || strncmp(line,"Publisher:",10)==0 || strncmp(line,"Media:",6)==0) {
+	    if(strncmp(line,"Name|",5)==0) hss_index(title,line,1,'|'); 
+	    if(strncmp(line,"Name:",5)==0) hss_index(title,line,1,':'); 
+	    if(strncmp(line,"Year|",5)==0) hss_index(year,line,1,'|'); 
+	    if(strncmp(line,"Released:",9)==0) hss_index(year,line,1,':'); 
+            if(strncmp(line,"Company|",8)==0) hss_index(company,line,1,'|'); 
+            if(strncmp(line,"Company:",8)==0) hss_index(company,line,1,':'); 
+	    if(strncmp(line,"Publisher:",10)==0) hss_index(company,line,1,':'); 
+	    
+	    // display canned information
          } else {
    	   lineno++;
 	   if(lineno > box_ch)
 	     break;
-           if(lineno==1) 
-	     fnt_print_string(screen,rc.db_x+4+((rc.db_w-(strlen(title)*8))/2)+rx0,(rc.db_y-14)+(lineno*16)+ry0,title,makecol(255,255,255),-1,-1);
-	   else {
+           if(lineno==1)  {
+	      fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(1*16)+1+ry0,"Title:",makecol(0,0,0),-1,-1);
+	      fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(2*16)+1+ry0,"Publisher:",makecol(0,0,0),-1,-1);
+	      fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*16)+1+ry0,"Released:",makecol(0,0,0),-1,-1);
+	      fnt_print_string(screen,rc.db_x+89,(rc.db_y-14)+(1*16)+ry0,title,makecol(255,255,255),-1,-1);
+	      fnt_print_string(screen,rc.db_x+89,(rc.db_y-14)+(2*16)+ry0,company,makecol(255,255,255),-1,-1);
+	      fnt_print_string(screen,rc.db_x+89,(rc.db_y-14)+(3*16)+ry0,year,makecol(255,255,255),-1,-1);
+//	      fnt_print_string(screen,rc.db_x+4+((rc.db_w-(strlen(title)*8))/2)+rx0,(rc.db_y-14)+(lineno*16)+ry0,title,makecol(255,255,255),-1,-1);
+	      lineno=lineno+2;
+	   } else {
 // word wrap
              strcat(nxline,line);
              desc_wrapa(line,nxline,box_cw);
@@ -427,8 +441,8 @@ void show_desc2(char *desc) {
              desc_wrapb(line,nxline,box_cw);
 	     strcpy(nxline,line);
 
-           }
-        }
+           }	    
+	 }
       }
       fclose(fp);
 #ifdef USESDL
@@ -773,6 +787,7 @@ void init() {
       } else {
 	 // else clause copying the font here?
 	 boxfont[i]=DefaultFont;
+	 printf("Can't Find Font, using default\n");
       }
    }
    

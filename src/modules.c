@@ -238,7 +238,7 @@ int customcfg() {
    int n;
    FILE *fi, *fo;
 
-printf("!!!CUST 1: %s\n",emuopt.cfgfile);
+   printf("Using custom config file: %s\n",emuopt.cfgfile);
    if(hss_count(emuopt.cfgfile,mysep)==1) {
       strcpy(ocfgfile,"");
       cmd_scanvar(ocfgfile,"%CFGFILE%");
@@ -1007,6 +1007,7 @@ int setbootdisk() {
    if(haveboot[0]!='N' && haveboot[0]!='n') {
       cmd_getvar(haveboot,"BOOTDISK");
       for(i=7;i>0;i--) {
+	 printf("We have a bootdisk!\n");
 	 printf("disk %d before: %s\n",i+1,arc[i].name);
 	 if(arc[i-1].inserted>0) {
 	    strcpy(arc[i].name,arc[i-1].name);
@@ -1732,7 +1733,8 @@ int module_exec() {
    // These should not be hard-coded like this!!! 
    if(strcmp(imenu.system,"a800")==0 || strcmp(imenu.system,"ST")==0 || 
       strcmp(imenu.system,"Amiga")==0 || strcmp(imenu.system,"c64")==0 ||
-      strcmp(imenu.emulator,"gens")==0 || strcmp(imenu.emulator,"linapple")==0) {
+      strcmp(imenu.emulator,"gens")==0 || strcmp(imenu.emulator,"linapple")==0 ||
+      strcmp(imenu.system,"apple2gs")==0) {
       sysmodule_computer();
       ransys=1;
    }

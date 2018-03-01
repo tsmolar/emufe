@@ -179,6 +179,7 @@ fnt_ttf_init() {
    FT_Error error;
    printf("fnt_ttf_init\n");
 //   fnt_ttf_setrender(RENDER_SIMPLE);
+//   fnt_ttf_setrender(RENDER_BLEND);
    fnt_ttf_setrender(RENDER_NATIVE);
    error = FT_Init_FreeType( &library ); 
    if ( error ) {

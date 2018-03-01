@@ -122,6 +122,9 @@ fnt_setactive(fnt_t* font) {
 }
 
 fnt_t* fnt_getactive() {
+   printf("Retrieving new active font -> %s\n",ActiveFont->name);
+   printf("--> font size %d\n",ActiveFont->size);
+   printf("--> font type %d\n",ActiveFont->type);
    return ActiveFont;
 }
 
