@@ -362,16 +362,21 @@ void desc_wrapb(char* rstr, char *istr, int len) {
 void show_desc2(char *desc) {
    FILE *fp;
    char line[300], nxline[300], descffname[90], *ww;
-   char title[128], year[12], company[70];
-   int lineno, white, black, box_cw, box_ch,i;
+   char title[128], year[12], company[70], media[20];
+   int lineno, white, black, box_cw, box_ch,i, fnw, fnh, fns, dheader;
 
    fnt_setactive(boxfont[B_DESC]); 
+   fnh=boxfont[B_DESC]->scale_h;
+   fnw=boxfont[B_DESC]->scale_w;
    
-   box_cw=(rc.db_w-8)/8;
-   box_ch=(rc.db_h-8)/16;
+   
+   dheader=0;
+   box_cw=(rc.db_w-8)/fnw;
+   box_ch=(rc.db_h-8)/fnh;
    strcpy(title,desc);
-   strcpy(year,"unknown");
-   strcpy(company,"unknown");
+   strcpy(year," unknown");
+   strcpy(company," unknown");
+   strcpy(media, " unknown");
    strcpy(nxline,"\n");
 
 #ifdef DEBUG
@@ -415,36 +420,45 @@ void show_desc2(char *desc) {
             if(strncmp(line,"Company|",8)==0) hss_index(company,line,1,'|'); 
             if(strncmp(line,"Company:",8)==0) hss_index(company,line,1,':'); 
 	    if(strncmp(line,"Publisher:",10)==0) hss_index(company,line,1,':'); 
-	    
+	    if(strncmp(line,"Media:",6)==0) hss_index(media,line,1,':'); 
+	    lineno=3;
+	    dheader=1;
 	    // display canned information
          } else {
    	   lineno++;
 	   if(lineno > box_ch)
 	     break;
            if(lineno==1)  {
-	      fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(1*16)+1+ry0,"Title:",makecol(0,0,0),-1,-1);
-	      fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(2*16)+1+ry0,"Publisher:",makecol(0,0,0),-1,-1);
-	      fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*16)+1+ry0,"Released:",makecol(0,0,0),-1,-1);
-	      fnt_print_string(screen,rc.db_x+89,(rc.db_y-14)+(1*16)+ry0,title,makecol(255,255,255),-1,-1);
-	      fnt_print_string(screen,rc.db_x+89,(rc.db_y-14)+(2*16)+ry0,company,makecol(255,255,255),-1,-1);
-	      fnt_print_string(screen,rc.db_x+89,(rc.db_y-14)+(3*16)+ry0,year,makecol(255,255,255),-1,-1);
-//	      fnt_print_string(screen,rc.db_x+4+((rc.db_w-(strlen(title)*8))/2)+rx0,(rc.db_y-14)+(lineno*16)+ry0,title,makecol(255,255,255),-1,-1);
-	      lineno=lineno+2;
+	      lineno=lineno+0;
 	   } else {
 // word wrap
              strcat(nxline,line);
              desc_wrapa(line,nxline,box_cw);
 //      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
 //           shadow
-      	     fnt_print_string(screen,rc.db_x+5+rx0,(rc.db_y-14)+(lineno*16)+1+ry0,line,makecol(22,22,22),-1,-1);
-      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(texthlr,texthlg,texthlb),-1,-1);
+      	     fnt_print_string(screen,rc.db_x+5+rx0,(rc.db_y-14)+(lineno*fnh)+1+ry0,line,makecol(22,22,22),-1,-1);
+      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,line,makecol(texthlr,texthlg,texthlb),-1,-1);
              desc_wrapb(line,nxline,box_cw);
 	     strcpy(nxline,line);
 
            }	    
 	 }
-      }
+      } // while
       fclose(fp);
+      if(dheader == 1) {
+	 fns=boxfont[B_DESC]->scale_w;
+	 boxfont[B_DESC]->scale_w=boxfont[B_DESC]->scale_h;
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(1*fnh)+1+ry0,"Title:",makecol(0,0,0),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(2*fnh)+1+ry0,"Publisher:",makecol(0,0,0),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*fnh)+1+ry0,"Released:",makecol(0,0,0),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(4*fnh)+1+ry0,"Media:",makecol(0,0,0),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(1*fnh)+ry0,title,makecol(255,255,255),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(2*fnh)+ry0,company,makecol(255,255,255),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(3*fnh)+ry0,year,makecol(255,255,255),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(4*fnh)+ry0,media,makecol(255,255,255),-1,-1);
+	 boxfont[B_DESC]->scale_w=fns;
+	 //	      fnt_print_string(screen,rc.db_x+4+((rc.db_w-(strlen(title)*8))/2)+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,title,makecol(255,255,255),-1,-1);
+      }	 
 #ifdef USESDL
    //   gfx_sdlflip();
       s2a_flip(screen);
