@@ -65,6 +65,8 @@ fnt_t* fnt_newfont(int ftype) {
     case TTF:
       f->width=f->height=f->scale_w=0;
       f->scale_h=14;
+//      fd=(unsigned char*)malloc(204800);
+//      f->data=fd;
     case BIOS_8X8:
       f->width=8;
       f->height=8;

@@ -369,9 +369,11 @@ void show_desc2(char *desc) {
    fnh=boxfont[B_DESC]->scale_h;
    fnw=boxfont[B_DESC]->scale_w;
    
-   
    dheader=0;
-   box_cw=(rc.db_w-8)/fnw;
+   box_cw=((rc.db_w-8)/fnw)*1.5;
+   
+   //printf("### box_cw=%d   rc.db_w=%d   fnw=%d\n",box_cw,rc.db_w,fnw);
+   
    box_ch=(rc.db_h-8)/fnh;
    strcpy(title,desc);
    strcpy(year," unknown");
@@ -437,7 +439,8 @@ void show_desc2(char *desc) {
 //      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
 //           shadow
       	     fnt_print_string(screen,rc.db_x+5+rx0,(rc.db_y-14)+(lineno*fnh)+1+ry0,line,makecol(22,22,22),-1,-1);
-      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,line,makecol(texthlr,texthlg,texthlb),-1,-1);
+      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,line,makecol(rc.txdesc_r,rc.txdesc_g,rc.txdesc_b),-1,-1);
+//      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,line,makecol(texthlr,texthlg,texthlb),-1,-1);
              desc_wrapb(line,nxline,box_cw);
 	     strcpy(nxline,line);
 
@@ -447,7 +450,7 @@ void show_desc2(char *desc) {
       fclose(fp);
       if(dheader == 1) {
 	 fns=boxfont[B_DESC]->scale_w;
-	 boxfont[B_DESC]->scale_w=boxfont[B_DESC]->scale_h;
+	 boxfont[B_DESC]->scale_w=boxfont[B_DESC]->scale_h*1.1;
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(1*fnh)+1+ry0,"Title:",makecol(0,0,0),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(2*fnh)+1+ry0,"Publisher:",makecol(0,0,0),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*fnh)+1+ry0,"Released:",makecol(0,0,0),-1,-1);
