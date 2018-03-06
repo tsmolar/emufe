@@ -43,7 +43,7 @@ typedef struct prop_t {
   int pb_x, pb_y, pb_w, pb_h, pb_x2, pb_y2; // pic box                         
   int db_x, db_y, db_w, db_h, db_x2, db_y2; // desc box                                      
   int font_w, font_h;  // these should be in the font lib
-  int txdesc_r,txdesc_g,txdesc_b;
+  int txdesc_r,txdesc_g,txdesc_b;    // move to menuinfo_t
 } prop_t;
 
 typedef struct menuinfo_t {
@@ -61,6 +61,9 @@ typedef struct menuinfo_t {
    int no_launch;
    int autosel;
    int profile;
+   
+   // text color settings
+   fgbg_t col[4];   //  imenu.col[0].bg.r
 } menuinfo_t;
 
 typedef struct env_t {

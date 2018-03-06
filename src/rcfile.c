@@ -68,13 +68,15 @@ int load_defaults() {
     rc.banr.bg.enable='N';
     cachefont=0;
     fullscr='a';
-    textbgr=textbgg=textbgb=128;
-    texthlr=texthlg=texthlb=0;
+//    texthlr=texthlg=texthlb=0;
     descbgr=descbgg=descbgb=255;
     rc.banr.sh.r=rc.banr.sh.g=rc.banr.sh.b=0;
     rc.banr.bg.r=rc.banr.bg.g=rc.banr.bg.b=0;
     rc.banr.fg.r=rc.banr.fg.g=rc.banr.fg.b=255;
-    shadowr=shadowg=shadowb=0;
+    imenu.col[0].bg.r=imenu.col[1].bg.g=imenu.col[1].bg.b=0;
+    imenu.col[1].bg.r=imenu.col[1].bg.g=imenu.col[1].bg.b=128;
+    imenu.col[1].sh.r=imenu.col[1].sh.g=imenu.col[1].sh.b=0;
+    imenu.col[3].fg.r=imenu.col[3].fg.g=imenu.col[3].fg.b=128;
     // box settings -- new 3.0                                                 
     rc.pb_x=364;  rc.pb_y=96;  rc.pb_w=244;  rc.pb_h=152;
     rc.pb_x2=rc.pb_x+rc.pb_w;
@@ -570,39 +572,47 @@ int load_rc(char *filen) {
 	 }
 	 
 
-	 if(strncmp(key, "TEXTBG", 6)==0) {
-	    textbgr=hextod(value[0],value[1]);
-	    textbgg=hextod(value[2],value[3]);
-	    textbgb=hextod(value[4],value[5]);
+	 if(strncmp(key, "MENUC1BG", 8)==0) {
+//	    textbgr=hextod(value[0],value[1]);
+//	    textbgg=hextod(value[2],value[3]);
+//	    textbgb=hextod(value[4],value[5]);
+	    imenu.col[1].bg.r=hextod(value[0],value[1]);
+	    imenu.col[1].bg.g=hextod(value[2],value[3]);
+	    imenu.col[1].bg.b=hextod(value[4],value[5]);
 	 }
-	 if(strncmp(key, "TEXTDS", 6)==0) {
+	 if(strncmp(key, "DESCTX", 6)==0) {
 	    // text description color
 	    rc.txdesc_r=hextod(value[0],value[1]);
 	    rc.txdesc_g=hextod(value[2],value[3]);
 	    rc.txdesc_b=hextod(value[4],value[5]);
-/*	    printf("textbgg=%d %d %d\n",textfgr, textfgg, textfgb);  */
 	 }
-	 if(strncmp(key, "TEXTFG", 6)==0) {
-	    textfgr=hextod(value[0],value[1]);
-	    textfgg=hextod(value[2],value[3]);
-	    textfgb=hextod(value[4],value[5]);
-/*	    printf("textbgg=%d %d %d\n",textfgr, textfgg, textfgb);  */
+	 if(strncmp(key, "MENUC1FG", 8)==0) {
+	    // main font color in menu window
+	    imenu.col[1].fg.r=hextod(value[0],value[1]);
+	    imenu.col[1].fg.g=hextod(value[2],value[3]);
+	    imenu.col[1].fg.b=hextod(value[4],value[5]);
+/*	    printf("textbgg=%d %d %d\n",imenu.col[1].fg.r, imenu.col[1].fg.g, imenu.col[1].fg.b);  */
 	 }
-	 if(strncmp(key, "TEXTSD", 6)==0) {
-	    textsdr=hextod(value[0],value[1]);
-	    textsdg=hextod(value[2],value[3]);
-	    textsdb=hextod(value[4],value[5]);
-/*	    printf("textbgg=%d %d %d\n",textsdr, textsdg, textsdb); */
+	 if(strncmp(key, "MENUHLFG", 8)==0) {
+	    imenu.col[0].fg.r=hextod(value[0],value[1]);
+	    imenu.col[0].fg.g=hextod(value[2],value[3]);
+	    imenu.col[0].fg.b=hextod(value[4],value[5]);
+/*	    printf("textbgg=%d %d %d\n",imenu.col[0].fg.r, imenu.col[0].fg.g, imenu.col[0].fg.b); */
 	 }
-	 if(strncmp(key, "TEXTHL", 6)==0) {
-	    texthlr=hextod(value[0],value[1]);
-	    texthlg=hextod(value[2],value[3]);
-	    texthlb=hextod(value[4],value[5]);
+	 if(strncmp(key, "MENUHLBG", 8)==0) {
+	    imenu.col[0].bg.r=hextod(value[0],value[1]);
+	    imenu.col[0].bg.g=hextod(value[2],value[3]);
+	    imenu.col[0].bg.b=hextod(value[4],value[5]);
 	 }
-	 if(strncmp(key, "TEXTIE", 6)==0) {
-	    textier=hextod(value[0],value[1]);
-	    textieg=hextod(value[2],value[3]);
-	    textieb=hextod(value[4],value[5]);
+	 if(strncmp(key, "MENUC2FG", 8)==0) {
+	    imenu.col[2].fg.r=hextod(value[0],value[1]);
+	    imenu.col[2].fg.g=hextod(value[2],value[3]);
+	    imenu.col[2].fg.b=hextod(value[4],value[5]);
+	 }
+	 if(strncmp(key, "MENUC3FG", 8)==0) {
+	    imenu.col[3].fg.r=hextod(value[0],value[1]);
+	    imenu.col[3].fg.g=hextod(value[2],value[3]);
+	    imenu.col[3].fg.b=hextod(value[4],value[5]);
 	 }
 	 if(strncmp(key, "DESCBG", 6)==0) {
 	    descbgr=hextod(value[0],value[1]);
@@ -645,11 +655,14 @@ int load_rc(char *filen) {
 	    printf("BLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_BANR].font,txtbx[B_BANR].fonttype,txtbx[B_BANR].font_w,txtbx[B_BANR].font_h);
 	 }
 
-	 if(strncmp(key, "SHDCOL", 6)==0) {
-	    shadowr=hextod(value[0],value[1]);
-	    shadowg=hextod(value[2],value[3]);
-	    shadowb=hextod(value[4],value[5]);
-//	    printf("shadow=%d %d %d\n",shadowr, shadowg, shadowb);  
+	 if(strncmp(key, "MENUC1SH", 8)==0) {
+//	    shadowr=hextod(value[0],value[1]);
+//	    shadowg=hextod(value[2],value[3]);
+//	    shadowb=hextod(value[4],value[5]);
+	    imenu.col[1].sh.r=hextod(value[0],value[1]);
+	    imenu.col[1].sh.g=hextod(value[2],value[3]);
+	    imenu.col[1].sh.b=hextod(value[4],value[5]);
+//	    printf("shadow=%d %d %d\n",imenu.col[1].bg.r, imenu.col[1].bg.g, imenu.col[1].bg.b);  
 	 }
 	 if(strncmp(key, "FULLSCREEN", 10)==0) {	
 	    fullscr=value[0];

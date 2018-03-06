@@ -95,16 +95,16 @@ int st_txt_col(char etype) {
     * should, we set fnfgcol directly.*/
    switch(etype) {
     case 'm':
-      fnfgcol=makecol16(textfgr,textfgg,textfgb);
+      fnfgcol=makecol16(imenu.col[1].fg.r,imenu.col[1].fg.g,imenu.col[1].fg.b);
       break;
     case 'd':
-      fnfgcol=makecol16(textfgr,textfgg,textfgb);
+      fnfgcol=makecol16(imenu.col[1].fg.r,imenu.col[1].fg.g,imenu.col[1].fg.b);
       break;
     case 'a':
-      fnfgcol=makecol16(textier,textieg,textieb);
+      fnfgcol=makecol16(imenu.col[2].fg.r,imenu.col[2].fg.g,imenu.col[2].fg.b);
       break;
     case 'i':
-      fnfgcol=makecol16(textier,textieg,textieb);
+      fnfgcol=makecol16(imenu.col[2].fg.r,imenu.col[2].fg.g,imenu.col[2].fg.b);
       break;
     case 's':
       fnfgcol=makecol16(255,255,255);
@@ -119,7 +119,8 @@ int st_txt_col(char etype) {
       fnfgcol=makecol16(80,64,16);
       break;
     case 'u':
-      fnfgcol=makecol16(0,64,80);
+//      fnfgcol=makecol16(128,64,80);
+      fnfgcol=makecol16(imenu.col[3].fg.r,imenu.col[3].fg.g,imenu.col[3].fg.b);
       break;
    }   
 }
@@ -150,7 +151,7 @@ int menu_uhlight(int index, int slct) {
    offset=(slct-index)+1;
 /*   set_font_fcolor(0,0,0); */
    st_txt_col(menu[slct].type);
-   set_font_bcolor(textbgr,textbgg,textbgb);
+   set_font_bcolor(imenu.col[1].bg.r,imenu.col[1].bg.g,imenu.col[1].bg.b);
    scare_mouse();
    if(usembmap==1) {
       blit(menumap, screen,0,(offset*fontv)-13,rc.mb_x+rx0,ry0+rc.mb_y-13+(offset*fontv),rc.mb_w,fontv);
@@ -183,12 +184,12 @@ int menu_hlight(int index, int slct) {
    fontv=txtbx[B_MENU].font_v;
    
    offset=(slct-index)+1;
-   set_font_fcolor(textsdr,textsdg,textsdb);
+   set_font_fcolor(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b);
 /*   set_font_bcolor(0,0,0); */
-   set_font_bcolor(texthlr,texthlg,texthlb);
+   set_font_bcolor(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b);
    scare_mouse();
 //   solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name);
-//   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),makecol(texthlr,texthlg,texthlb),-1);
+//   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b),makecol(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b),-1);
 //   
    
 //   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,
@@ -197,7 +198,7 @@ int menu_hlight(int index, int slct) {
 	   (rc.mb_x+2)+rc.mb_w-4+rx0,(rc.mb_y)+(fontv-14)+(offset*fontv)+ry0,fnbgcol);
    
    
-   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(textsdr,textsdg,textsdb),-1,-1);
+   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b),-1,-1);
    rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_x+9)+rx0,rc.mb_y+(fontv-14)+(offset*fontv)+ry0, fnbgcol);
 
 //   rect(screen,(rc.mb_x)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_x+60)+rx0,(rc.mb_y+2)+(offset*fontv)+ry0, fnbgcol);
@@ -278,11 +279,11 @@ void info_bar() {
 /*   set_font_fcolor(232,232,0); */
    set_font_fcolor(descbgr,descbgg,descbgb);
 //   set_font_bcolor(64,64,64);
-   set_font_bcolor(texthlr,texthlg,texthlb);
+   set_font_bcolor(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b);
    rectfill(screen, rc.db_x+2+rx0, rc.db_y+rc.db_h-17+ry0, rc.db_x+rc.db_w-2+rx0, rc.db_y+rc.db_h-2+ry0, fnbgcol);
    solid_string(rc.db_x+40+rx0,rc.db_y+rc.db_h-17+ry0,"Press mouse/joystick button or '<ENTER>' to select this option");  
 /*   set_font_fcolor(232,64,0); */
-//   set_font_fcolor(textsdr,textsdg,textsdb);
+//   set_font_fcolor(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b);
    set_font_fcolor(255,255,255);
    solid_string(rc.db_x+88+rx0,rc.db_y+rc.db_h-17+ry0,"mouse/joystick button");  
    solid_string(rc.db_x+296+rx0,rc.db_y+rc.db_h-17+ry0,"<ENTER>");  
@@ -436,11 +437,11 @@ void show_desc2(char *desc) {
 // word wrap
              strcat(nxline,line);
              desc_wrapa(line,nxline,box_cw);
-//      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(textfgr,textfgg,textfgb),-1,-1);
+//      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*16)+ry0,line,makecol(imenu.col[1].fg.r,imenu.col[1].fg.g,imenu.col[1].fg.b),-1,-1);
 //           shadow
       	     fnt_print_string(screen,rc.db_x+5+rx0,(rc.db_y-14)+(lineno*fnh)+1+ry0,line,makecol(22,22,22),-1,-1);
       	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,line,makecol(rc.txdesc_r,rc.txdesc_g,rc.txdesc_b),-1,-1);
-//      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,line,makecol(texthlr,texthlg,texthlb),-1,-1);
+//      	     fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,line,makecol(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b),-1,-1);
              desc_wrapb(line,nxline,box_cw);
 	     strcpy(nxline,line);
 
@@ -642,7 +643,7 @@ int draw_screen() {
 
    black=makecol16(0,0,0); 
    gray128=makecol16(128,128,128); 
-   menubg=makecol16(textbgr,textbgg,textbgb); 
+   menubg=makecol16(imenu.col[1].bg.r,imenu.col[1].bg.g,imenu.col[1].bg.b); 
    white=makecol16(255,255,255); 
 
    set_bg();
@@ -656,8 +657,8 @@ int draw_screen() {
 
 void restore_screen(int index, int slc) {
    // After changing gfx mode, call this
-   set_font_fcolor(textfgr,textfgb,textfgg);
-   set_font_scolor(shadowr,shadowg,shadowb);
+   set_font_fcolor(imenu.col[1].fg.r,imenu.col[1].fg.b,imenu.col[1].fg.g);
+   set_font_fcolor(imenu.col[1].sh.r,imenu.col[1].sh.b,imenu.col[1].sh.g);
 
    draw_screen();
    
@@ -714,8 +715,8 @@ void setgfxmode() {
 }
 
 void init() {
-   char tmpstr[20], tstr2[20];
-   int i;
+   char tmpstr[20], tstr2[20], ext[5];
+   int i,exi, exl;
 
    allegro_init();
 
@@ -758,8 +759,8 @@ void init() {
 
    setgfxmode();
    set_font_bcolor(0,0,0);
-   set_font_fcolor(textfgr,textfgb,textfgg);
-   set_font_scolor(shadowr,shadowg,shadowb);
+   set_font_fcolor(imenu.col[1].fg.r,imenu.col[1].fg.b,imenu.col[1].fg.g);
+   set_font_fcolor(imenu.col[1].sh.r,imenu.col[1].sh.b,imenu.col[1].sh.g);
 
    // init font here
    fnt_init();
@@ -795,10 +796,23 @@ void init() {
    for(i=0;i<4;i++) {
       if(txtbx[i].fonttype>-1) {
 	 sprintf(fullpath,"%s%c%s",fontdir,mysep,txtbx[i].font);
-	 printf("VLOAD: %s  type: %d\n",fullpath,txtbx[i].fonttype);
+	 
+	 // Check to ensure that no TTFs are being loaded
+	 exl=strlen(txtbx[i].font)-3;
+	 for(exi=0;exi<3;exi++) {
+	    ext[exi]=txtbx[i].font[exi+exl];
+	 }
+	 ext[3]=0;
+	 
+	 if(strcmp(ext,"ttf")==0) {
+	    printf ("ERROR: TTF fonts can't be loaded at the box level currently.\n   To use TTF, set the global TTFFONT, and set fonttype for the box to 4\n");
+	 }
+	 // end ext check
+	 
+	 printf("VLOAD: %s  type: %d   ext:%s\n",fullpath,txtbx[i].fonttype,ext);
 	 LOG(3, ("box font.load\n"));
 	 boxfont[i]=fnt_loadfont(fullpath,txtbx[i].fonttype);
-
+	 
 	 boxfont[i]->scale_w=txtbx[i].font_w;
 	 boxfont[i]->scale_h=txtbx[i].font_h;
       } else {
@@ -1496,7 +1510,7 @@ int main(int argc, char* argv[]) {
    draw_screen();
    // Setup selection for new selection type
    selection=create_bitmap(rc.mb_w,16);
-   rectfill(selection,0,0,rc.mb_w,16,makecol(texthlr,texthlg,texthlb));
+   rectfill(selection,0,0,rc.mb_w,16,makecol(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b));
 //   rect(selection,0,0,rc.mb_w,16,makecol(255,255,255));
 //   SDL_SetAlpha(selection, SDL_SRCALPHA, 128);
    sa_setalpha(selection, 128);
