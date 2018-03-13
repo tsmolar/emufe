@@ -33,7 +33,7 @@ int fnt_blendfunc(int pix, int drw, int alp) {
    return ((pix*adf + drw*alp) / 255);
 }
 
-fnt_ttf_draw_bitmap_blend( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, int color) {
+void fnt_ttf_draw_bitmap_blend( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, int color) {
    
    // Simple render
    
@@ -75,7 +75,7 @@ fnt_ttf_draw_bitmap_blend( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, in
 //#endif
 }
 
-fnt_ttf_draw_bitmap_simple( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, int color) {
+void fnt_ttf_draw_bitmap_simple( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, int color) {
    
    // Simple render
    // Limited/no Anti-aliasing
@@ -107,7 +107,7 @@ fnt_ttf_draw_bitmap_simple( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, i
 }
 
 #ifdef USESDL
-fnt_ttf_draw_bitmap_sdl( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, Uint32 color) {
+void fnt_ttf_draw_bitmap_sdl( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, Uint32 color) {
    
    // This uses SDL per-pixel alpha-blending to provide clean anti-aliasing
    // There may not be a way to reconcile this with allegro's methods, hence
@@ -142,7 +142,7 @@ fnt_ttf_draw_bitmap_sdl( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y, Uint
 }
 #endif
 
-fnt_ttf_draw_bitmap0( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y) {
+void fnt_ttf_draw_bitmap0( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y) {
    
    // Simple render
    
@@ -175,9 +175,11 @@ fnt_ttf_draw_bitmap0( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y) {
 #endif
 }
 
-fnt_ttf_init() {
+void fnt_ttf_init() {
    FT_Error error;
-   printf("fnt_ttf_init\n");
+#ifdef DEBUG
+   printf("in fnt_ttf_init()\n");
+#endif
 //   fnt_ttf_setrender(RENDER_SIMPLE);
 //   fnt_ttf_setrender(RENDER_BLEND);
    fnt_ttf_setrender(RENDER_NATIVE);
@@ -185,23 +187,31 @@ fnt_ttf_init() {
    if ( error ) {
       printf("... an error occurred during freetype initialization ...\n"); 
    }
+#ifdef DEBUG
    printf("done fnt_ttf_init\n");
+#endif
 }
 
-fnt_ttf_loadfont(fnt_t *myfont ,char *filen) {
+void fnt_ttf_loadfont(fnt_t *myfont ,char *filen) {
    FT_Error error;
+#ifdef DEBUG
    printf("load ttf font:%s\n",filen);
+#endif
    error = FT_New_Face( library, filen, 0, &face ); 
+#ifdef DEBUG
    printf("Face Family: %s\n",face->family_name);
+#endif
    if ( error == FT_Err_Unknown_File_Format ) {
       printf("unsupported font format\n"); 
    }
    else if ( error ) {
+#ifdef DEBUG
       printf("could not open font\n"); 
+#endif
    }
 }
 
-fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, int sd) {
+void fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, int sd) {
    // Refined Version from tutorial
    FT_GlyphSlot slot = face->glyph; /* a small shortcut */  
    FT_Error error;
@@ -217,9 +227,9 @@ fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, int sd
    // ... initialize library ... 
    //  ... create face object ... 
 
-   printf("fnt_ttf_print_string\n");
+   // printf("fnt_ttf_print_string\n");
    cfont=fnt_getactive();
-   printf("scale_h=%d\n",cfont->scale_w);
+   // printf("scale_h=%d\n",cfont->scale_w);
    error = FT_Set_Pixel_Sizes(face, /* handle to face object */  
 			      cfont->scale_w,    /* pixel_width */
 			     cfont->scale_h );  /* pixel_height */

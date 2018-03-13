@@ -44,6 +44,7 @@ void set_bg() {
    bitmap=load_bitmap(fname,p);
    if(bitmap) {
       blit(bitmap,screen,0,0,0,0,300,400);
+      s2a_updaterect(screen,0,0,300,400);
       destroy_bitmap(bitmap);
    }      
 }   
@@ -53,6 +54,7 @@ void ch_launch(BITMAP *x)
    scare_mouse();
 //   masked_blit(x,screen,0,0,24,268,86,27);
    masked_blit(x,screen,0,0,24,204,102,23);
+   s2a_updaterect(screen,24,204,102,23);
    unscare_mouse();
 }
 
@@ -61,6 +63,7 @@ void ch_exit(BITMAP *x)
    scare_mouse();
 //   masked_blit(x,screen,0,0,24,304,86,27);
    masked_blit(x,screen,0,0,24,239,102,23);
+   s2a_updaterect(screen,24,239,102,23);
    unscare_mouse();
 }
 
@@ -104,7 +107,7 @@ void init() {
    allegro_init();
    install_mouse();
    install_keyboard();
-   set_color_depth(16);
+   set_color_depth(32);
    
    w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,300,400,0,0);
    load_buttons();  /* Load buttons */
@@ -151,7 +154,11 @@ int main(int argc, char* argv[]) {
    sprintf(fname,"%s%cemufe.exe -n -i -ac -c",bindir,mysep);
 #else
 //   sprintf(basedir,"/usr/src/keep/emufe");
-   sprintf(fname,"%s%cbin%cemufe -n -i -ac",bindir,mysep,mysep);
+//   sprintf(fname,"%s%cbin%cemufe -n -i -ac",bindir,mysep,mysep);
+
+   // need to determine archetecture and plug it in here!
+   sprintf(fname,"%s%cbin%cemufe.x86_64 -n -i -ac",bindir,mysep,mysep);
+      printf("fname: %s\n",fname);
 #endif
 #ifdef DEBUG
    printf("fname: %s\n",fname);
@@ -181,6 +188,7 @@ int main(int argc, char* argv[]) {
 	    printf("Execute:  %s\n", fname);
 #endif
 	    w=set_gfx_mode(GFX_TEXT,300,400,0,0);
+	    printf("If this doesn't run properly, try setting CDROOT env variable to the top directory\n");
 	    system(fname);
 	    ef_shutdown();
 	 }

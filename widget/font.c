@@ -60,7 +60,7 @@ fnt_t* fnt_newfont(int ftype) {
    BITMAP* bfd;
    unsigned char* fd;
 
-   printf("ftype is %d (1)\n", ftype);
+   // printf("ftype is %d (1)\n", ftype);
    switch(ftype) {
     case TTF:
       f->width=f->height=f->scale_w=0;
@@ -104,10 +104,10 @@ fnt_t* fnt_newfont(int ftype) {
       f->data=bfd;
       break;
    }
-   printf("ftype is %d (2)\n", ftype);
+//   printf("ftype is %d (2)\n", ftype);
 
    f->type=ftype;
-   printf("ftype is %d (3)\n", f->type);
+//   printf("ftype is %d (3)\n", f->type);
    return f;
 }
 
@@ -118,15 +118,15 @@ fnt_destroy(fnt_t* font) {
 
 fnt_setactive(fnt_t* font) {
    ActiveFont=font;
-   printf("Setting new active font -> %s\n",ActiveFont->name);
-   printf("--> font size %d\n",ActiveFont->size);
-   printf("--> font type %d\n",ActiveFont->type);
+//   printf("Setting new active font -> %s\n",ActiveFont->name);
+//   printf("--> font size %d\n",ActiveFont->size);
+//   printf("--> font type %d\n",ActiveFont->type);
 }
 
 fnt_t* fnt_getactive() {
-   printf("Retrieving new active font -> %s\n",ActiveFont->name);
-   printf("--> font size %d\n",ActiveFont->size);
-   printf("--> font type %d\n",ActiveFont->type);
+//   printf("Retrieving new active font -> %s\n",ActiveFont->name);
+//   printf("--> font size %d\n",ActiveFont->size);
+//   printf("--> font type %d\n",ActiveFont->type);
    return ActiveFont;
 }
 
@@ -169,15 +169,17 @@ fnt_t* fnt_loadfont(char *filen, int ftype) {
    int ix,iy;
    int char_h;
    fnt_t* lfont;
+#ifdef DEBUG
    printf("creating font with %d\n",ftype);
-
+#endif
+   
    lfont=fnt_newfont(ftype);
-   printf("f-type is %d (1)\n", lfont->type);
+//   printf("f-type is %d (1)\n", lfont->type);
    w=lfont->data;
    char_h=lfont->height;
-   printf("f-type is %d (1.1)\n", lfont->type);
+//   printf("f-type is %d (1.1)\n", lfont->type);
    strcpy(lfont->name,filen);
-   printf("f-type is %d (1.2)\n", lfont->type);
+//   printf("f-type is %d (1.2)\n", lfont->type);
 //#ifdef DEBUG
 //   printf("fontname is %s\n", fontname);
 //#endif
@@ -213,7 +215,7 @@ fnt_t* fnt_loadfont(char *filen, int ftype) {
       fclose(fp);
    }
    strcpy(currfont,filen);
-   printf("f-type is %d (2)\n", lfont->type);
+//   printf("f-type is %d (2)\n", lfont->type);
    return lfont;
 }
 
@@ -412,7 +414,9 @@ fnt_init() {
 #ifdef USE_FREETYPE
    fnt_ttf_init();
 #endif
-   printf("dont fnt_init()\n");
+#ifdef DEBUG
+   printf("done fnt_init()\n");
+#endif
 }
 
 fnt_setscale(fnt_t *myfont, int w, int h) {

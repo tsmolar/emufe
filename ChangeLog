@@ -1,4 +1,6 @@
 3.3.0
+ * reworked the theme color loading
+ * Fix debug so that it spews very little when DEBUG_LEVEL = 0 
  * Added JOYSTICK=A support.  Emufe will autodetect joysticks when
    this is enabled and re-set it to Y or N in memory accordingly 
  * Mouse pointer was off before on the Y-axis.  It's much closer now

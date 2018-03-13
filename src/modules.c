@@ -798,7 +798,7 @@ int cmd_scanvar(char *strout, const char *strin) {
 //	 if(strcmp(currvar,"FAST")==0) strcpy(currl,emuopt.fastcpu);
 	 cmd_getvar(currl,currvar);
 #ifdef DEBUG
-	 printf("CMD is %s  CL is %s\n",currvar,currl);
+	 LOG(2, ("CMD is %s  CL is %s\n",currvar,currl));
 #endif
       } else {
 	 // printf("I AM HERE\n");
@@ -822,8 +822,8 @@ int build_cmd() {
       cmd_getcmdline("disk");
    }
 #ifdef DEBUG
-   printf("BINTYPE: %s\n",emuopt.bintype);
-   printf("CMD LINE: %s\n",emuopt.cmd_patt);
+   LOG(2, ("BINTYPE: %s\n",emuopt.bintype));
+   LOG(2, ("CMD LINE: %s\n",emuopt.cmd_patt));
 #endif
    cmd_scanvar(emuopt.cmd_line,emuopt.cmd_patt);
 }
@@ -884,10 +884,17 @@ int cmdtbl_alter(char *sopt,char *senv, char *scmd) {
 
 int cmdtbl_print() {
    int i;
-   printf("print of cmdtbl\n");
-   for(i=0;i<cmdtidx;i++) {
-      printf("opt=%s    env=%s   cmd=%s\n",cmdtbl[i].optname,cmdtbl[i].envpat,cmdtbl[i].cmdopt);
-   }
+   
+   // This will print out the command table if debug level is high enough
+   
+   if (DEBUG_LEVEL >= 2) {
+      printf("\nprint of cmdtbl\n");
+      printf("-------------------------------------------------------------\n");
+      for(i=0;i<cmdtidx;i++) {
+	 printf("opt=%s    env=%s   cmd=%s\n",cmdtbl[i].optname,cmdtbl[i].envpat,cmdtbl[i].cmdopt);
+      }
+      printf("-------------------------------------------------------------\n");
+   }  
 }
 
 int env_clear() {
@@ -896,9 +903,15 @@ int env_clear() {
 
 int env_print() {
    int i;
-   printf("print of env\n");
-   for(i=0;i<envidx;i++) {
-      printf("%s=%s\n",enviro[i].var,enviro[i].value);
+
+   if (DEBUG_LEVEL >= 2) {
+      printf("\n+--------------+\n");
+      printf("| print of env |\n");
+      printf("+--------------+---------------------------------\n");
+      for(i=0;i<envidx;i++) {
+	 printf("| %s=%s\n",enviro[i].var,enviro[i].value);
+      }
+      printf("+------------------------------------------------\n\n");
    }
 }
 
@@ -947,7 +960,7 @@ int env_load(const char *emuenv) {
    int i;
    char lb[260], value[20], var[40], v2[40];
 #ifdef DEBUG
-   printf("EMUENV file is %s (env_load)\n",emuenv);
+   LOG(2, ("EMUENV file is %s (env_load)\n",emuenv));
 #endif
    fp=fopen(emuenv,"rb");
    while(!feof(fp)) {
@@ -1048,7 +1061,7 @@ int load_settings() {
    
 //   env_clear();
 #ifdef DEBUG
-   printf("emuopt.cfgdir dir: %s\n",emuopt.cfgdir);
+   LOG(2, ("emuopt.cfgdir dir: %s\n",emuopt.cfgdir));
 #endif
    // should we save this into imenu, emuopts or other structure?  Probably
    sprintf(emuenv,"%s%cetc%cemucd.env",basedir,mysep,mysep);
@@ -1082,10 +1095,10 @@ int load_settings() {
    if(emuenv[0] == 'A') {
       if(SDL_NumJoysticks() == 0) {
 	 env_set("JOYSTICK=N");
-	 printf("Auto Joystick Detection Enabled: setting JOYSTICK=N\n");
+	 LOG(1, ("Auto Joystick Detection Enabled: setting JOYSTICK=N\n"));
       } else {
 	 env_set("JOYSTICK=Y");
-	 printf("Auto Joystick Detection Enabled: setting JOYSTICK=Y\n");
+	 LOG(1, ("Auto Joystick Detection Enabled: setting JOYSTICK=Y\n"));
       }
       env_print();
    }
@@ -1103,7 +1116,7 @@ int mod_loadcfg(const char *emucfg) {
 
 //   sprintf(emucfg,"%s%c%s%cetc%cemu_%s.cfg",basedir,mysep,imenu.sysbase,mysep,mysep,imenu.emulator);
 #ifdef DEBUG
-   printf("EMUCFG2 file is %s\n",emucfg);
+   LOG(2, ("EMUCFG2 file is %s\n",emucfg));
 #endif
    emuopt.usecfg='N';
    fp=fopen(emucfg,"rb");
@@ -1208,7 +1221,7 @@ int mod_loadcfg(const char *emucfg) {
    }
    fclose(fp);   
 #ifdef DEBUG
-   printf("Loaded EMUCFG2 file\n");
+   LOG(1, ("Loaded EMUCFG2 file\n"));
    cmdtbl_print();
 #endif
 }
@@ -1232,7 +1245,7 @@ int mod_loademucfg() {
       sprintf(cfgfile,"%s%c%s%s%cemu_%s_prf%d.cfg",basedir,mysep,imenu.sysbase,etc,mysep,emuver,imenu.profile);	
    }
 #ifdef DEBUG
-   printf("TRYING version-specifc CFG File: %s\n",cfgfile);
+   LOG(1, ("TRYING version-specifc CFG File: %s\n",cfgfile));
 #endif
    if(file_exists(cfgfile)) {
       mod_loadcfg(cfgfile);
@@ -1244,7 +1257,7 @@ int mod_loademucfg() {
 	sprintf(cfgfile,"%s%c%s%s%cemu_%s_prf%d.cfg",basedir,mysep,imenu.sysbase,etc,mysep,imenu.emulator,imenu.profile);
       
 #ifdef DEBUG
-      printf("TRYING CFG File: %s\n",cfgfile);
+      LOG(1, ("TRYING CFG File: %s\n",cfgfile));
 #endif
       if(file_exists(cfgfile)) 
 	mod_loadcfg(cfgfile);
@@ -1258,7 +1271,7 @@ int mod_loadsyscfg() {
    char cfgfile[160];
    sprintf(cfgfile,"%s%c%setc%cemu_%s.cfg",basedir,mysep,imenu.sysbase,mysep,imenu.system);
 #ifdef DEBUG
-   printf("TRYING CFG File: %s\n",cfgfile);
+   LOG(1, ("TRYING CFG File: %s\n",cfgfile));
 #endif
    if(file_exists(cfgfile)) 
      mod_loadcfg(cfgfile);
@@ -1333,7 +1346,7 @@ int mod_getsystem(char *msys, char *msysbase) {
    sprintf(lb,"%s%cetc%cemucd.env",basedir,mysep,mysep);
    dfixsep2(emuenv,lb,0);
 #ifdef DEBUG
-   printf("EMUENV file is %s (mod_getsystem)\n",emuenv);
+   LOG(2,("EMUENV file is %s (mod_getsystem)\n",emuenv));
 #endif
    fp=fopen(emuenv,"rb");
    while(!feof(fp)) {
@@ -1405,7 +1418,7 @@ int mod_exportvars() {
 //	    printf("env_setxp: %s=%s\n",var,value);
 #ifndef WIN32
 	    // how do you do this in windows?
-	    printf("SETENV: setenv(%s,%s,1)\n",var,value);
+	    LOG(1, ("SETENV: setenv(%s,%s,1)\n",var,value));
 	    setenv(var,value,1);
 #endif
 	    break;
@@ -1519,7 +1532,7 @@ int process_cmd(char *cmd) {
 
 int emumodule_generic() {
 #ifdef DEBUG
-   printf("EMUmodule: generic\n");
+   printf("* EMUmodule: generic\n");
 #endif
    load_settings();
    mod_loademucfg();
@@ -1532,7 +1545,7 @@ int emumodule_generic() {
 int emumodule_computer() {
    int didcp=0;
 #ifdef DEBUG
-   printf("EMUmodule: computer\n");
+   printf("* EMUmodule: computer\n");
 #endif
 // Test We need to load env first if versioned configs are to work, is there
 // a downside?
@@ -1548,7 +1561,7 @@ int emumodule_computer() {
    // earlier?
    mod_getbintype(emuopt.bintype);
 #ifdef DEBUG
-   printf("bintype #2: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom);
+   LOG(2, ("bintype #2: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom));
 #endif
    // probably need to set the work dir here, (diskloc), not in dealwithzip
    // Need to create and cd to a subdir named after the system
@@ -1631,7 +1644,8 @@ int emumodule_computer() {
 
 int sysmodule_arcade() {
 #ifdef DEBUG
-   printf("SYSmodule: arcade\n");
+   printf("\n* SYSmodule: arcade\n");
+   printf("    If SYSmodule is incorrect, emulator may not work as intended\n\n");
 #endif
    env_clear();
    mod_loadpergame();
@@ -1639,7 +1653,7 @@ int sysmodule_arcade() {
    strcpy(emuopt.bintype,"rom");
    emu_basename(emuopt.fqrom,imenu.game);
 #ifdef DEBUG
-   printf("bintype: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom);
+   LOG(1, ("bintype: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom));
 #endif
    emumodule_generic();
 }
@@ -1647,7 +1661,8 @@ int sysmodule_arcade() {
 int sysmodule_generic() {
   
 #ifdef DEBUG
-   printf("SYSmodule: generic\n");
+   printf("* SYSmodule: generic\n");
+   printf("  generic is usually appropriate for console emulation, but not computers\n\n");
 #endif
    env_clear();
    mod_loadpergame();
@@ -1659,7 +1674,7 @@ int sysmodule_generic() {
 //     printf("No existo\n");
    mod_getbintype(emuopt.bintype);
 #ifdef DEBUG
-   printf("bintype: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom);
+   LOG(1, ("bintype: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom));
 #endif
 //   strcpy(emuopt.bintype,"cart");
    emumodule_generic();
@@ -1668,7 +1683,8 @@ int sysmodule_generic() {
 int sysmodule_computer() {
   
 #ifdef DEBUG
-   printf("SYSmodule: computer\n");
+   printf("* SYSmodule: computer\n");
+   printf("  computer is for systems that have different media types\n\n");
 #endif
    env_clear();
    mod_loadpergame();
@@ -1681,7 +1697,7 @@ int sysmodule_computer() {
 //     We are doing this later on, can probably remove this.
    mod_getbintype(emuopt.bintype);
 #ifdef DEBUG
-   printf("bintype: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom);
+   LOG(1, ("bintype: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom));
 #endif
 //   strcpy(emuopt.bintype,"cart");
 //   if(strcmp(emuopt.bintype,"cmd")!=0) 
@@ -1715,7 +1731,8 @@ int module_exec() {
    printf("+----------------------------------\n\n");
 #endif
    // Do we need to parse the system info out of emucd.env?   is it useful?
-   // 
+   //  -- Note this info doesn't appear to be loaded yet at this point   
+   
    // Check for certain systems, else execute generic
    
    // I don't know what happened to cmd processing, but let's try adding it here
@@ -1772,7 +1789,10 @@ int module_exec() {
       }
 
       mod_exportvars();
-      printf("CUSECMD:%s\n", emuopt.cmd_line);
+      printf("\n+-- Command Line Follows -----------------------------+\n"); 
+      printf("CMDLINE:%s\n", emuopt.cmd_line);
+      printf("+-----------------------------------------------------+\n\n"); 
+      
       system(emuopt.cmd_line);
       mod_cleantmp();
       strcpy(emuopt.cmd_line,"");

@@ -13,7 +13,7 @@ extern char fullscr;
 extern int joy_enable;
 
 // debug level can be 0-5
-#define DEBUG_LEVEL 1
+#define DEBUG_LEVEL 0
 
 // debug print macro
 #ifdef DEBUG

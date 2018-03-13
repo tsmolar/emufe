@@ -383,8 +383,7 @@ void show_desc2(char *desc) {
    strcpy(nxline,"\n");
 
 #ifdef DEBUG
-   sprintf(debugtxt,"Loading Description (2)...%s\n",desc);
-   debug(3,debugtxt);
+   LOG(3,("Loading Description (2)...%s\n",desc));
 #endif
    if(imenu.mode==0) {
      sprintf(line, "%s/%s.desc",descdir,desc);
@@ -404,8 +403,9 @@ void show_desc2(char *desc) {
    else
      blit(descmap,screen, 0,0,rc.db_x+rx0,rc.db_y+ry0,rc.db_w,rc.db_h);
 #ifdef DEBUG
-   sprintf(debugtxt,"descffname=%s\n",descffname);
-   debug(3,debugtxt);
+//   sprintf(debugtxt,"descffname=%s\n",descffname);
+//   debug(3,debugtxt);
+   LOG(3,("descffname=%s\n",descffname));
 #endif
 
    if ((fp=fopen(descffname, "r")) != NULL) {
@@ -505,8 +505,7 @@ void display_info(int slc)  {
    sprintf(picname, "%s%c%s.pcx", picsdir, mysep, menu[slc].rom);
 
 #ifdef DEBUG
-   sprintf(debugtxt,"\n>>picname is: %s\n", picname);
-   debug(2,debugtxt);
+   LOG(2,("\n>>picname is: %s\n", picname));
 #endif
 //   disp_image(picname);
    do_imgboxes(picsdir,menu[slc].rom);
@@ -523,10 +522,8 @@ int load_menu(char *lmenu) {
    char *name, rom[30], waste[39];
    int i=1,sl;
 #ifdef DEBUG
-   sprintf(debugtxt,"Loading Menu...%s\n",lmenu);
-   debug(1,debugtxt);
-   sprintf(debugtxt,"Menu strlen: %d\n",strlen(menu));
-   debug(5,debugtxt);
+   LOG(1,("Loading Menu...%s\n",lmenu));
+   LOG(5,("Menu strlen: %d\n",strlen(menu)));
 #endif
    fp=fopen(lmenu, "r");
    while( type != 'e' ) {
@@ -555,8 +552,9 @@ int load_menu(char *lmenu) {
 	    title(-1,-1,imenu.title);
 //	    sprintf(picname, "%s/%s.pcx",picsdir ,rom); 
 #ifdef DEBUG
-	    sprintf(debugtxt,"\npicsdir is: %s  rom is %s\n", picsdir,rom);
-	    debug(2,debugtxt);
+//	    sprintf(debugtxt,"\npicsdir is: %s  rom is %s\n", picsdir,rom);
+//	    debug(2,debugtxt);
+	    LOG(2,("\npicsdir is: %s  rom is %s\n", picsdir,rom));
 #endif
             do_imgbox(B_PICBOX,picsdir,rom);
             do_imgbox(B_KEYBOARD,picsdir,rom);
@@ -568,8 +566,9 @@ int load_menu(char *lmenu) {
 	    if(strncmp(currfont,rom,strlen(currfont))!=0)
 	      sprintf(fullpath,"%s%c%s",fontdir,mysep,rom);
 #ifdef DEBUG
-	    sprintf(debugtxt,"menu bitmap.font.load\n");
-	    debug(3,debugtxt);
+//	    sprintf(debugtxt,"menu bitmap.font.load\n");
+//	    debug(3,debugtxt);
+	    LOG(3,("menu bitmap.font.load\n"));
 #endif
 	    // Kludge, don't load fonts from menu if using TTF
 	    if(ActiveFont->type != TTF)
@@ -622,8 +621,9 @@ int load_menu(char *lmenu) {
 	 
 #ifdef DEBUG
       } else {
-	 sprintf(debugtxt,"ignored: %s\n",name);
-	 debug(3,debugtxt);
+//	 sprintf(debugtxt,"ignored: %s\n",name);
+//	 debug(3,debugtxt);
+	 LOG(3,("ignored: %s\n",name));
 	 /* put a free here */
 #endif
       }      
@@ -674,7 +674,8 @@ void settxtmode() {
       // this MIGHT be useful for testing
       w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
 # ifdef DEBUG
-      debug(3,"settxtmode() attempting window mode rather than text mode to address a bug\n");
+//      debug(3,"settxtmode() attempting window mode rather than text mode to address a bug\n");
+      LOG(3,("settxtmode() attempting window mode rather than text mode to address a bug\n"));
 # endif
 #else
    // if using GFX_TEXT causes trouble, use GFX_AUTODETECT_WINDOWED to
@@ -691,8 +692,9 @@ void setgfxmode() {
    int w=0;
    
 #ifdef DEBUG
-   sprintf(debugtxt,"setgfxmode() fullscr=%c  usex=%d  usey=%d, in_gfxmode:%d\n",fullscr,usex,usey,in_gfxmode);
-   debug(3,debugtxt);
+//   sprintf(debugtxt,"setgfxmode() fullscr=%c  usex=%d  usey=%d, in_gfxmode:%d\n",fullscr,usex,usey,in_gfxmode);
+//   debug(3,debugtxt);
+   LOG(3,("setgfxmode() fullscr=%c  usex=%d  usey=%d, in_gfxmode:%d\n",fullscr,usex,usey,in_gfxmode));
 #endif
    if(in_gfxmode==0) {
       if(fullscr=='n') 
@@ -707,7 +709,8 @@ void setgfxmode() {
    }
    if(w!=0) {
 #ifdef DEBUG
-      debug(1,"Could not set graphics mode!\n");
+//      debug(1,"Could not set graphics mode!\n");
+      LOG(1,("Could not set graphics mode!\n"));
 #endif
       exit(34);
    }
@@ -809,7 +812,7 @@ void init() {
 	 }
 	 // end ext check
 	 
-	 printf("VLOAD: %s  type: %d   ext:%s\n",fullpath,txtbx[i].fonttype,ext);
+	 LOG(3,("VLOAD: %s  type: %d   ext:%s\n",fullpath,txtbx[i].fonttype,ext));
 	 LOG(3, ("box font.load\n"));
 	 boxfont[i]=fnt_loadfont(fullpath,txtbx[i].fonttype);
 	 
@@ -825,10 +828,12 @@ void init() {
 # else
    sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
 #  ifdef DEBUG
-   sprintf(debugtxt,"Font: %s\n",fullpath);
-   debug(3,debugtxt);
-   sprintf(debugtxt,"zdescbox: %s\n",txtbx[B_DESC].box);
-   debug(3,debugtxt);
+//   sprintf(debugtxt,"Font: %s\n",fullpath);
+//   debug(3,debugtxt);
+   LOG(3,("Font: %s\n",fullpath));
+//   sprintf(debugtxt,"zdescbox: %s\n",txtbx[B_DESC].box);
+//   debug(3,debugtxt);
+   LOG(3,("zdescbox: %s\n",txtbx[B_DESC].box));
 #  endif
    // so font_load is messing up txtbx[B_DESC].box!!!
    LOG(3, ("bitmap.font.load (no freetype)\n"));
@@ -890,8 +895,9 @@ void load_dfltimg(char *fname) {
 
    sprintf(picname,"%s%c%s",picsdir,mysep,fname);
 #ifdef DEBUG
-   sprintf(debugtxt,"load_dfltimg: loading %s\n",picname);
-   debug(1,debugtxt);
+//   sprintf(debugtxt,"load_dfltimg: loading %s\n",picname);
+//   debug(1,debugtxt);
+   LOG(1,("load_dfltimg: loading %s\n",picname));
 #endif 
    defbmp=load_bitmap(picname,p);
 } // load_dfltimg()
@@ -916,14 +922,15 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
        sprintf(picnoext,"%s%c%s%s",imgdir,mysep,imgbx[i].pfx,iname);
        AddPicExt(picname,picnoext);
 #ifdef DEBUG
-       sprintf(debugtxt,"do_imgbox_scale(): looking for picname:%s\n",picname);
-       debug(3,debugtxt);
+//       sprintf(debugtxt,"do_imgbox_scale(): looking for picname:%s\n",picname);
+//       debug(3,debugtxt);
+       LOG(3,("do_imgbox_scale(): looking for picname:%s\n",picname));
 #endif
        bitmap=load_bitmap(picname,p);
        if(imgbx_bmp[i] && i!=B_KEYBOARD) 
 	 masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
        else 
-	 printf("do_imgbox_scale(): I HAVE NO BG!\n");
+	 LOG(1, ("do_imgbox_scale(): I HAVE NO BG!\n"));
 		 
 
        if(bitmap) {
@@ -945,8 +952,9 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     y2=imgbx[i].y + imgbx[i].h;
 	     
 #ifdef DEBUG
-	     sprintf(debugtxt,"rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2);
-	     debug(3,debugtxt);
+//	     sprintf(debugtxt,"rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2);
+//	     debug(3,debugtxt);
+	     LOG(3,("rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2));
 #endif
 	     // Figure out how to mask this (if masktype==0 then ignore)
 	     // bitmap
@@ -987,7 +995,8 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	  }	  
 	  
 #ifdef DEBUG
-	  debug(3,"do_imgbox_scale():loaded bitmap\n");
+//	  debug(3,"do_imgbox_scale():loaded bitmap\n");
+	  LOG(3,("do_imgbox_scale():loaded bitmap\n"));
 #endif
        } // endif (if bitmap)
 
@@ -1019,10 +1028,12 @@ void do_imgbox(int i, char *imgdir, char *iname) {
         // TODO: Centering and maybe scaling (course scaling)
         if(bitmap->w > imgbx[i].w || bitmap->h > imgbx[i].h) {
 #ifdef DEBUG
-	   sprintf(debugtxt,"Scaling: bitmap(w):%d  bitmap(h):%d\n",bitmap->w,bitmap->h);
-	   debug(3,debugtxt);
-	   sprintf(debugtxt,"Scaling: box(w):%d  box(h):%d\n",imgbx[i].w,imgbx[i].h);
-	   debug(3,debugtxt);
+//	   sprintf(debugtxt,"Scaling: bitmap(w):%d  bitmap(h):%d\n",bitmap->w,bitmap->h);
+//	   debug(3,debugtxt);
+	   LOG(3,("Scaling: bitmap(w):%d  bitmap(h):%d\n",bitmap->w,bitmap->h));
+//	   sprintf(debugtxt,"Scaling: box(w):%d  box(h):%d\n",imgbx[i].w,imgbx[i].h);
+//	   debug(3,debugtxt);
+	   LOG(3,("Scaling: box(w):%d  box(h):%d\n",imgbx[i].w,imgbx[i].h));
 #endif
            sc_bitmap=sa_scale_bm(bitmap,imgbx[i].w,imgbx[i].h);
 	} else
@@ -1082,12 +1093,14 @@ void set_bg() {
 	sprintf(fname,"%s/%s",gthemedir,bgpic);
       
 #ifdef DEBUG
-      sprintf(debugtxt,"set_bg: gthemedir:%s\n",gthemedir);
-      debug(3,debugtxt);
-//      sprintf(debugtxt,"set_bg: ws:%d  file:%s\n",widescreen,bgpic);
+//      sprintf(debugtxt,"set_bg: gthemedir:%s\n",gthemedir);
 //      debug(3,debugtxt);
-      sprintf(debugtxt,"set_bg: load_bitmap:%s\n",fname);
-      debug(3,debugtxt);
+      LOG(3,("set_bg: gthemedir:%s\n",gthemedir));
+////      sprintf(debugtxt,"set_bg: ws:%d  file:%s\n",widescreen,bgpic);
+////      debug(3,debugtxt);
+//      sprintf(debugtxt,"set_bg: load_bitmap:%s\n",fname);
+//      debug(3,debugtxt);
+      LOG(3,("set_bg: load_bitmap:%s\n",fname));
 #endif
       bitmap=load_bitmap(fname,p);
       if(bitmap) {
@@ -1138,8 +1151,9 @@ void draw_imgbx(int boxno) {
    PALETTE p; 
 
 #ifdef DEBUG
-   sprintf(debugtxt,"in draw_imgbx(%d)\n",boxno);
-   debug(3,debugtxt);
+//   sprintf(debugtxt,"in draw_imgbx(%d)\n",boxno);
+//   debug(3,debugtxt);
+   LOG(3,("in draw_imgbx(%d)\n",boxno));
 #endif
    if(imgbx[boxno].enabled==1) {
       destroy_bitmap(imgbx_bmp[boxno]);
@@ -1153,8 +1167,9 @@ void draw_imgbx(int boxno) {
 	else
 	  sprintf(pathname,"%s%c%s",gthemedir,mysep,imgbx[boxno].imgname);
 #ifdef DEBUG
-	sprintf(debugtxt,"IMGBOX #%d: %s\n",boxno,pathname);
-	debug(3,debugtxt);
+//	sprintf(debugtxt,"IMGBOX #%d: %s\n",boxno,pathname);
+//	debug(3,debugtxt);
+	LOG(3,("IMGBOX #%d: %s\n",boxno,pathname));
 #endif
 	imgbx_bmp[boxno]=load_bitmap(pathname,p);
      }
@@ -1176,8 +1191,9 @@ void draw_imgbx(int boxno) {
 	sprintf(pathname,"%s%c%s",gthemedir,mysep,imgbx[boxno].ovname);
 
 #ifdef DEBUG
-      sprintf(debugtxt,"Overlay: #%d: %s\n",boxno,pathname);
-      debug(3,debugtxt);
+//      sprintf(debugtxt,"Overlay: #%d: %s\n",boxno,pathname);
+//      debug(3,debugtxt);
+      LOG(3,("Overlay: #%d: %s\n",boxno,pathname));
 #endif
       imgbx_ovl[boxno]=load_bitmap(pathname,p);
       sa_setalphablendmode(imgbx_ovl[boxno]);
@@ -1482,10 +1498,12 @@ int main(int argc, char* argv[]) {
 	 }
       }
 #ifdef DEBUG
-      sprintf(debugtxt,"rx0=%d   ry0=%d\n",rx0,ry0);
-      debug(3,debugtxt);
-      sprintf(debugtxt,"Use CDROOT: %s\n",cdroot); 
-      debug(1,debugtxt);
+//      sprintf(debugtxt,"rx0=%d   ry0=%d\n",rx0,ry0);
+//      debug(3,debugtxt);
+      LOG(3,("rx0=%d   ry0=%d\n",rx0,ry0));
+//      sprintf(debugtxt,"Use CDROOT: %s\n",cdroot); 
+//      debug(1,debugtxt);
+      LOG(1,("Use CDROOT: %s\n",cdroot)); 
 #endif
       init();
    } else {
@@ -1656,10 +1674,11 @@ int main(int argc, char* argv[]) {
       
       if(keypressed()) {
 	 keyp=readkey() >> 8; 
-	 printf("key:%d--%d\n",keyp,KEY_DOWN);
+//	 printf("key:%d--%d\n",keyp,KEY_DOWN);
 #ifdef DEBUG
-	 printf(debugtxt,"keyp=%d\n",keyp,KEY_DOWN);
-	 debug(3,debugtxt);
+//	 printf(debugtxt,"keyp=%d\n",keyp,KEY_DOWN);
+//	 debug(3,debugtxt);
+	 LOG(3,("keyp=%d\n",keyp,KEY_DOWN));
 #endif
 	 if(keyp==KEY_F2) {
 //	    run_setup("setup1");
@@ -1692,10 +1711,12 @@ int main(int argc, char* argv[]) {
 	       display_menu(index);
 	    }
 #ifdef DEBUG
-	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
-	    debug(3,debugtxt);
-	    sprintf(debugtxt,"Type: %c",menu[slc].type);
-	    debug(3,debugtxt);
+//	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
+//	    debug(3,debugtxt);
+	    LOG(3,("slc is %d index is %d\n",slc, index));
+//	    sprintf(debugtxt,"Type: %c",menu[slc].type);
+//	    debug(3,debugtxt);
+	    LOG(3,("Type: %c",menu[slc].type));
 #endif
 	    menu_hlight(index,slc);
 	 }
@@ -1719,8 +1740,9 @@ int main(int argc, char* argv[]) {
 	    display_menu(index);
 
 #ifdef DEBUG
-	    sprintf(debugtxt,"Type: %c",menu[slc].type);
-	    debug(3,debugtxt);
+//	    sprintf(debugtxt,"Type: %c",menu[slc].type);
+//	    debug(3,debugtxt);
+	    LOG(3,("Type: %c",menu[slc].type));
 #endif
 	    menu_hlight(index,slc);
 	 }
@@ -1786,10 +1808,12 @@ int main(int argc, char* argv[]) {
 	    display_menu(index);
 
 #ifdef DEBUG
-	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
-	    debug(3,debugtxt);
-	    sprintf(debugtxt,"Type: %c",menu[slc].type);
-	    debug(3,debugtxt);
+//	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
+//	    debug(3,debugtxt);
+	    LOG(3,("slc is %d index is %d\n",slc, index));
+//	    sprintf(debugtxt,"Type: %c",menu[slc].type);
+//	    debug(3,debugtxt);
+	    LOG(3,("Type: %c",menu[slc].type));
 #endif
 	    menu_hlight(index,slc);
 	 }
@@ -1814,13 +1838,15 @@ int main(int argc, char* argv[]) {
 	    cdclock=0;
 	    type=menu[slc].type;
 #ifdef DEBUG
-	    sprintf(debugtxt,"SLC was %d\n",slc);
-	    debug(3,debugtxt);
+//	    sprintf(debugtxt,"SLC was %d\n",slc);
+//	    debug(3,debugtxt);
+	    LOG(3,("SLC was %d\n",slc));
 #endif
 	    if( type=='m' ) {
 #ifdef DEBUG
-	       sprintf(debugtxt,"Loading File___%s\n",menu[slc].rom);
-	       debug(3,debugtxt);
+//	       sprintf(debugtxt,"Loading File___%s\n",menu[slc].rom);
+//	       debug(3,debugtxt);
+	       LOG(3,("Loading File___%s\n",menu[slc].rom));
 #endif
 	       sprintf(newmenu, "%s/%s", dirname, menu[slc].rom);
 	       menuitems=load_menu(newmenu);
@@ -1832,12 +1858,15 @@ int main(int argc, char* argv[]) {
 	    if( type=='d' ) {
 	       ww=menu[slc].rom;
 #ifdef DEBUG
-	       sprintf(debugtxt,"Loading Directory___%s\n",menu[slc].rom);
-	       debug(3,debugtxt);
-	       sprintf(debugtxt,"dirname is %s\n",dirname);
-	       debug(3,debugtxt);
-	       sprintf(debugtxt,"romname is %s\n",ww);
-	       debug(3,debugtxt);
+//	       sprintf(debugtxt,"Loading Directory___%s\n",menu[slc].rom);
+//	       debug(3,debugtxt);
+	       LOG(3,("Loading Directory___%s\n",menu[slc].rom));
+//	       sprintf(debugtxt,"dirname is %s\n",dirname);
+//	       debug(3,debugtxt);
+	       LOG(3,("dirname is %s\n",dirname));
+//	       sprintf(debugtxt,"romname is %s\n",ww);
+//	       debug(3,debugtxt);
+	       LOG(3,("romname is %s\n",ww));
 #endif
 	       /* strcat is very picky, I can only seem to get it to 
 		work if the first parameter is a static string, and the
@@ -1846,8 +1875,9 @@ int main(int argc, char* argv[]) {
 	       sprintf(dirname,"%s%s%c",dirname,menu[slc].rom,mysep);
 	       sprintf(newmenu,"%s%c%sindex.menu",basedir,mysep,dirname);
 #ifdef DEBUG
-	       sprintf(debugtxt,"dirname is now %s\n",newmenu);
-	       debug(3,debugtxt);
+//	       sprintf(debugtxt,"dirname is now %s\n",newmenu);
+//	       debug(3,debugtxt);
+	       LOG(3,("dirname is now %s\n",newmenu));
 #endif
 	       menuitems=load_menu(newmenu);
 //	       printf("menuitems is %d\n",menuitems);
@@ -1882,8 +1912,9 @@ int main(int argc, char* argv[]) {
 	       sprintf(newmenu,"%s%c%s%s",basedir,mysep,dirname,usemenu);
 //		  strcat(newmenu, usemenu);
 #ifdef DEBUG
-	       sprintf(debugtxt,"newmenu %s   dirname:%s\n",newmenu,dirname);
-	       debug(3,debugtxt);
+//	       sprintf(debugtxt,"newmenu %s   dirname:%s\n",newmenu,dirname);
+//	       debug(3,debugtxt);
+	       LOG(3,("newmenu %s   dirname:%s\n",newmenu,dirname));
 #endif
 		  menuitems=load_menu(newmenu);
 

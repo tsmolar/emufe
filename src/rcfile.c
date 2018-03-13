@@ -263,7 +263,7 @@ int load_rc(char *filen) {
 	    hss_index(tmpstr,value,1,'x');
 	    txtbx[B_MENU].font_h=atoi(tmpstr);
 	    txtbx[B_MENU].font_v=txtbx[B_MENU].font_h+2;
-	    printf("GLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_MENU].font,txtbx[B_MENU].fonttype,txtbx[B_MENU].font_w,txtbx[B_MENU].font_h);
+	    LOG(1, ("GLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_MENU].font,txtbx[B_MENU].fonttype,txtbx[B_MENU].font_w,txtbx[B_MENU].font_h));
 	 }
 	 
 	 // Setup Dialog Box
@@ -279,7 +279,7 @@ int load_rc(char *filen) {
 	    hss_index(tmpstr,value,1,'x');
 	    txtbx[B_SETUP].font_h=atoi(tmpstr);
 	    txtbx[B_SETUP].font_v=txtbx[B_SETUP].font_h;
-	    printf("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_SETUP].font,txtbx[B_SETUP].fonttype,txtbx[B_SETUP].font_w,txtbx[B_SETUP].font_h);
+	    LOG(1, ("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_SETUP].font,txtbx[B_SETUP].fonttype,txtbx[B_SETUP].font_w,txtbx[B_SETUP].font_h));
 	 }
 
 	 
@@ -568,7 +568,7 @@ int load_rc(char *filen) {
 	    hss_index(tmpstr,value,1,'x');
 	    txtbx[B_DESC].font_h=atoi(tmpstr);
 	    txtbx[B_DESC].font_v=txtbx[B_DESC].font_h;
-	    printf("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_DESC].font,txtbx[B_DESC].fonttype,txtbx[B_DESC].font_w,txtbx[B_DESC].font_h);
+	    LOG(1, ("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_DESC].font,txtbx[B_DESC].fonttype,txtbx[B_DESC].font_w,txtbx[B_DESC].font_h));
 	 }
 	 
 
@@ -652,7 +652,7 @@ int load_rc(char *filen) {
 	    hss_index(tmpstr,value,1,'x');
 	    txtbx[B_BANR].font_h=atoi(tmpstr);
 	    txtbx[B_BANR].font_v=txtbx[B_BANR].font_h;
-	    printf("BLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_BANR].font,txtbx[B_BANR].fonttype,txtbx[B_BANR].font_w,txtbx[B_BANR].font_h);
+	    LOG(1, ("BLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_BANR].font,txtbx[B_BANR].fonttype,txtbx[B_BANR].font_w,txtbx[B_BANR].font_h));
 	 }
 
 	 if(strncmp(key, "MENUC1SH", 8)==0) {
