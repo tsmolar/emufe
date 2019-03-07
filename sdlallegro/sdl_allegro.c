@@ -858,10 +858,10 @@ void destroy_bitmap(SDL_Surface *bmp)
 int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
 {
    SDL_Rect srect, drect;
-   
+
 //   if(SDL_MUSTLOCK(dest))
 //     if(SDL_LockSurface(dest) < 0) return;
-   
+
    srect.x = srx;
    srect.y = sry;
    srect.w = wdt;
@@ -871,10 +871,20 @@ int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy
    drect.w = wdt;
    drect.h = hgt;
 
-//   printf("1call to blit\n");
+#ifdef DEBUG
+   printf("Before SDL blit  src->%p   dest->%p\n",src,dest);
+   printf("Address for screen is %p\n",screen);
+#endif
+
    SDL_BlitSurface(src, &srect, dest, &drect);
-//   printf("2call to blit\n");
-   if(SA_AUTOUPDATE==1) {	
+
+//   if(SDL_MUSTLOCK(dest))
+//     SDL_UnlockSurface(dest);
+
+#ifdef DEBUG
+   printf("After SDL blit  blit\n");
+#endif
+   if(SA_AUTOUPDATE==1) {
       if(dest == screen) {
 #ifdef SDL1
 	 SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);

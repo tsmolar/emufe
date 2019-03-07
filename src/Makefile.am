@@ -53,7 +53,7 @@ splash_SOURCES=splash.c dfilepath.c
 
 if USESDL
 #bl_SOURCES+=gfx.c
-AM_CFLAGS=-DUSESDL -DDEBUG
+AM_CFLAGS=-DUSESDL
 #AM_CFLAGS=-DUSESDL
 emufe_LDADD+=../sdlallegro/libsdlallegro.a ../widget/libfont.a
 splash_LDADD=../sdlallegro/libsdlallegro.a ../widget/libfont.a
@@ -61,7 +61,7 @@ INCLUDES = -I../sdlallegro -I../widget
 endif
 
 if USESDL2
-AM_CFLAGS=-DUSESDL -DDEBUG
+AM_CFLAGS=-DUSESDL
 emufe_LDADD+=../sdlallegro/libsdlallegro.a ../widget/libfont.a
 splash_LDADD=../sdlallegro/libsdlallegro.a ../widget/libfont.a
 INCLUDES = -I../sdlallegro -I../widget

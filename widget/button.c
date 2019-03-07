@@ -50,17 +50,13 @@ up_bmp_button(Widget *b,int x,int y) /* called by mouse_depress */
         if(in_box(b->x1,b->y1,b->x2,b->y2,x,y) && b->handler) 
             (*(b->handler))(b,x-b->x1,y-b->y1,-1);
    
-//   printf("ubb handler cb success\n");
 // I get it now, if just popped, then this button is destroyed, and executing
 // anything below might cause a segfault.
    	if(just_popped) return;
 
-//   printf("didn't just pop\n");
 	restore_under(b);
-//   printf("did restore under\n");
 //        masked_blit(b->btbmp.btnupbmp,screen,b->btbmp.up_x1,b->btbmp.up_y1,b->x1,b->y1,b->btbmp.up_x2,b->btbmp.up_y2);
         masked_blit(b->btbmp.btnupbmp,useb,b->btbmp.up_x1,b->btbmp.up_y1,b->x1,b->y1,b->btbmp.up_x2,b->btbmp.up_y2);
-//   printf("did blit\n");
 //#ifdef USESDL
 //        SDL_UpdateRect(screen,b->x1,b->y1,b->x2-1,b->y2-1);
 //        SDL_Flip(screen);
@@ -72,7 +68,7 @@ up_bmp_button(Widget *b,int x,int y) /* called by mouse_depress */
 //        draw_pointer(x,y);	
 }
 
-down_bmp_button(Widget *b,int x,int y,int m) /* called by mouse_press */
+void down_bmp_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
    BITMAP* useb;
 #ifdef SDL2
@@ -108,7 +104,7 @@ down_bmp_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 //        draw_pointer(x,y);	
 }
 
-up_button(Widget *b,int x,int y) /* called by mouse_depress */
+void up_button(Widget *b,int x,int y) /* called by mouse_depress */
 {
    BITMAP* useb;
 #ifdef SDL2
@@ -128,7 +124,7 @@ up_button(Widget *b,int x,int y) /* called by mouse_depress */
 //   printf("handler cb success\n");
 // Should this be here?   
    	if(just_popped) return;
-	
+
 	restore_under(b);
         mcolor=makecol(COLOR254);
 	rectfill(useb,b->x1,b->y1,b->x2-1,b->y2-1,mcolor);
@@ -159,7 +155,7 @@ up_button(Widget *b,int x,int y) /* called by mouse_depress */
 //        draw_pointer(x,y);	
 }
 
-down_button(Widget *b,int x,int y,int m) /* called by mouse_press */
+void down_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
    BITMAP* useb;
 #ifdef SDL2
@@ -257,7 +253,7 @@ Widget* wdg_button_txt_add(Widget *parent,int x1, int y1, int x2, int y2,
    
    w->press=&down_button;
    w->depress=&up_button;
-   w->text=(char *)malloc(strlen(text)+4);  // Doesn't Crash on Linux 
+   w->text=(char *)malloc(strlen(text)+20);  // Doesn't Crash on Linux 
    strcpy(w->text,text);
    up_button(w,-1,-1);
    return w;
@@ -302,7 +298,7 @@ Widget* add_button
 	w->y2=y2;
 //	w->text=text;  // works on most platforms, but is probably not correct
                        // Crashes on Linux                   
-        w->text=(char *)malloc(strlen(text)+4);  // Doesn't Crash on Linux 
+        w->text=(char *)malloc(strlen(text)+20);  // Doesn't Crash on Linux 
         strcpy(w->text,text);                    //
 	w->handler=handler;
         strcpy(w->id,"BUTL");
@@ -350,7 +346,7 @@ Widget* add_bmp_button
  * 
  */
 
-up_up_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
+void up_up_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 {
 	int i;
 	restore_under(b);
@@ -364,7 +360,7 @@ up_up_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 		(*(b->handler))(b,x-b->x1,y-b->y1,-1);
 }
 
-down_up_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
+void down_up_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
 	int i;
 	restore_under(b);
@@ -374,7 +370,7 @@ down_up_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 	}
 }
 
-up_down_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
+void up_down_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 {
 	int i;
 	restore_under(b);
@@ -388,7 +384,7 @@ up_down_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 		(*(b->handler))(b,x-b->x1,y-b->y1,-1);
 }
 
-down_down_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
+void down_down_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
 	int i;
 	restore_under(b);
@@ -399,7 +395,7 @@ down_down_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 }
 
 
-up_left_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
+void up_left_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 {
 	int i;
 	
@@ -420,7 +416,7 @@ up_left_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 	
 }
 
-down_left_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
+void down_left_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
 	int i;
 	
@@ -435,7 +431,7 @@ down_left_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 
 }
 
-up_right_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
+void up_right_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 {
 	int i;
 	
@@ -456,7 +452,7 @@ up_right_arrow_button(Widget *b,int x,int y) /* called by mouse_depress */
 	
 }
 
-down_right_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
+void down_right_arrow_button(Widget *b,int x,int y,int m) /* called by mouse_press */
 {
 	int i;
 	
@@ -479,25 +475,25 @@ Widget* wdg_button_arrow_add(Widget *parent,int x,int y,int dir,
       w=wdg_button_add(parent,x-6,y,x+7,y+7,handler); 
       w->press=&down_up_arrow_button;
       w->depress=&up_up_arrow_button;
-      w->text=(char *)malloc(9);  // Doesn't Crash on Linux 
+      w->text=(char *)malloc(20);  // Doesn't Crash on Linux 
       strcpy(w->text,"UP");
    } else if (dir == DOWN) {
       w=wdg_button_add(parent,x-6,y-7,x+7,y,handler); 
       w->press=&down_down_arrow_button;
       w->depress=&up_down_arrow_button;
-      w->text=(char *)malloc(9);  // Doesn't Crash on Linux 
+      w->text=(char *)malloc(20);  // Doesn't Crash on Linux 
       strcpy(w->text,"DOWN");
    } else if (dir == LEFT) {
       w=wdg_button_add(parent,x,y-6,x+7,y+7,handler); 
       w->press=&down_left_arrow_button;
       w->depress=&up_left_arrow_button;
-      w->text=(char *)malloc(9);  // Doesn't Crash on Linux 
+      w->text=(char *)malloc(20);  // Doesn't Crash on Linux 
       strcpy(w->text,"LEFT");
    } else if (dir == RIGHT) {
       w=wdg_button_add(parent,x-6,y-6,x+1,y+7,handler); 
       w->press=&down_right_arrow_button;
       w->depress=&up_right_arrow_button;
-      w->text=(char *)malloc(9);  // Doesn't Crash on Linux 
+      w->text=(char *)malloc(20);  // Doesn't Crash on Linux 
       strcpy(w->text,"RIGHT");
    }
    (*(w->depress))(w,-1,-1);
@@ -515,7 +511,7 @@ Widget* add_arrow_button0
   (int x,int y,int dir,int(*handler)(Widget*,int,int,int))
 {
         Widget *w=new_widget();
-        w->text=(char *)malloc(9);  // Doesn't Crash on Linux 
+        w->text=(char *)malloc(20);  // Doesn't Crash on Linux 
 
 	if (dir == UP) {
 		w->press=&down_up_arrow_button;
@@ -577,8 +573,7 @@ Widget* add_arrow_button0
 Widget* add_invisible_button
    (int x1,int y1,int x2,int y2,int(*handler)(Widget*,int,int,int))
 {
-	Widget *w;
-	w=new_widget();
+	Widget *w=new_widget();
 	
 	w->press=handler;
 	w->depress=NULL; /* no action on mouse-up */
@@ -590,6 +585,7 @@ Widget* add_invisible_button
 	w->y1=y1;
 	w->y2=y2;
   	w->btbmp.btnupbmp = w->btbmp.btndnbmp = w->btbmp.btnhlbmp =NULL;
+        w->destroy=&destroy_button;
         w->extra=NULL;
 	w->handler=NULL; /* the handler is called directly on mouse-press,
 			    so it's assigned to w->press instead */
@@ -598,7 +594,7 @@ Widget* add_invisible_button
 	return w;
 }
 
-up_checkbox(Widget *b,int x,int y) /* called by mouse_depress */
+void up_checkbox(Widget *b,int x,int y) /* called by mouse_depress */
 {
    BITMAP* useb;
    useb=getwdgbmp(b);
@@ -626,7 +622,7 @@ up_checkbox(Widget *b,int x,int y) /* called by mouse_depress */
      (*(b->handler))(b,x-b->x1,y-b->y1,-1);
 }
 
-down_checkbox(Widget *b,int x,int y,int m) /* called by mouse_press */
+void down_checkbox(Widget *b,int x,int y,int m) /* called by mouse_press */
 {  
    if(strcmp(b->text,"1")!=0)
      strcpy(b->text,"1");
@@ -649,7 +645,7 @@ Widget* wdg_checkbox_add
 	w->y2=y+8;
 //	w->text=text;  // works on most platforms, but is probably not correct
                        // Crashes on Linux                   
-        w->text=(char *)malloc(6);  // Doesn't Crash on Linux 
+        w->text=(char *)malloc(20);  // Doesn't Crash on Linux 
         sprintf(w->text,"%d",checked);
 	w->handler=handler;
 	w->destroy=&destroy_button;

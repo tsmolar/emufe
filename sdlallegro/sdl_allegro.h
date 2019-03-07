@@ -3,7 +3,7 @@
 
 typedef SDL_Surface BITMAP;
 
-#ifdef HAVE_LIBSDL_MIXER
+#if defined(HAVE_LIBSDL_MIXER) || defined(HAVE_LIBSDL2_MIXER)
 #include"SDL_mixer.h"
 typedef Mix_Chunk SAMPLE;
 #endif
@@ -96,7 +96,7 @@ int save_pcx(const char *fname, BITMAP *bm, RGB *pal);
 BITMAP *sa_readpcx_pf(FILE *pf, RGB *pal);
 BITMAP *sa_readpcx(const char *filename, RGB *pal);
 
-#ifdef HAVE_LIBSDL_MIXER
+#if defined(HAVE_LIBSDL_MIXER) || defined(HAVE_LIBSDL2_MIXER)
 int install_sound(int digi, int midi, const char *cfg_path);
 SAMPLE *load_sample(const char *filename);
 SAMPLE *load_wav(const char *filename);

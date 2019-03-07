@@ -25,17 +25,25 @@
 //unsigned char fontdata[4096];
 #include "font.h"
 
+#ifdef USE_FREETYPE
+extern void fnt_ttf_init();
+extern int fnt_ttf_calcwidth(char *text);
+extern int fnt_ttf_calcheight(char *text);
+extern void fnt_ttf_loadfont(fnt_t *myfont, char *filen);
+extern void fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, int sd);
+#endif
+
 #ifdef COMPFONT
 #include "fontdata.h"
 fnt_t* cf8x16;
 #endif
 
-#define FONT_VERSION "3.7.4"
+#define FONT_VERSION "3.7.5"
 
 fnt_t* ActiveFont;  // Current Active Font
 
 // unsigned char arps_font[16][256];
-char fontdir[90], tfont[30], currfont[30];
+char fontdir[90], tfont[30], currfont[130];
 
 #ifdef USE_FREETYPE
 FT_Library library;
@@ -52,8 +60,12 @@ void fnt_version_info() {
 }
 
 // Improved Font Routines
-fnt_t* fnt_newfont(int ftype) {
-   fnt_t *f = (fnt_t*)malloc(sizeof(fnt_t));
+fnt_t *fnt_newfont(int ftype) {
+   fnt_t *f;
+   f = malloc(sizeof(fnt_t));
+
+   //printf("fnt_newfont: pointer: %p\n",(void *)f);
+//   struct fnt_t *f = malloc(sizeof(struct fnt_t));
 #ifdef USESDL
    Uint32 ckey;
 #endif
@@ -111,13 +123,15 @@ fnt_t* fnt_newfont(int ftype) {
    return f;
 }
 
-fnt_destroy(fnt_t* font) {
+void fnt_destroy(fnt_t* font) {
   //  if(font->data != NULL) free(font->data);
   if(font != NULL) free(font);
 }
 
-fnt_setactive(fnt_t* font) {
+void fnt_setactive(fnt_t* font) {
+//   printf("fnt_setactive: font_p=%p\n",font);
    ActiveFont=font;
+//   printf("fnt_setactive: ActiveFont_p=%p\n",ActiveFont);
 //   printf("Setting new active font -> %s\n",ActiveFont->name);
 //   printf("--> font size %d\n",ActiveFont->size);
 //   printf("--> font type %d\n",ActiveFont->type);
@@ -127,6 +141,7 @@ fnt_t* fnt_getactive() {
 //   printf("Retrieving new active font -> %s\n",ActiveFont->name);
 //   printf("--> font size %d\n",ActiveFont->size);
 //   printf("--> font type %d\n",ActiveFont->type);
+//   printf("fnt_getactive: ActiveFont_p=%p\n",ActiveFont);
    return ActiveFont;
 }
 
@@ -168,12 +183,13 @@ fnt_t* fnt_loadfont(char *filen, int ftype) {
    unsigned char* w;
    int ix,iy;
    int char_h;
-   fnt_t* lfont;
+   fnt_t *lfont;
 #ifdef DEBUG
    printf("creating font with %d\n",ftype);
 #endif
    
    lfont=fnt_newfont(ftype);
+//printf("fnt_loadfont pointer is %p\n",(void *)lfont);
 //   printf("f-type is %d (1)\n", lfont->type);
    w=lfont->data;
    char_h=lfont->height;
@@ -185,6 +201,7 @@ fnt_t* fnt_loadfont(char *filen, int ftype) {
 //#endif
    if(ftype==TTF) {
 #ifdef USE_FREETYPE
+      printf("loading TTF: %s\n",filen);
       fnt_ttf_loadfont(lfont,filen);
 #else
       printf("Error: TrueType support not compiled in\n");
@@ -215,11 +232,11 @@ fnt_t* fnt_loadfont(char *filen, int ftype) {
       fclose(fp);
    }
    strcpy(currfont,filen);
-//   printf("f-type is %d (2)\n", lfont->type);
+
    return lfont;
 }
 
-fnt_display_char(BITMAP *b,int x, int y, unsigned char chr,int fcolor) {
+void fnt_display_char(BITMAP *b,int x, int y, unsigned char chr,int fcolor) {
    int t,c,dc,cx;
    int fh=ActiveFont->height;
    unsigned char* fdata;
@@ -292,7 +309,7 @@ void fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long
 #ifdef SDL2
    SDL_Rect frect;
 #endif
-   
+
    if(ActiveFont->type==TTF ) {
 #ifdef USE_FREETYPE
       fnt_ttf_print_string(b,x,y,str,fg,bg,sd);
@@ -310,8 +327,9 @@ void fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long
 #ifdef USESDL
       // Put here for speed optimization
       //   if(SDL_MUSTLOCK(screen)){
-      if(b==screen && ActiveFont->type<2)
+      if(b==screen && ActiveFont->type<2) {
 	if(SDL_LockSurface(b) < 0) return;
+      }
 #endif
       
       while(*str) {
@@ -400,7 +418,7 @@ int calc_height(char *stt) {
    return height ;  
 }
 
-fnt_init() {
+void fnt_init() {
    // right now, only sets up compiled-in fonts
    int i;
 #ifdef COMPFONT
@@ -419,7 +437,7 @@ fnt_init() {
 #endif
 }
 
-fnt_setscale(fnt_t *myfont, int w, int h) {
+void fnt_setscale(fnt_t *myfont, int w, int h) {
    myfont->scale_w=w;
    myfont->scale_h=h;
 }

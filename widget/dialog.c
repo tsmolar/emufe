@@ -81,9 +81,9 @@ typedef struct setwin_t {
    int type;   // fixed or floating
    Widget *pw;
    BITMAP *bm;  // where to draw to
-   charar_t line[28];
-   charar_t ddown[20];
-   widgetlist_t widget[25];
+   charar_t line[80];
+   charar_t ddown[80];
+   widgetlist_t widget[40];
 } setwin_t;
 
 extern char mysep;

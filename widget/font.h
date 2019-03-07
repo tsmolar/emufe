@@ -27,12 +27,20 @@ extern fnt_t* cf8x16;
 
 extern char fontdir[90];
 extern char tfont[30];
-extern char currfont[30];
+extern char currfont[130];
 extern fnt_t* ActiveFont;
 
 /* This is for displaying text in graphics modes */
-//extern fnt_t fnt_loadfont(char, int);
-//void fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long sd);
+extern fnt_t* fnt_loadfont(char*, int);
+
+extern void fnt_destroy(fnt_t* font);
+extern void fnt_setactive(fnt_t* font);
+extern fnt_t* fnt_getactive();
+extern fnt_t* fnt_loadfont(char *filen, int ftype);
+extern fnt_t* fnt_convblit(fnt_t* font);
+//extern void fnt_display_char(BITMAP *b,int x, int y, unsigned char chr,int fcolor);
+//extern void fnt_print_string(BITMAP *b, int x, int y, char *str, long fg, long bg, long sd);
+
 
 #ifdef USE_FREETYPE
 #define RENDER_SIMPLE 0  /* No Antialiasing */

@@ -30,7 +30,7 @@ int has_focus(Widget* b) {
      return 0;
 }
 
-unfocus_input(Widget *b,int x, int y, int m) {
+void unfocus_input(Widget *b,int x, int y, int m) {
    int hlcol,fncol,al,wdt,i;
    char limittxt[190];
    BITMAP* useb;
@@ -45,6 +45,7 @@ unfocus_input(Widget *b,int x, int y, int m) {
    if(b==wdg_getlevel(W_FOCUS)) // remove focus if it belongs to me
      wdg_setlevel(W_FOCUS,NULL);
    // Need condition to unfocus here?
+
    if(just_popped) return;
    restore_under(b);
    // Draw unfocused input here, leave options for themes/bmps
@@ -115,12 +116,12 @@ Widget* wdg_input_add (Widget *parent,int x1,int y1,int wc,char* text) {
 
    // Note: Probably should put unfocus on handler rather than depress
    //       Depress should do nothing basically.
-   
+
    w->press=&focus_input;
    w->depress=NULL;  // If I don't set this then it points to unfocus?
 //   w->depress=&unfocus_input;
    w->draggable=0; /* &down_button is only called once */
-	
+
    w->x1=x1;
    w->x2=x2;
    w->y1=y1;
@@ -211,6 +212,7 @@ wdg_input_data(Widget* b, int *ksym, char *kasc) {
       *ksym=0;*kasc=0;
    }
    // Draw Text & Cursor
+
    style_rectfill(screen,b->x1+2,b->y1+2,b->x2-2,b->y2-2,hlcol,al);
    fnt_print_string(screen, b->x1+3, b->y1+3, b->text, fncol, -1 , -1);
    cx=(cursor_px*8)+b->x1+2;

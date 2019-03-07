@@ -31,7 +31,7 @@ int fshadow, cachefont, colortable[8];
 extern fnt_t* ActiveFont;
 
 // Legacy Char Functions
-font_load(char *filen) {
+void font_load(char *filen) {
   //   fnt_t* nf;
    fnt_t* f2;
    PALETTE pal;
@@ -51,16 +51,16 @@ font_load(char *filen) {
    printf("END font_load()\n");
 }
 
-display_char(int x, int y, unsigned char chr) {
+void display_char(int x, int y, unsigned char chr) {
    fnt_display_char(screen,x, y, chr,fnfgcol);
 }
 
-shadow_char(int x, int y, unsigned char chr) {
+void shadow_char(int x, int y, unsigned char chr) {
    fnt_display_char(screen,x+1, y+1, chr,shdcol);
    fnt_display_char(screen,x, y, chr,fnfgcol);
 }
 
-solid_char(int x, int y, unsigned char chr) {
+void solid_char(int x, int y, unsigned char chr) {
    int fh=ActiveFont->height-1;
    rectfill(screen,x,y,x+7,y+fh,fnbgcol);
    fnt_display_char(screen,x, y, chr,fnfgcol);
@@ -69,22 +69,22 @@ solid_char(int x, int y, unsigned char chr) {
 
 // Legacy Routines
 
-set_font_fcolor(int r, int g, int b) {
+void set_font_fcolor(int r, int g, int b) {
    font_fr = r; font_fg = g; font_fb = b;
    fnfgcol=makecol(r,g,b);
 }
 
-set_font_bcolor(int r, int g, int b) {
+void set_font_bcolor(int r, int g, int b) {
    font_br = r; font_bg = g; font_bb = b;
    fnbgcol=makecol(r,g,b);
 }
 
-set_font_scolor(int r, int g, int b) {
+void set_font_scolor(int r, int g, int b) {
    /* Seems reversed, but why? */
    shdcol=makecol(r,g,b);
 }
 
-solid_string(int x, int y, char *stt) {
+void solid_string(int x, int y, char *stt) {
    if(fshadow==1)
      fnt_print_string(screen,x,y,stt,fnfgcol,fnbgcol,shdcol);
 		      else

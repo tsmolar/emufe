@@ -109,16 +109,18 @@ void rectfill(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
    srect.y = y1;
    srect.w = x2 - (x1 -1);
    srect.h = y2 - (y1 -1);
-   
+#ifdef DEBUG
+   printf("rectfill pointer=%p\n",bmp);
+#endif
    SDL_FillRect(bmp, &srect, color); 
 #ifdef SDL1
    SDL_UpdateRect(bmp, x1, y1, srect.w, srect.h);
 #endif
 #ifdef SDL2
-   if (SA_AUTOUPDATE == 1) {	
+   if (SA_AUTOUPDATE == 1) {
       SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
       SDL_RenderPresent(sdlRenderer);
-      printf("PRESENT!  rectfill()\n");
+//      printf("PRESENT!  rectfill()\n");
    }
 #endif
 }
@@ -154,7 +156,7 @@ void rect(SDL_Surface *bmp, int x1, int y1, int x2, int y2, int color) {
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
    SDL_RenderPresent(sdlRenderer);
-   printf("PRESENT!  rect()\n");
+//   printf("PRESENT!  rect()\n");
 #endif   
 }
 
@@ -174,7 +176,7 @@ void hline(SDL_Surface *bmp, int x1, int y, int x2, int color) {
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
    SDL_RenderPresent(sdlRenderer);
-   printf("PRESENT!  hline()\n");
+//   printf("PRESENT!  hline()\n");
 #endif   
 }
 
@@ -192,7 +194,7 @@ void vline(BITMAP *bmp, int x, int y1, int y2, int color) {
 #ifdef SDL2
    SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
    SDL_RenderPresent(sdlRenderer);
-   printf("PRESENT!  vline()\n");
+//   printf("PRESENT!  vline()\n");
 #endif   
 }
 
@@ -264,7 +266,7 @@ void fastline(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
 #ifdef SDL2
 	 SDL_RenderCopy(sdlRenderer,screen,&srect,&srect);
 	 SDL_RenderPresent(sdlRenderer);
-	 printf("PRESENT!  fastline()\n");
+//	 printf("PRESENT!  fastline()\n");
 #endif   
       } /* hline */
    } /* vline */

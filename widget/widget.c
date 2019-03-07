@@ -14,7 +14,7 @@
 #include <sys/types.h>
 #include "widget.h"
 
-#define WIDGETVER "2.1.9"
+#define WIDGETVER "2.2.1"
 
 #define in_box(x1,y1,x2,y2,mx,my) ((mx)>(x1) && (mx)<(x2) && (my)>(y1) && (my)<(y2))
 
@@ -139,11 +139,11 @@ void widget_init() /* Initializes the widget library */
 }
 
 int widget_clear_level() {
+#ifdef DEBUG
    printf("widget_clear_level: about to pop \n");
+#endif
    pop_level();
-   printf("pop ok\n");
    push_level(0,0,0,0);
-   printf("push ok\n");
 }
 
 void wdg_adjust(int id, int ax, int ay) {
@@ -190,7 +190,6 @@ int push_level(int x1,int y1,int x2,int y2) /* Makes current level temporary ina
 #ifdef GFXLIB_SDL
    SDL_Surface *bmp;
 #endif
-//   printf("pushlevel: curr_level:%d\n",curr_level);
    rem_pointer(mx,my);
 //   printf("pl 2 (removed pointer)\n");
 	if (curr_level > -1){
@@ -237,7 +236,6 @@ int pop_level() /* Deletes all widgets in the current level (from memory)
    SDL_Surface *bmp;
 #endif
 	rem_pointer(mx,my);
-//   printf("pop: curr level: %d\n",curr_level);
    // Note, this was <= 0, but then you can't pop the lowest level,
    // is this desired?
 	if(curr_level < 0) {
@@ -253,7 +251,6 @@ int pop_level() /* Deletes all widgets in the current level (from memory)
 	while(w1) {		/* Delete all widgets in this level */
 		w2=w1;		
 		w1=w2->next;
-//	   printf("xxx: %d\n",w2->destroy);
 		if(w2->destroy) (*(w2->destroy))(w2);
 //	   printf("free:\n");
 		free(w2);
@@ -263,7 +260,7 @@ int pop_level() /* Deletes all widgets in the current level (from memory)
 	just_popped=1;
 	curr_level--;
 
-//   printf("pop 3\n");
+   printf("popped: New level is %d\n",curr_level);
         if(curr_level>-1 && level[curr_level].data) {
 #ifdef FUNC_DEBUG
 	  printf("going to pop a level in pop_level");
@@ -555,7 +552,7 @@ void event_loop(int halt_on_pop)
 		   || (level[curr_level].pressed==w && w->draggable))
 	       && w->press)
 	    {
-	       printf("went hwer1\n");
+//	       printf("went hwer1\n");
 //	       wflag_clickprocessed=1;
 	       (*(w->press))(w,mx,my,mk);
 	       level[curr_level].pressed=w;

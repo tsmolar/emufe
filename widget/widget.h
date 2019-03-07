@@ -90,6 +90,10 @@ void wdg_destroy(Widget *w);
 /* Interogating level[] (which should be global btw) */
 Widget* wdg_getlevel(int);
 void wdg_setlevel(int,Widget *w);
+extern BITMAP* getwdgbmp(Widget *b);
+extern void unfocus_input(Widget *b,int x, int y, int m);
+//extern Widget* wdg_input_add (Widget *parent,int x1,int y1,int wc,char* text);
+//extern Widget* add_input (int x1,int y1,int wc,char* text)
 
 /* Globals */
 extern int just_popped;

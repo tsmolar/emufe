@@ -13,7 +13,7 @@ extern char fullscr;
 extern int joy_enable;
 
 // debug level can be 0-5
-#define DEBUG_LEVEL 0
+#define DEBUG_LEVEL 5
 
 // debug print macro
 #ifdef DEBUG
@@ -38,13 +38,17 @@ typedef struct prop_t {
    fgbg_t banr;
 
   // new for 3.0
-  int mb_x, mb_y, mb_w, mb_h, mb_x2, mb_y2; // menu box                        
-  int bb_x, bb_y, bb_w, bb_h, bb_x2, bb_y2; // banner box                         
-  int pb_x, pb_y, pb_w, pb_h, pb_x2, pb_y2; // pic box                         
-  int db_x, db_y, db_w, db_h, db_x2, db_y2; // desc box                                      
+  int mb_x, mb_y, mb_w, mb_h, mb_x2, mb_y2; // menu box
+  int bb_x, bb_y, bb_w, bb_h, bb_x2, bb_y2; // banner box
+  int pb_x, pb_y, pb_w, pb_h, pb_x2, pb_y2; // pic box
+  int db_x, db_y, db_w, db_h, db_x2, db_y2; // desc box
   int font_w, font_h;  // these should be in the font lib
   int txdesc_r,txdesc_g,txdesc_b;    // move to menuinfo_t
 } prop_t;
+
+#define SYS_GENERIC 0
+#define SYS_ARCADE 1
+#define SYS_COMPUTER 2
 
 typedef struct menuinfo_t {
    int mode;
@@ -52,6 +56,7 @@ typedef struct menuinfo_t {
    int noexec;
    char system[20];
    char sysbase[40];
+   int systype;
    char emulator[40];
    char game[40];
    char rc[70];
@@ -61,7 +66,7 @@ typedef struct menuinfo_t {
    int no_launch;
    int autosel;
    int profile;
-   
+
    // text color settings
    fgbg_t col[4];   //  imenu.col[0].bg.r
 } menuinfo_t;

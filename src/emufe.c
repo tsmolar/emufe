@@ -9,6 +9,7 @@
 #endif
 
 #include <string.h>
+#include <stdlib.h>
 #include <time.h>
 #include "font.h"
 #include "font_legacy.h"
@@ -34,7 +35,7 @@ int in_gfxmode=0, jflag=0;
 //fnt_t* LoadedFont;
 //fnt_t* myttf;
 fnt_t* DefaultFont;
-fnt_t* boxfont[4];
+fnt_t* boxfont[6];
 
 // Note, this might ultimately be used for the menu, but not now
 typedef struct menu_t {
@@ -53,7 +54,7 @@ menu_t menu[600];
 char dirname[120], bgpic[90], picsdir[90], menuname[20], rcfilename[20], defimg[20];
 char *commands[30], *lmenus[30];
 char descdir[90], picbox[40], theme[200], gthemedir[96], fullscr;
-char tfontbmp[30],fullpath[120];
+char tfontbmp[30],fullpath[350];
 char basedir[160], restr[20];
 char startdir[160], lastitem[160], *fname, debugtxt[300];
 int menulength, usembmap, usedbmap;
@@ -249,9 +250,11 @@ int display_menu(int index) {
 
    for(i=index; i<index+(rc.mb_h/fontv);i++) {
       io=i-index+1;
+
       if (i>menulength) break;
 /*     textout(screen,font,names[i],34,90+(i*8),red); */
       st_txt_col(menu[i].type);
+
       if(menu[i].type=='m' || menu[i].type=='d') {
 /*	 set_font_fcolor(80,0,80); */
 //	 printf("fontprt: passing -1 to fnt_print_screen\n");
@@ -260,13 +263,13 @@ int display_menu(int index) {
 	rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(io*fontv)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(io*fontv)+ry0, fnfgcol);
       } else {
 	 if(menu[i].type=='s') {
-/*	    rect(screen,37,88+(io*16),44,95+(io*16), fnbgcol); */
 	   rect(screen,(rc.mb_x+4)+rx0,(rc.mb_y-9)+(io*16)+ry0,(rc.mb_x+11)+rx0,(rc.mb_y-2)+(io*fontv)+ry0, fnfgcol); 
-	 }	 
+	 }
 /*	 set_font_fcolor(80,64,16); */
 	 fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(io*fontv)+ry0,menu[i].name,fnfgcol,-1,shdcol);
       }
-   }   
+   }
+
 #ifdef USESDL
 //   gfx_sdlflip();
    s2a_flip(screen);
@@ -363,7 +366,7 @@ void desc_wrapb(char* rstr, char *istr, int len) {
 void show_desc2(char *desc) {
    FILE *fp;
    char line[300], nxline[300], descffname[90], *ww;
-   char title[128], year[12], company[70], media[20];
+   char title[128], year[12], company[70], developer[70], media[20];
    int lineno, white, black, box_cw, box_ch,i, fnw, fnh, fns, dheader;
 
    fnt_setactive(boxfont[B_DESC]); 
@@ -379,6 +382,7 @@ void show_desc2(char *desc) {
    strcpy(title,desc);
    strcpy(year," unknown");
    strcpy(company," unknown");
+   strcpy(developer," unknown");
    strcpy(media, " unknown");
    strcpy(nxline,"\n");
 
@@ -415,7 +419,7 @@ void show_desc2(char *desc) {
 	 if(feof(fp))
 	   break;
          if( strncmp(line,"Name|",5)==0 || strncmp(line,"Year|",5)==0 || strncmp(line,"Company|",8)==0 || strncmp(line,"Company:",8)==0 ||
-	     strncmp(line,"Name:",5)==0 || strncmp(line,"Released:",9)==0 || strncmp(line,"Publisher:",10)==0 || strncmp(line,"Media:",6)==0) {
+	     strncmp(line,"Name:",5)==0 || strncmp(line,"Released:",9)==0 || strncmp(line,"Publisher:",10)==0 || strncmp(line,"Developer:",10)==0 || strncmp(line,"Media:",6)==0) {
 	    if(strncmp(line,"Name|",5)==0) hss_index(title,line,1,'|'); 
 	    if(strncmp(line,"Name:",5)==0) hss_index(title,line,1,':'); 
 	    if(strncmp(line,"Year|",5)==0) hss_index(year,line,1,'|'); 
@@ -423,6 +427,7 @@ void show_desc2(char *desc) {
             if(strncmp(line,"Company|",8)==0) hss_index(company,line,1,'|'); 
             if(strncmp(line,"Company:",8)==0) hss_index(company,line,1,':'); 
 	    if(strncmp(line,"Publisher:",10)==0) hss_index(company,line,1,':'); 
+	    if(strncmp(line,"Developer:",10)==0) hss_index(developer,line,1,':'); 
 	    if(strncmp(line,"Media:",6)==0) hss_index(media,line,1,':'); 
 	    lineno=3;
 	    dheader=1;
@@ -456,10 +461,13 @@ void show_desc2(char *desc) {
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(2*fnh)+1+ry0,"Publisher:",makecol(0,0,0),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*fnh)+1+ry0,"Released:",makecol(0,0,0),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(4*fnh)+1+ry0,"Media:",makecol(0,0,0),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(5*fnh)+1+ry0,"Developer:",makecol(0,0,0),-1,-1);
+	 
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(1*fnh)+ry0,title,makecol(255,255,255),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(2*fnh)+ry0,company,makecol(255,255,255),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(3*fnh)+ry0,year,makecol(255,255,255),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(4*fnh)+ry0,media,makecol(255,255,255),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(5*fnh)+ry0,developer,makecol(255,255,255),-1,-1);
 	 boxfont[B_DESC]->scale_w=fns;
 	 //	      fnt_print_string(screen,rc.db_x+4+((rc.db_w-(strlen(title)*8))/2)+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,title,makecol(255,255,255),-1,-1);
       }	 
@@ -606,7 +614,7 @@ int load_menu(char *lmenu) {
 	    //	      (char *)roms[i]=rom;
 	    i++;
 	    break;
-	  default:	       
+	  default:
 	    menu[i].type=type;
 	    strcpy(menu[i].name,name);
 	    strcpy(menu[i].rom,rom);
@@ -618,7 +626,7 @@ int load_menu(char *lmenu) {
 #endif
 	    i++;
 	 }
-	 
+
 #ifdef DEBUG
       } else {
 //	 sprintf(debugtxt,"ignored: %s\n",name);
@@ -626,15 +634,15 @@ int load_menu(char *lmenu) {
 	 LOG(3,("ignored: %s\n",name));
 	 /* put a free here */
 #endif
-      }      
+      }
    }
-   
+
    menulength=i-2;
    fclose(fp);
 
    LOG(3,("done\n"));
    LOG(3,(debugtxt,"menulength: %d\n",menulength));
-
+   
    return i-2;
 }
 
@@ -754,6 +762,7 @@ void init() {
 	 ry0=(usey-miny)/2;
       }
    }
+   // Initial RC file load goes here
    if(imenu.mode>1) 
      load_rc(imenu.rc); 
    else
@@ -780,7 +789,7 @@ void init() {
    if(strncmp(rc.ttfont, "na", 2) != 0) {
      fnt_destroy(DefaultFont);
      sprintf(fullpath,"%s%c%s",fontdir,mysep,rc.ttfont);
-      LOG(3,("ttf.font.load\n"));
+      LOG(3,("ttf.font.load: %s\n",fullpath));
       DefaultFont=fnt_loadfont(fullpath,TTF);
       LOG(3, ("ttf.font.load done\n"));
       
@@ -788,11 +797,12 @@ void init() {
       ///  TTF sizing 
 //      DefaultFont->scale_w=16; DefaultFont->scale_h=16;
    } else {
-     fnt_destroy(DefaultFont);
-     sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
+      fnt_destroy(DefaultFont);
+      sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
+      LOG(3, ("TTF fonts are not defined\n"));
       LOG(3, ("bitmap.font.load\n"));
-     DefaultFont=fnt_loadfont(fullpath,BIOS_8X16);
-     fnt_setactive(DefaultFont);
+      DefaultFont=fnt_loadfont(fullpath,BIOS_8X16);
+      fnt_setactive(DefaultFont);
    }
    
    // Load box fonts
@@ -814,8 +824,14 @@ void init() {
 	 
 	 LOG(3,("VLOAD: %s  type: %d   ext:%s\n",fullpath,txtbx[i].fonttype,ext));
 	 LOG(3, ("box font.load\n"));
+	 boxfont[i]=NULL;
 	 boxfont[i]=fnt_loadfont(fullpath,txtbx[i].fonttype);
-	 
+
+	 LOG(3, ("boxfont[i] pointer address: %p\n",(void *)boxfont[i]));
+	 LOG(3, ("Font information\n"));
+         LOG(3, ("Font Width: %d\n", boxfont[i]->width));
+         LOG(3, ("Font Height: %d\n", boxfont[i]->height));
+
 	 boxfont[i]->scale_w=txtbx[i].font_w;
 	 boxfont[i]->scale_h=txtbx[i].font_h;
       } else {
@@ -931,7 +947,7 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	 masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
        else 
 	 LOG(1, ("do_imgbox_scale(): I HAVE NO BG!\n"));
-		 
+
 
        if(bitmap) {
 
@@ -1135,9 +1151,11 @@ void draw_title(int fg, int bg) {
    } else {
       comp_load(rc.bb_x,rc.bb_y,rc.bb_w,rc.bb_h,txtbx[B_BANR].box);
    }
-   if(!titlemap)
+   // blitting a second time crashes, I can't figure out why
+   if(!titlemap) {	
       titlemap=create_bitmap(rc.bb_w,rc.bb_h);
-   blit(screen,titlemap,rc.bb_x+rx0,rc.bb_y+ry0,0,0,rc.bb_w,rc.bb_h);
+      blit(screen,titlemap,rc.bb_x+rx0,rc.bb_y+ry0,0,0,rc.bb_w,rc.bb_h);
+   }
    title(-1,-1,"Emufe");
 }
 
@@ -1225,10 +1243,15 @@ void draw_menubox(int fg, int bg) {
    }
    if(strncmp(txtbx[B_MENU].box, "default", 7)!=0 && strcmp(txtbx[B_MENU].box, "trans")!=0) {
      comp_load(rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h,txtbx[B_MENU].box);
-      if(usembmap==0)
-	menumap=create_bitmap(rc.mb_w,rc.mb_h);
-      blit(screen, menumap,rc.mb_x+rx0,rc.mb_y+ry0,0,0,rc.mb_w,rc.mb_h);
-      usembmap=1;
+            
+// Seems like if we try to blit from the screen to menumap a second time, it
+// crashes
+      
+      if(usembmap==0) {	   
+	 menumap=create_bitmap(rc.mb_w,rc.mb_h);
+	 blit(screen, menumap,rc.mb_x+rx0,rc.mb_y+ry0,0,0,rc.mb_w,rc.mb_h);
+	 usembmap=1;
+      }
    }
 }
 
@@ -1425,12 +1448,13 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
 
 int main(int argc, char* argv[]) {
    long w;
-   char type, newmenu[300], *ww, picname[180], letsel, usemenu[25];
+   char type, newmenu[500], *ww, picname[180], letsel, usemenu[25];
    int keyp, index, slc, menuitems, stln, por, tmpc;
    int my, mp, entidx, pslc, zpos, jlf, jrt, jup, jdn, jbu, menf;
    int aidx;
    
    imenu.noexec=imenu.autosel=0;
+   imenu.systype=SYS_GENERIC;
    usembmap=0; usedbmap=0;
    por=0;
    jlf=jrt=jup=jdn=0;
@@ -1533,14 +1557,15 @@ int main(int argc, char* argv[]) {
 //   SDL_SetAlpha(selection, SDL_SRCALPHA, 128);
    sa_setalpha(selection, 128);
 
-   
    menuitems=load_menu(newmenu);
    if(strlen(lastitem)>0) {
       slc=index=find_menu_e(lastitem);
    }
    display_menu(index);
    menu_hlight(index,slc);
-   clear_keybuf(); 
+
+   clear_keybuf();
+
 /*   position_mouse(320,200); */
    show_mouse(screen);
    imenu.no_launch=0;
@@ -2011,13 +2036,28 @@ int main(int argc, char* argv[]) {
 		     strcpy(imenu.emulator,menu[slc].rom);
 		  }
 //		  printf("imenu.sysbase: %s\n",imenu.sysbase);
+//		  printf("imenu.system: %s\n",imenu.system);
 //		  printf("imenu.emulator: %s\n",imenu.emulator);
 //		  sprintf(imenu.emulator,"%s%s",dirname,roms[slc]);
 		  imenu.mode++;
 		  // Expand this!!!
 //		  sprintf(imenu.menu,"%s%s.menu",dirname,roms[slc]);
+
+		  // per emulator rc file load happens here
 		  sprintf(imenu.rc,"%s%c%setc%c%s.rc",basedir,mysep,dirname,mysep,imenu.emulator);
-		  load_rc(imenu.rc);
+
+		  // New 2019, RC files not needed for simple
+		  // console systems
+		  // We might want to always run set_generic_rc
+		  // and overlay with rc file
+
+		  imenu.systype=SYS_GENERIC;  // set to default
+		  if(fileio_file_exists(imenu.rc)) {
+		     load_rc(imenu.rc);
+		  } else {
+		     LOG(3,("Warning, no .rc file, using default settings\n"));
+		     set_generic_rc();
+		  }
 		  sprintf(imenu.menu,"%s%c%s%s",basedir,mysep,dirname,menuname);
 		  // HERE IS THE BUG
 //		  sprintf(imenu.lastmenu,"%s.menu",menu[slc].rom);

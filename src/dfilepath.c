@@ -195,7 +195,7 @@ void getnxtpath(char *opath, char *ipath) {
 void dfixsep2(char *opath, char *ipath, int setfq) {
    int i,i2,nsep;
 //#ifdef WIN32
-   char tdir[122],tcomp[30];
+   char tdir[150];
 //   basename(tempd,ipath);
 //   basename(tdir,ipath);
 //   abs_dirname(tempd,ipath);

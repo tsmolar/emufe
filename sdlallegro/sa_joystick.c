@@ -5,7 +5,7 @@ int num_joysticks;
 JOYSTICK_INFO joy[8];
 
 // Joystick section
-install_joystick(int type)  {
+void install_joystick(int type)  {
    int i;
    num_joysticks=SDL_NumJoysticks();
    for(i=0;i<num_joysticks;i++) {
@@ -21,7 +21,7 @@ install_joystick(int type)  {
 }
 // END Joystick section
 
-poll_joystick() {
+void poll_joystick() {
    Uint8 stick;
    int axis;
    SDL_JoystickUpdate();

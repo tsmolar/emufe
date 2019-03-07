@@ -20,6 +20,7 @@
 #include "fileio.h"
 #include "dfilepath.h"
 #include "rcfile.h"
+//#include "widget.h"
 
 typedef struct charar_t {
    char str[85];
@@ -80,8 +81,48 @@ int envcidx,mapidx;
 env_t envc[MAX_ENVC];
 map_t emap[MAX_ENVC];
 
+// So it seems the new GCC will develop pointer problems if you don't
+// prototype functions that return pointers, so I'm dropping these here
+// It is probably overkill, these should go in the header files
+//
+// from input.c
+extern Widget* wdg_input_add (Widget *parent,int x1,int y1,int wc,char* text);
+extern Widget* add_input (int x1,int y1,int wc,char* text);
+
+// from button.c
+#ifndef BUTTON_H
+extern Widget* wdg_button_add(Widget *parent,int x1, int y1, int x2, int y2,
+			      int(*handler)(Widget*,int,int,int));
+extern Widget* wdg_button_txt_add(Widget *parent,int x1, int y1, int x2, int y2,
+				  char* text,int(*handler)(Widget*,int,int,int));
+extern Widget* wdg_button_bmp_add(Widget *parent,int x1, int y1, int x2, int y2,
+		                  bmpbtn_t bbmp,int(*handler)(Widget*,int,int,int));
+extern Widget* wdg_button_arrow_add(Widget *parent,int x,int y,int dir,
+			     int(*handler)(Widget*,int,int,int));
+extern Widget* wdg_checkbox_add
+   (Widget *parent,int x,int y,int checked,int(*handler)(Widget*,int,int,int));
+extern Widget* add_checkbox (int x,int y,int checked,int(*handler)(Widget*,int,int,int));
+
+extern Widget* add_button(int,int,int,int,char*,int(*handler)(Widget*,int,int,int));
+extern Widget* add_arrow_button(int,int,int,int(*handler)(Widget*,int,int,int));
+extern Widget* add_invisible_button
+        (int x1,int y1,int x2,int y2,int(*handler)(Widget*,int,int,int));
+extern Widget* add_bmp_button(int,int,int,int,bmpbtn_t,int(*handler)(Widget*,int,int,int));
+#endif
+
+// from widget.c
+extern Widget* new_widget();
+extern Widget* wdg_getlevel(int v);
+
+// from window.c 
+#ifndef WINDOW_H
+Widget* widget_newwindow(int x1, int y1, int x2, int y2);
+#endif
+
 int wcb_buttoncb(Widget *w, int x, int y, int m) {
+#ifdef DEBUG
    printf("SETUP: wcb_buttoncb\n");
+#endif
 //   printf("CALLBACK!-> %s\n",w->text);
    swin.active=P_CANCEL;
    swin.lastbutton=B_CANCEL;
@@ -102,7 +143,9 @@ int wcb_buttoncb(Widget *w, int x, int y, int m) {
 
 int limit_str(char *sstr,const char *istr,int len) {
    int i;
+#ifdef DEBUG
    printf("SETUP: limit_str\n");
+#endif
 
    for(i=0;i<len;i++)
      sstr[i]=istr[i];
@@ -110,13 +153,15 @@ int limit_str(char *sstr,const char *istr,int len) {
 }
 
 int setup_findbin(const char *fb) {
-   char fpath[80],sdir[40],fspec[20];
+   char fpath[180],sdir[140],fspec[120];
    int n;
    FILE *fp;
    DIR *dp;
    struct dirent *ep;
 
+#ifdef DEBUG
    printf("SETUP: setup_findbin\n");
+#endif
 
    setup_envget(sdir,fb);
    dfixsep2(fpath,sdir,1);
@@ -162,22 +207,29 @@ int setup_findbin(const char *fb) {
 
 int wcb_dropdown(Widget *w, int x, int y, int m) {
    
-      printf("SETUP: wcb_dropdown\n");
+#ifdef DEBUG
+   printf("SETUP: wcb_dropdown\n");
+#endif
 
    alert_button=y;
    while(mouse_b!=0) poll_mouse();
    close_window();
+//   pop_level();
 }
 
 int wcb_openselect(Widget *w, int x, int y, int m) {
    int i,ni,dx,dw,dy,dh,li=-1,ci=-1,si=0;
-   char wvar[90], wvar2[30], *homet;
+   char wvar[190], wvar2[130], *homet;
    Widget *nw;
    
-      printf("SETUP: wcb_openselect\n");
+#ifdef DEBUG
+   printf("SETUP: wcb_openselect\n");
+#endif
    //   printf("Now what?\n");
    for(i=0;i<16;i++) {
 #ifdef DEBUG
+      printf("==OPENSELECT DEBUG:===============================\n");
+      printf("i=%d\n",i);
       printf("wx:%d,  bx:%d,  wy:%d,  by:%d\n",swin.widget[i].x+14+(strlen(swin.widget[i].text)*8),(w->x1-swin.startx)-2,swin.widget[i].y,(w->y1-7)-swin.starty);
       printf("wt:%s\n",swin.widget[i].text);
 #endif
@@ -188,7 +240,7 @@ int wcb_openselect(Widget *w, int x, int y, int m) {
 	 && dy==(w->y1-7)-swin.starty) {
 //	 printf("setup_mapget(wvar,%s,3)\n",swin.widget[i].text);
 	 setup_mapget(wvar,swin.widget[i].text,3);
-	 si=i;
+	 si=i; // widget index
 	 break;
       }
       
@@ -230,11 +282,13 @@ int wcb_openselect(Widget *w, int x, int y, int m) {
    dw=dw+4;
    dh=(16*ni)+2;
 #ifdef DEBUG
+   printf("==Openselect size=============\n");
    printf("ni=%d\n",ni);
    printf("dx=%d\n",dx);
    printf("dy=%d\n",dy);
    printf("width=%d\n",dw);
    printf("height=%d\n",dh);
+   printf("==============================\n");
 #endif
    new_window(dx,dy,dx+dw,dy+dh);
    rectfill(screen,dx,dy,dx+dw,dy+dh,makecol(224,224,224));
@@ -260,7 +314,7 @@ int wcb_openselect(Widget *w, int x, int y, int m) {
 	    }
 	    rectfill(screen,dx,dy+1+(ci*16),dx+dw,dy+17+(ci*16),makecol(0,0,0));
 	    limit_str(wvar2,swin.ddown[ci].str,dw/8);
-	    fnt_print_string(screen,dx+2,dy+1+(ci*16),wvar2,makecol(224,224,224),-1,-1);	       
+	    fnt_print_string(screen,dx+2,dy+1+(ci*16),wvar2,makecol(224,224,224),-1,-1);
 	    li=ci;
 	 }
       }
@@ -268,10 +322,23 @@ int wcb_openselect(Widget *w, int x, int y, int m) {
       event_loop(JUST_ONCE);
       kbd_loop(JUST_ONCE);
    }
+
 //   printf("\nabr: %d\n",ci);
    if(ci>0) {
       strcpy(swin.widget[si].evalue,swin.ddown[ci].str);
-      (*(swin.widget[si].widget->handler))(swin.widget[si].widget,-1,-1,-1);
+      printf("evalue is: %s\n",swin.widget[si].evalue);
+
+      // Ran into lots of troube with this, it doing to callback to the
+      // select box, which should be "unfocus_input", and causes the text
+      // box to update with the selected value.  Sometimes it seems to be 
+      // an invalid pointer
+
+      // (*(swin.widget[si].widget->handler))(swin.widget[si].widget,-1,-1,-1);
+      
+      // instead we are going to force it.   This seems to have fewer
+      // crashes than the previous line, but I could be imagining it
+      // I would rather use the previous line, so feel free to play with it
+      unfocus_input(swin.widget[si].widget,-1,-1,-1);
    }
    
    
@@ -282,7 +349,9 @@ int wcb_checkcb(Widget *w, int x, int y, int m) {
    int i,tx,ty;
    char wvar[20];
    
-      printf("SETUP: wcb_checkcb\n");
+#ifdef DEBUG
+   printf("SETUP: wcb_checkcb\n");
+#endif
 //   printf("CHECK CALLBACK!\n");
    for(i=0;i<swin.numwidget;i++) {
       if(swin.widget[i].widget==w)
@@ -300,7 +369,9 @@ int wcb_checkcb(Widget *w, int x, int y, int m) {
 int gfx_windecor(int x, int y, int width, int height,int base) {
    int bcr,bcg,bcb,wh,wl,ir,ig,ib;
    
+#ifdef DEBUG
    printf("SETUP: gfx_windecor\n");
+#endif
 
    bcr=getr(base); bcg=getg(base); bcb=getg(base); 
    wl=makecol(bcr/4,bcg/4,bcb/4);
@@ -320,8 +391,10 @@ int gfx_windecor(int x, int y, int width, int height,int base) {
 int wcb_ab(Widget *w, int x, int y, int m) {
    // Alert Button Callback
 
+#ifdef DEBUG
    printf("SETUP: wcb_ab\n");
-
+#endif
+   
    alert_button=3;
    if(w->ksym==KEY_Y || w->ksym==KEY_ENTER)
      alert_button=1;
@@ -339,8 +412,10 @@ int gfx_alert(char *text,int k1, char *b1,int k2, char *b2,int k3,char *b3) {
    bmpbtn_t mybutton;
 #endif
 
+#ifdef DEBUG
    printf("SETUP: gfx_alert\n");
-
+#endif
+   
    mbw=40;
    alert_button=0;
    
@@ -427,10 +502,12 @@ int gfx_alert(char *text,int k1, char *b1,int k2, char *b2,int k3,char *b3) {
 
 int setup_parse_line(char *sline, int lno) {
    int i,wxs,bc=0;
-   char wstr[20];
+   char wstr[40];
    
+#ifdef DEBUG
    printf("SETUP: setup_parse_line\n");
-
+#endif
+   
    for(i=0;i<strlen(sline);i++) {
       if(sline[i]=='|') sline[i]=' ';
       if(sline[i]==10) sline[i]=0;
@@ -459,6 +536,7 @@ int setup_parse_line(char *sline, int lno) {
 	printf("widget text: %s widget num:%d\n",wstr,swin.numwidget);
 #endif
 	strcpy(swin.widget[swin.numwidget].text,wstr); // button
+
 	swin.numwidget++;
       }
       if(bc==1) sline[i]=' ';
@@ -470,8 +548,10 @@ int setup_parse_line(char *sline, int lno) {
 int setup_getlocalcfgname(char *cfgname) {
    char *homet;
 
+#ifdef DEBUG
    printf("SETUP: setup_getlocalcfgname\n");
-
+#endif
+   
 #ifdef WIN32
    strcpy(cfgname,"C:\\emulator\\emucd.env");
 #else
@@ -483,7 +563,9 @@ int setup_getlocalcfgname(char *cfgname) {
 int setup_getflashcfgname(char *cfgname) {
 //   char *homet;
 
+#ifdef DEBUG
    printf("SETUP: setup_getflashcfgname\n");
+#endif
    sprintf(cfgname,"%s%cuser_config%ccfg1%cemucd.env",basedir,mysep,mysep,mysep);
    printf("SETUP: cfgname=%s\n", cfgname);
 }
@@ -491,7 +573,9 @@ int setup_getflashcfgname(char *cfgname) {
 int setup_getglobalcfgname(char *cfgname) {
    // this could be used to fix the crash bug when
    // emufe -n -i is used without CDROOT
+#ifdef DEBUG
    printf("SETUP: setup_getglobalcfgname\n");
+#endif
    sprintf(cfgname,"%s%cetc%cemucd.env",basedir,mysep,mysep);
 }
 
@@ -513,7 +597,9 @@ int setup_envset(const char *var, const char *val) {
    int i,cc=0;
    //   printf("%s==%s\n",var,val);
 
+#ifdef DEBUG
    printf("SETUP: setup_envset:  var=%s  val=%s\n",var,val);
+#endif
    // printf("SETUP: setup_envset:  envcidx=%d  MAX_ENVC=%d\n",envcidx,MAX_ENVC);
 
    for(i=0;i<envcidx;i++) {
@@ -536,27 +622,28 @@ int setup_envset(const char *var, const char *val) {
    }
 }
 
-setup_mapget(char *ret, const char *var, int pno) {
+void setup_mapget(char *ret, const char *var, int pno) {
    int i;
    for(i=0;i<mapidx;i++) {
 #ifdef DEBUG
       printf("%s--%s--\n",var,emap[i].var); 
-#endif
-      
       printf("SETUP: setup_mapget\n");
+#endif
 
       if(strncmp(emap[i].var,var,18)==0) {
 	 if(pno==2) strcpy(ret,emap[i].value);
 	 if(pno==3) strcpy(ret,emap[i].p3);
 	 if(pno==4) strcpy(ret,emap[i].p4);
-      }      
+      }
    }
 }
 
 int setup_mapset(const char *var, const char *val,const char *p3, const char *p4) {
    int i,cc=0;
 
+#ifdef DEBUG
    printf("SETUP: setup_mapset\n");
+#endif
 
    for(i=0;i<mapidx;i++) {
       if(strcmp(emap[i].var,var)==0) {
@@ -628,7 +715,9 @@ int setup_envget(char* ival, const char *var) {
      strcpy(emuenv,lc);
    else
      setup_getglobalcfgname(emuenv);
+#ifdef DEBUG
    printf("checking disk:%s\n",emuenv);
+#endif
    fp=fopen(emuenv,"rb");
    while(!feof(fp)) {
       fgets(lc,240,fp);
@@ -663,8 +752,11 @@ int setup_envget(char* ival, const char *var) {
 
 int setup_menv(char *val,const char *var) {
    int i;
-   
+
+#ifdef DEBUG
    printf("SETUP: setup_menv\n");
+#endif
+
    strcpy(val,"");
    for(i=0;i<mapidx;i++) {
 //      printf("%d\n",i);
@@ -682,7 +774,9 @@ int setup_menvget(char *val, const char *var) {
    int i;
    char ival[40];
 
+#ifdef DEBUG
    printf("SETUP: setup_menvget\n");
+#endif
    setup_menv(ival,var);
 //   printf("ival is %s\n",ival);
 
@@ -700,8 +794,10 @@ int load_setup_fl(char *fname) {
    char lb[200],v1[40],v2[40],v3[30],v4[80];
    int sw=0,nl=0,i;
 
+#ifdef DEBUG   
    printf("SETUP: load_setup_fl\n");
-
+#endif
+   
    if(fp=fopen(fname,"rb")) {
       while(!feof(fp)) {
 	 fgets(lb,195,fp);
@@ -728,12 +824,12 @@ int load_setup_fl(char *fname) {
 //	    printf("v3:%s\nv4:%s\n",v3,v4);
 	    setup_mapset(v1,v2,v3,v4);
 	 }
-	 
+
 	 if(strncmp(lb,"=VARIABLE",9)==0)
 	   sw=2;
 	 if(strncmp(lb,"=END VARIABLE",13)==0)
 	   sw=0;
-	 
+
 	 if(lb[0]=='+' && lb[1]=='-') { 
 	    if(sw==0) {
 	       swin.width=(strlen(lb)*8);
@@ -754,14 +850,16 @@ int load_setup_fl(char *fname) {
 }
 
 int setup_mystyle() {
+#ifdef DEBUG
    printf("SETUP: setup_mystyle\n");
-
+#endif
+   
    // Override some of the widget default styles
    activestyle.input.bg=makecol(240,240,240);
 }
 
 int run_setup(char *n_setup) {
-   char fname[120],envval[60],wst[20];
+   char fname[120],envval[255],wst[80];
    int sx,sy,i,sxo,syo,l;
    Widget *nw;
 
@@ -787,7 +885,9 @@ int run_setup(char *n_setup) {
    printf("Gloading %s\n",fname);
    if(!load_setup_fl(fname))
      return 0;
+#ifdef DEBUG
    printf("SETUP: run_setup()  file loaded: %s\n", fname);
+#endif
 //   printf("Width:%d  Height:%d\n",swin.width,swin.height);
 
    if(swin.width>0 && swin.height>0) {
@@ -811,20 +911,20 @@ int run_setup(char *n_setup) {
 	 sxo=sx+swin.widget[i].x;
 	 syo=sy+swin.widget[i].y;
 	 if(swin.widget[i].type==SU_BUTTON) {
-	    l=sxo+(strlen(swin.widget[i].text)*8)+8;
+	    l=sxo+(strlen(swin.widget[i].text)*8)+8; 
 	    nw=add_button(sxo,syo,l,syo+20,swin.widget[i].text,&wcb_buttoncb);
 	    if(strcmp(swin.widget[i].text,"ACCEPT")==0)
 	      wdg_bind_key(nw,KEY_ENTER,-1,0);
 	    if(strcmp(swin.widget[i].text,"CANCEL")==0)
 	      wdg_bind_key(nw,KEY_ESC,-1,0);
 	 }
-//	 printf("widgeta %d  type: %d\n",i,swin.widget[i].type);
+//printf("widgeta %d  type: %d\n",i,swin.widget[i].type);
 	 if(swin.widget[i].type==SU_CHECKBOX) {
-//	    printf("chh: >%s<\n",swin.widget[i].text);
+//printf("chh: >%s<\n",swin.widget[i].text);
 	    setup_menvget(swin.widget[i].evalue,swin.widget[i].text);
 	    setup_mapget(fname,swin.widget[i].text,4);
 	    hss_index(wst,fname,1,',');
-//	    printf("chc: >%s<\n",fname);
+//printf("chc: >%s<\n",fname);
 	    if(strcmp(wst,swin.widget[i].evalue)==0)
 	      nw=add_checkbox(sxo,syo+4,1,&wcb_checkcb);
 	    else
@@ -834,22 +934,31 @@ int run_setup(char *n_setup) {
 	    fnt_print_string(screen,sxo+8,syo,swin.widget[i].text,makecol(0,0,0),-1,-1);
 	 }
 	 if(swin.widget[i].type==SU_ENVTEXT) {
-//	    printf("wth: >%s<\n",swin.widget[i].text);
+//printf("wth: >%s<\n",swin.widget[i].text);
 	    setup_menvget(envval,swin.widget[i].text);
-//	    printf("asd: >%s<\n",envval);
+//printf("asd: >%s<\n",envval);
 	    fnt_print_string(screen,sxo+8,syo,envval,makecol(0,0,0),-1,-1);
 	 }
 	 if(swin.widget[i].type==SU_SELECT || swin.widget[i].type==SU_EDIT) {
-//	    printf("wth: >%s<\n",swin.widget[i].text);
+//printf("wth: >%s<\n",swin.widget[i].text);
 	    strcpy(swin.widget[i].evalue,"n/a");
 	    setup_menvget(swin.widget[i].evalue,swin.widget[i].text);
-//	    printf("asd: >%s<\n",swin.widget[i].evalue);
+//printf("asd: >%s<\n",swin.widget[i].evalue);
 //	    fnt_print_string(screen,sxo+8,syo,envval,makecol(0,0,0),-1,-1);
-	    nw=add_input (sxo+8,syo,strlen(swin.widget[i].text),swin.widget[i].evalue);
+// looks like this doesn't have a callback?
+
+//	    nw=add_input (sxo+8,syo,strlen(swin.widget[i].text),swin.widget[i].evalue);
+	    nw=wdg_input_add(NULL,sxo+8,syo,strlen(swin.widget[i].text),swin.widget[i].evalue);
 	    swin.widget[i].widget=nw;
+
+//  printf("\n\n\nLOOK: swin.widget[%d].widget is SU_SELECT, added input\n",i);
+//  printf("LOOK: Widget returned by add_input is %p\n",nw);
+//  printf("LOOK: swin.widget[%d].widget address is %p\n\n\n\n",i,swin.widget[i].widget);
+//  printf("LOOK: swin.widget[%d].widget->handler address is %d\n",i,swin.widget[i].widget->handler);
 	    if(swin.widget[i].type==SU_SELECT) {
 	       // need to bind this to the select, somehow
 	       nw=add_arrow_button(sxo+22+(strlen(swin.widget[i].text)*8),syo+14,DOWN,&wcb_openselect);
+//	       nw=wdg_input_add (NULL, sxo+22+(strlen(swin.widget[i].text)*8),syo+14,DOWN,&wcb_openselect);
 	    }
 	 }
       }
@@ -903,7 +1012,9 @@ int run_setup(char *n_setup) {
 int setup_spvar(const char *var) {
    char p1[22],p2[12];
 
+#ifdef DEBUG
    printf("SETUP: setup_spvar\n");
+#endif
 
    hss_index(p2,var,1,'_');
 
@@ -921,8 +1032,10 @@ int setup_advoptlst(char *vlist, const char *var) {
    char p1[16],ipv[16];
 //   printf("checking changes\n");
 
+#ifdef DEBUG
    printf("SETUP: setup_advoptlst\n");
-
+#endif
+   
    strcpy(vlist,"");
    for(i=0;i<envcidx;i++) {
       hss_index(ipv,var,0,'_');
@@ -936,8 +1049,10 @@ int setup_advoptlst(char *vlist, const char *var) {
 
 int setup_hderr(const char *msg1, const char *msg2,const char *msg3) {
 
+#ifdef DEBUG
    printf("SETUP: setup_hderr\n");
-
+#endif
+   
    setup_envcclr();
    setup_envset("instmsg1", msg1);
    setup_envset("instmsg2", msg2);
@@ -946,8 +1061,10 @@ int setup_hderr(const char *msg1, const char *msg2,const char *msg3) {
 }
 
 int setup_hd(const char *glo, const char *loc, const char *type) {
+#ifdef DEBUG
    printf("SETUP: setup_hd\n");
-
+#endif
+   
    setup_envcclr();
 //   printf("CXHE\n");
    if(strcmp(type,"hdi")==0) {
@@ -978,7 +1095,9 @@ int setup_go() {
 //   SA_AUTOUPDATE=0;
 //#endif
    fnt_setactive(boxfont[B_SETUP]);
+#ifdef DEBUG
    printf("SETUP: setup_go\n");
+#endif
 //   setup_getlocalcfgname(lc);
    setup_getflashcfgname(lc);
    if(file_exists(lc)) 

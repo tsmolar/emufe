@@ -149,6 +149,44 @@ int hextod(char b, char l) {
    return hival+loval;
 }
 
+int set_generic_rc() {
+  /*   A generic rc would look like this:
+   * 
+   *  VERSION=3.5
+   *  FONTDIR=../../fonts
+   *  PICSDIR=./pics
+   *  SHADOW=Y or N
+   *  MENUNAME=<system>.menu
+   *  DEFLTIMG=<system>.pcx
+   *  THEME=../../etc/theme.rc
+   */
+   char tmpstr[300], t_system[20];
+   
+   sprintf(tmpstr,"%s%c%s%cpics",basedir,mysep,dirname,mysep);
+   strcpy(picsdir,tmpstr);   // PICSDIR
+   
+   sprintf(tmpstr, "%s%cfonts", basedir, mysep);
+   strcpy(fontdir,tmpstr);   // FONTDIR
+
+   fshadow=1;   // SHADOW
+
+   sprintf(tmpstr, "%s%cetc%ctheme.rc", basedir, mysep, mysep);
+   strcpy(theme,tmpstr);   // THEME
+
+   mod_getsystem(t_system, imenu.sysbase);
+   sprintf(tmpstr,"%s.menu", t_system);
+   strcpy(menuname,tmpstr);   // MENUNAME
+
+   sprintf(tmpstr,"%s.pcx", t_system);
+   strcpy(defimg,tmpstr);   // DEFLTIMG
+
+//   dfixsep2(fontdir,"../../fonts",1);
+//   dfixsep2(picsdir,"./pics",1);  /* might have to stretch this out */
+//   strcpy(menuname,"nes.menu");  /* fixme */
+//   strcpy(defimg,"nes.pcx");  /* fixme */
+//   dfixsep2(theme,tmpstr,1);
+}
+
 int load_rc(char *filen) {
    /* The rc file should be in the same directory as emufe */
    FILE *fp;
@@ -679,6 +717,15 @@ int load_rc(char *filen) {
 #ifdef DEBUG
 	    LOG(3, ("Fullscreen mode: %c",fullscr));
 #endif
+	 }
+	 // put systype into rc file unless we find a better place
+	 if(strncmp(key, "SYSTYPE", 7)==0) {
+	    if(strcmp(value,"generic")==0)
+	      imenu.systype=SYS_GENERIC;
+	    if(strcmp(value,"arcade")==0)
+	      imenu.systype=SYS_ARCADE;
+	    if(strcmp(value,"computer")==0)
+	      imenu.systype=SYS_COMPUTER;
 	 }
 	 if(strncmp(key, "MENUNAME", 8)==0) {
 	    strcpy(menuname,value);

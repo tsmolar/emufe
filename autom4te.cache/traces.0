@@ -1,10 +1,132 @@
+m4trace:/usr/share/aclocal/pkg.m4:58: -1- AC_DEFUN([PKG_PROG_PKG_CONFIG], [m4_pattern_forbid([^_?PKG_[A-Z_]+$])
+m4_pattern_allow([^PKG_CONFIG(_(PATH|LIBDIR|SYSROOT_DIR|ALLOW_SYSTEM_(CFLAGS|LIBS)))?$])
+m4_pattern_allow([^PKG_CONFIG_(DISABLE_UNINSTALLED|TOP_BUILD_DIR|DEBUG_SPEW)$])
+AC_ARG_VAR([PKG_CONFIG], [path to pkg-config utility])
+AC_ARG_VAR([PKG_CONFIG_PATH], [directories to add to pkg-config's search path])
+AC_ARG_VAR([PKG_CONFIG_LIBDIR], [path overriding pkg-config's built-in search path])
+
+if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
+	AC_PATH_TOOL([PKG_CONFIG], [pkg-config])
+fi
+if test -n "$PKG_CONFIG"; then
+	_pkg_min_version=m4_default([$1], [0.9.0])
+	AC_MSG_CHECKING([pkg-config is at least version $_pkg_min_version])
+	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
+		AC_MSG_RESULT([yes])
+	else
+		AC_MSG_RESULT([no])
+		PKG_CONFIG=""
+	fi
+fi[]dnl
+])
+m4trace:/usr/share/aclocal/pkg.m4:92: -1- AC_DEFUN([PKG_CHECK_EXISTS], [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+if test -n "$PKG_CONFIG" && \
+    AC_RUN_LOG([$PKG_CONFIG --exists --print-errors "$1"]); then
+  m4_default([$2], [:])
+m4_ifvaln([$3], [else
+  $3])dnl
+fi])
+m4trace:/usr/share/aclocal/pkg.m4:121: -1- AC_DEFUN([_PKG_SHORT_ERRORS_SUPPORTED], [AC_REQUIRE([PKG_PROG_PKG_CONFIG])
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi[]dnl
+])
+m4trace:/usr/share/aclocal/pkg.m4:139: -1- AC_DEFUN([PKG_CHECK_MODULES], [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+AC_ARG_VAR([$1][_CFLAGS], [C compiler flags for $1, overriding pkg-config])dnl
+AC_ARG_VAR([$1][_LIBS], [linker flags for $1, overriding pkg-config])dnl
+
+pkg_failed=no
+AC_MSG_CHECKING([for $1])
+
+_PKG_CONFIG([$1][_CFLAGS], [cflags], [$2])
+_PKG_CONFIG([$1][_LIBS], [libs], [$2])
+
+m4_define([_PKG_TEXT], [Alternatively, you may set the environment variables $1[]_CFLAGS
+and $1[]_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.])
+
+if test $pkg_failed = yes; then
+   	AC_MSG_RESULT([no])
+        _PKG_SHORT_ERRORS_SUPPORTED
+        if test $_pkg_short_errors_supported = yes; then
+	        $1[]_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$2" 2>&1`
+        else 
+	        $1[]_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$2" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$$1[]_PKG_ERRORS" >&AS_MESSAGE_LOG_FD
+
+	m4_default([$4], [AC_MSG_ERROR(
+[Package requirements ($2) were not met:
+
+$$1_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+_PKG_TEXT])[]dnl
+        ])
+elif test $pkg_failed = untried; then
+     	AC_MSG_RESULT([no])
+	m4_default([$4], [AC_MSG_FAILURE(
+[The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+_PKG_TEXT
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.])[]dnl
+        ])
+else
+	$1[]_CFLAGS=$pkg_cv_[]$1[]_CFLAGS
+	$1[]_LIBS=$pkg_cv_[]$1[]_LIBS
+        AC_MSG_RESULT([yes])
+	$3
+fi[]dnl
+])
+m4trace:/usr/share/aclocal/pkg.m4:208: -1- AC_DEFUN([PKG_CHECK_MODULES_STATIC], [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+_save_PKG_CONFIG=$PKG_CONFIG
+PKG_CONFIG="$PKG_CONFIG --static"
+PKG_CHECK_MODULES($@)
+PKG_CONFIG=$_save_PKG_CONFIG[]dnl
+])
+m4trace:/usr/share/aclocal/pkg.m4:226: -1- AC_DEFUN([PKG_INSTALLDIR], [m4_pushdef([pkg_default], [m4_default([$1], ['${libdir}/pkgconfig'])])
+m4_pushdef([pkg_description],
+    [pkg-config installation directory @<:@]pkg_default[@:>@])
+AC_ARG_WITH([pkgconfigdir],
+    [AS_HELP_STRING([--with-pkgconfigdir], pkg_description)],,
+    [with_pkgconfigdir=]pkg_default)
+AC_SUBST([pkgconfigdir], [$with_pkgconfigdir])
+m4_popdef([pkg_default])
+m4_popdef([pkg_description])
+])
+m4trace:/usr/share/aclocal/pkg.m4:248: -1- AC_DEFUN([PKG_NOARCH_INSTALLDIR], [m4_pushdef([pkg_default], [m4_default([$1], ['${datadir}/pkgconfig'])])
+m4_pushdef([pkg_description],
+    [pkg-config arch-independent installation directory @<:@]pkg_default[@:>@])
+AC_ARG_WITH([noarch-pkgconfigdir],
+    [AS_HELP_STRING([--with-noarch-pkgconfigdir], pkg_description)],,
+    [with_noarch_pkgconfigdir=]pkg_default)
+AC_SUBST([noarch_pkgconfigdir], [$with_noarch_pkgconfigdir])
+m4_popdef([pkg_default])
+m4_popdef([pkg_description])
+])
+m4trace:/usr/share/aclocal/pkg.m4:267: -1- AC_DEFUN([PKG_CHECK_VAR], [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+AC_ARG_VAR([$1], [value of $3 for $2, overriding pkg-config])dnl
+
+_PKG_CONFIG([$1], [variable="][$3]["], [$2])
+AS_VAR_COPY([$1], [pkg_cv_][$1])
+
+AS_VAR_IF([$1], [""], [$5], [$4])dnl
+])
 m4trace:/usr/share/aclocal-1.15/amversion.m4:14: -1- AC_DEFUN([AM_AUTOMAKE_VERSION], [am__api_version='1.15'
 dnl Some users find AM_AUTOMAKE_VERSION and mistake it for a way to
 dnl require some minimum version.  Point them to the right macro.
-m4_if([$1], [1.15], [],
+m4_if([$1], [1.15.1], [],
       [AC_FATAL([Do not call $0, use AM_INIT_AUTOMAKE([$1]).])])dnl
 ])
-m4trace:/usr/share/aclocal-1.15/amversion.m4:33: -1- AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION], [AM_AUTOMAKE_VERSION([1.15])dnl
+m4trace:/usr/share/aclocal-1.15/amversion.m4:33: -1- AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION], [AM_AUTOMAKE_VERSION([1.15.1])dnl
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
 _AM_AUTOCONF_VERSION(m4_defn([AC_AUTOCONF_VERSION]))])
@@ -1481,6 +1603,195 @@ int main(int argc, char *argv[])
   AC_SUBST(SDL_LIBS)
   rm -f conf.sdltest
 ])
+m4trace:m4/sdl2.m4:13: -1- AC_DEFUN([AM_PATH_SDL2], [dnl 
+dnl Get the cflags and libraries from the sdl2-config script
+dnl
+AC_ARG_WITH(sdl-prefix,[  --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)],
+            sdl_prefix="$withval", sdl_prefix="")
+AC_ARG_WITH(sdl-exec-prefix,[  --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)],
+            sdl_exec_prefix="$withval", sdl_exec_prefix="")
+AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run a test SDL program],
+		    , enable_sdltest=yes)
+
+  min_sdl_version=ifelse([$1], ,2.0.0,$1)
+
+  if test "x$sdl_prefix$sdl_exec_prefix" = x ; then
+    PKG_CHECK_MODULES([SDL], [sdl2 >= $min_sdl_version],
+           [sdl_pc=yes],
+           [sdl_pc=no])
+  else
+    sdl_pc=no
+    if test x$sdl_exec_prefix != x ; then
+      sdl_config_args="$sdl_config_args --exec-prefix=$sdl_exec_prefix"
+      if test x${SDL2_CONFIG+set} != xset ; then
+        SDL2_CONFIG=$sdl_exec_prefix/bin/sdl2-config
+      fi
+    fi
+    if test x$sdl_prefix != x ; then
+      sdl_config_args="$sdl_config_args --prefix=$sdl_prefix"
+      if test x${SDL2_CONFIG+set} != xset ; then
+        SDL2_CONFIG=$sdl_prefix/bin/sdl2-config
+      fi
+    fi
+  fi
+
+  if test "x$sdl_pc" = xyes ; then
+    no_sdl=""
+    SDL2_CONFIG="pkg-config sdl2"
+  else
+    as_save_PATH="$PATH"
+    if test "x$prefix" != xNONE && test "$cross_compiling" != yes; then
+      PATH="$prefix/bin:$prefix/usr/bin:$PATH"
+    fi
+    AC_PATH_PROG(SDL2_CONFIG, sdl2-config, no, [$PATH])
+    PATH="$as_save_PATH"
+    AC_MSG_CHECKING(for SDL - version >= $min_sdl_version)
+    no_sdl=""
+
+    if test "$SDL2_CONFIG" = "no" ; then
+      no_sdl=yes
+    else
+      SDL_CFLAGS=`$SDL2_CONFIG $sdl_config_args --cflags`
+      SDL_LIBS=`$SDL2_CONFIG $sdl_config_args --libs`
+
+      sdl_major_version=`$SDL2_CONFIG $sdl_config_args --version | \
+             sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
+      sdl_minor_version=`$SDL2_CONFIG $sdl_config_args --version | \
+             sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+      sdl_micro_version=`$SDL2_CONFIG $sdl_config_args --version | \
+             sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+      if test "x$enable_sdltest" = "xyes" ; then
+        ac_save_CFLAGS="$CFLAGS"
+        ac_save_CXXFLAGS="$CXXFLAGS"
+        ac_save_LIBS="$LIBS"
+        CFLAGS="$CFLAGS $SDL_CFLAGS"
+        CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
+        LIBS="$LIBS $SDL_LIBS"
+dnl
+dnl Now check if the installed SDL is sufficiently new. (Also sanity
+dnl checks the results of sdl2-config to some extent
+dnl
+      rm -f conf.sdltest
+      AC_TRY_RUN([
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "SDL.h"
+
+char*
+my_strdup (char *str)
+{
+  char *new_str;
+  
+  if (str)
+    {
+      new_str = (char *)malloc ((strlen (str) + 1) * sizeof(char));
+      strcpy (new_str, str);
+    }
+  else
+    new_str = NULL;
+  
+  return new_str;
+}
+
+int main (int argc, char *argv[])
+{
+  int major, minor, micro;
+  char *tmp_version;
+
+  /* This hangs on some systems (?)
+  system ("touch conf.sdltest");
+  */
+  { FILE *fp = fopen("conf.sdltest", "a"); if ( fp ) fclose(fp); }
+
+  /* HP/UX 9 (%@#!) writes to sscanf strings */
+  tmp_version = my_strdup("$min_sdl_version");
+  if (sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
+     printf("%s, bad version string\n", "$min_sdl_version");
+     exit(1);
+   }
+
+   if (($sdl_major_version > major) ||
+      (($sdl_major_version == major) && ($sdl_minor_version > minor)) ||
+      (($sdl_major_version == major) && ($sdl_minor_version == minor) && ($sdl_micro_version >= micro)))
+    {
+      return 0;
+    }
+  else
+    {
+      printf("\n*** 'sdl2-config --version' returned %d.%d.%d, but the minimum version\n", $sdl_major_version, $sdl_minor_version, $sdl_micro_version);
+      printf("*** of SDL required is %d.%d.%d. If sdl2-config is correct, then it is\n", major, minor, micro);
+      printf("*** best to upgrade to the required version.\n");
+      printf("*** If sdl2-config was wrong, set the environment variable SDL2_CONFIG\n");
+      printf("*** to point to the correct copy of sdl2-config, and remove the file\n");
+      printf("*** config.cache before re-running configure\n");
+      return 1;
+    }
+}
+
+],, no_sdl=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+        CFLAGS="$ac_save_CFLAGS"
+        CXXFLAGS="$ac_save_CXXFLAGS"
+        LIBS="$ac_save_LIBS"
+      fi
+    fi
+    if test "x$no_sdl" = x ; then
+      AC_MSG_RESULT(yes)
+    else
+      AC_MSG_RESULT(no)
+    fi
+  fi
+  if test "x$no_sdl" = x ; then
+     ifelse([$2], , :, [$2])
+  else
+     if test "$SDL2_CONFIG" = "no" ; then
+       echo "*** The sdl2-config script installed by SDL could not be found"
+       echo "*** If SDL was installed in PREFIX, make sure PREFIX/bin is in"
+       echo "*** your path, or set the SDL2_CONFIG environment variable to the"
+       echo "*** full path to sdl2-config."
+     else
+       if test -f conf.sdltest ; then
+        :
+       else
+          echo "*** Could not run SDL test program, checking why..."
+          CFLAGS="$CFLAGS $SDL_CFLAGS"
+          CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
+          LIBS="$LIBS $SDL_LIBS"
+          AC_TRY_LINK([
+#include <stdio.h>
+#include "SDL.h"
+
+int main(int argc, char *argv[])
+{ return 0; }
+#undef  main
+#define main K_and_R_C_main
+],      [ return 0; ],
+        [ echo "*** The test program compiled, but did not run. This usually means"
+          echo "*** that the run-time linker is not finding SDL or finding the wrong"
+          echo "*** version of SDL. If it is not finding SDL, you'll need to set your"
+          echo "*** LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf to point"
+          echo "*** to the installed location  Also, make sure you have run ldconfig if that"
+          echo "*** is required on your system"
+	  echo "***"
+          echo "*** If you have an old version installed, it is best to remove it, although"
+          echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"],
+        [ echo "*** The test program failed to compile or link. See the file config.log for the"
+          echo "*** exact error that occured. This usually means SDL was incorrectly installed"
+          echo "*** or that you have moved SDL since it was installed. In the latter case, you"
+          echo "*** may want to edit the sdl2-config script: $SDL2_CONFIG" ])
+          CFLAGS="$ac_save_CFLAGS"
+          CXXFLAGS="$ac_save_CXXFLAGS"
+          LIBS="$ac_save_LIBS"
+       fi
+     fi
+     SDL_CFLAGS=""
+     SDL_LIBS=""
+     ifelse([$3], , :, [$3])
+  fi
+  AC_SUBST(SDL_CFLAGS)
+  AC_SUBST(SDL_LIBS)
+  rm -f conf.sdltest
+])
 m4trace:configure.ac:5: -1- m4_pattern_forbid([^_?A[CHUM]_])
 m4trace:configure.ac:5: -1- m4_pattern_forbid([_AC_])
 m4trace:configure.ac:5: -1- m4_pattern_forbid([^LIBOBJS$], [do not use LIBOBJS directly, use AC_LIBOBJ (see section `AC_LIBOBJ vs LIBOBJS'])
@@ -1507,6 +1818,7 @@ m4trace:configure.ac:5: -1- m4_pattern_allow([^datadir$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^sysconfdir$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^sharedstatedir$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^localstatedir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^runstatedir$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^includedir$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^oldincludedir$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^docdir$])
@@ -1535,7 +1847,7 @@ m4trace:configure.ac:5: -1- m4_pattern_allow([^target_alias$])
 m4trace:configure.ac:7: -1- AM_INIT_AUTOMAKE
 m4trace:configure.ac:7: -1- m4_pattern_allow([^AM_[A-Z]+FLAGS$])
 m4trace:configure.ac:7: -1- AM_SET_CURRENT_AUTOMAKE_VERSION
-m4trace:configure.ac:7: -1- AM_AUTOMAKE_VERSION([1.15])
+m4trace:configure.ac:7: -1- AM_AUTOMAKE_VERSION([1.15.1])
 m4trace:configure.ac:7: -1- _AM_AUTOCONF_VERSION([2.69])
 m4trace:configure.ac:7: -1- m4_pattern_allow([^INSTALL_PROGRAM$])
 m4trace:configure.ac:7: -1- m4_pattern_allow([^INSTALL_SCRIPT$])
@@ -1664,7 +1976,7 @@ m4trace:configure.ac:14: -1- m4_pattern_allow([^host$])
 m4trace:configure.ac:14: -1- m4_pattern_allow([^host_cpu$])
 m4trace:configure.ac:14: -1- m4_pattern_allow([^host_vendor$])
 m4trace:configure.ac:14: -1- m4_pattern_allow([^host_os$])
-m4trace:configure.ac:15: -1- _m4_warn([syntax], [AC_ARG_PROGRAM was called before AC_CANONICAL_TARGET], [../../lib/autoconf/general.m4:1833: AC_CANONICAL_TARGET is expanded from...
+m4trace:configure.ac:15: -1- _m4_warn([syntax], [AC_ARG_PROGRAM was called before AC_CANONICAL_TARGET], [../../lib/autoconf/general.m4:1844: AC_CANONICAL_TARGET is expanded from...
 configure.ac:15: the top level])
 m4trace:configure.ac:15: -1- m4_pattern_allow([^target$])
 m4trace:configure.ac:15: -1- m4_pattern_allow([^target_cpu$])
@@ -1682,11 +1994,11 @@ m4trace:configure.ac:33: -1- m4_pattern_allow([^AWK$])
 m4trace:configure.ac:33: -1- m4_pattern_allow([^_libcurl_config$])
 m4trace:configure.ac:33: -1- m4_pattern_allow([^_libcurl_config$])
 m4trace:configure.ac:33: -1- _m4_warn([syntax], [AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body], [../../lib/autoconf/lang.m4:193: AC_LANG_CONFTEST is expanded from...
-../../lib/autoconf/general.m4:2661: _AC_LINK_IFELSE is expanded from...
-../../lib/autoconf/general.m4:2678: AC_LINK_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2672: _AC_LINK_IFELSE is expanded from...
+../../lib/autoconf/general.m4:2689: AC_LINK_IFELSE is expanded from...
 ../../lib/m4sugar/m4sh.m4:639: AS_IF is expanded from...
-../../lib/autoconf/general.m4:2031: AC_CACHE_VAL is expanded from...
-../../lib/autoconf/general.m4:2052: AC_CACHE_CHECK is expanded from...
+../../lib/autoconf/general.m4:2042: AC_CACHE_VAL is expanded from...
+../../lib/autoconf/general.m4:2063: AC_CACHE_CHECK is expanded from...
 m4/libcurl.m4:38: LIBCURL_CHECK_CONFIG is expanded from...
 configure.ac:33: the top level])
 m4trace:configure.ac:33: -2- m4_pattern_allow([^curl_free$])
@@ -1733,53 +2045,83 @@ m4trace:configure.ac:61: -1- m4_pattern_allow([^USEALLEGRO_TRUE$])
 m4trace:configure.ac:61: -1- m4_pattern_allow([^USEALLEGRO_FALSE$])
 m4trace:configure.ac:61: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_TRUE])
 m4trace:configure.ac:61: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_FALSE])
-m4trace:configure.ac:63: -1- AM_PATH_ALLEGRO([4.1.0], [gfx_lib=allegro], [:])
-m4trace:configure.ac:63: -1- m4_pattern_allow([^ALLEGRO_CONFIG$])
-m4trace:configure.ac:63: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2764: AC_TRY_RUN is expanded from...
-m4/allegro.m4:14: AM_PATH_ALLEGRO is expanded from...
-configure.ac:63: the top level])
-m4trace:configure.ac:63: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2687: AC_TRY_LINK is expanded from...
-m4/allegro.m4:14: AM_PATH_ALLEGRO is expanded from...
-configure.ac:63: the top level])
-m4trace:configure.ac:63: -1- m4_pattern_allow([^allegro_CFLAGS$])
-m4trace:configure.ac:63: -1- m4_pattern_allow([^allegro_LIBS$])
-m4trace:configure.ac:65: -1- AM_PATH_SDL([1.2.5], [gfx_lib=sdl1], [:])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_CONFIG$])
+m4trace:configure.ac:65: -1- AM_PATH_SDL2([2.0.0], [gfx_lib=sdl2], [:])
+m4trace:configure.ac:65: -1- PKG_CHECK_MODULES([SDL], [sdl2 >= $min_sdl_version], [sdl_pc=yes], [sdl_pc=no])
+m4trace:configure.ac:65: -1- PKG_PROG_PKG_CONFIG
+m4trace:configure.ac:65: -1- m4_pattern_forbid([^_?PKG_[A-Z_]+$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^PKG_CONFIG(_(PATH|LIBDIR|SYSROOT_DIR|ALLOW_SYSTEM_(CFLAGS|LIBS)))?$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^PKG_CONFIG_(DISABLE_UNINSTALLED|TOP_BUILD_DIR|DEBUG_SPEW)$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^PKG_CONFIG$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^PKG_CONFIG_PATH$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^PKG_CONFIG$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_CFLAGS$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_LIBS$])
+m4trace:configure.ac:65: -1- PKG_CHECK_EXISTS([sdl2 >= $min_sdl_version], [pkg_cv_[]SDL_CFLAGS=`$PKG_CONFIG --[]cflags "sdl2 >= $min_sdl_version" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:65: -1- PKG_CHECK_EXISTS([sdl2 >= $min_sdl_version], [pkg_cv_[]SDL_LIBS=`$PKG_CONFIG --[]libs "sdl2 >= $min_sdl_version" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:65: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL2_CONFIG$])
 m4trace:configure.ac:65: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2764: AC_TRY_RUN is expanded from...
-m4/sdl.m4:11: AM_PATH_SDL is expanded from...
+You should run autoupdate.], [../../lib/autoconf/general.m4:2775: AC_TRY_RUN is expanded from...
+m4/sdl2.m4:13: AM_PATH_SDL2 is expanded from...
 configure.ac:65: the top level])
 m4trace:configure.ac:65: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2687: AC_TRY_LINK is expanded from...
-m4/sdl.m4:11: AM_PATH_SDL is expanded from...
+You should run autoupdate.], [../../lib/autoconf/general.m4:2698: AC_TRY_LINK is expanded from...
+m4/sdl2.m4:13: AM_PATH_SDL2 is expanded from...
 configure.ac:65: the top level])
 m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_CFLAGS$])
 m4trace:configure.ac:65: -1- m4_pattern_allow([^SDL_LIBS$])
-m4trace:configure.ac:71: -1- AM_CONDITIONAL([USESDL2], [true])
-m4trace:configure.ac:71: -1- m4_pattern_allow([^USESDL2_TRUE$])
-m4trace:configure.ac:71: -1- m4_pattern_allow([^USESDL2_FALSE$])
-m4trace:configure.ac:71: -1- _AM_SUBST_NOTMAKE([USESDL2_TRUE])
-m4trace:configure.ac:71: -1- _AM_SUBST_NOTMAKE([USESDL2_FALSE])
-m4trace:configure.ac:76: -1- AM_CONDITIONAL([USESDL], [true])
-m4trace:configure.ac:76: -1- m4_pattern_allow([^USESDL_TRUE$])
-m4trace:configure.ac:76: -1- m4_pattern_allow([^USESDL_FALSE$])
-m4trace:configure.ac:76: -1- _AM_SUBST_NOTMAKE([USESDL_TRUE])
-m4trace:configure.ac:76: -1- _AM_SUBST_NOTMAKE([USESDL_FALSE])
-m4trace:configure.ac:79: -1- m4_pattern_allow([^HAVE_LIBSDL_IMAGE$])
-m4trace:configure.ac:80: -1- m4_pattern_allow([^HAVE_LIBSDL_MIXER$])
-m4trace:configure.ac:85: -1- AM_CONDITIONAL([USEALLEGRO], [true])
-m4trace:configure.ac:85: -1- m4_pattern_allow([^USEALLEGRO_TRUE$])
-m4trace:configure.ac:85: -1- m4_pattern_allow([^USEALLEGRO_FALSE$])
-m4trace:configure.ac:85: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_TRUE])
-m4trace:configure.ac:85: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_FALSE])
-m4trace:configure.ac:132: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:132: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:132: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:132: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:132: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:132: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:132: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:132: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:132: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:68: -1- AM_CONDITIONAL([USESDL2], [true])
+m4trace:configure.ac:68: -1- m4_pattern_allow([^USESDL2_TRUE$])
+m4trace:configure.ac:68: -1- m4_pattern_allow([^USESDL2_FALSE$])
+m4trace:configure.ac:68: -1- _AM_SUBST_NOTMAKE([USESDL2_TRUE])
+m4trace:configure.ac:68: -1- _AM_SUBST_NOTMAKE([USESDL2_FALSE])
+m4trace:configure.ac:71: -1- m4_pattern_allow([^HAVE_LIBSDL2_IMAGE$])
+m4trace:configure.ac:72: -1- m4_pattern_allow([^HAVE_LIBSDL2_MIXER$])
+m4trace:configure.ac:75: -1- AM_PATH_SDL([1.2.5], [gfx_lib=sdl1], [:])
+m4trace:configure.ac:75: -1- m4_pattern_allow([^SDL_CONFIG$])
+m4trace:configure.ac:75: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2775: AC_TRY_RUN is expanded from...
+m4/sdl.m4:11: AM_PATH_SDL is expanded from...
+configure.ac:75: the top level])
+m4trace:configure.ac:75: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2698: AC_TRY_LINK is expanded from...
+m4/sdl.m4:11: AM_PATH_SDL is expanded from...
+configure.ac:75: the top level])
+m4trace:configure.ac:75: -1- m4_pattern_allow([^SDL_CFLAGS$])
+m4trace:configure.ac:75: -1- m4_pattern_allow([^SDL_LIBS$])
+m4trace:configure.ac:78: -1- AM_CONDITIONAL([USESDL], [true])
+m4trace:configure.ac:78: -1- m4_pattern_allow([^USESDL_TRUE$])
+m4trace:configure.ac:78: -1- m4_pattern_allow([^USESDL_FALSE$])
+m4trace:configure.ac:78: -1- _AM_SUBST_NOTMAKE([USESDL_TRUE])
+m4trace:configure.ac:78: -1- _AM_SUBST_NOTMAKE([USESDL_FALSE])
+m4trace:configure.ac:81: -1- m4_pattern_allow([^HAVE_LIBSDL_IMAGE$])
+m4trace:configure.ac:82: -1- m4_pattern_allow([^HAVE_LIBSDL_MIXER$])
+m4trace:configure.ac:84: -1- AM_PATH_ALLEGRO([4.1.0], [gfx_lib=allegro], [:])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^ALLEGRO_CONFIG$])
+m4trace:configure.ac:84: -1- _m4_warn([obsolete], [The macro `AC_TRY_RUN' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2775: AC_TRY_RUN is expanded from...
+m4/allegro.m4:14: AM_PATH_ALLEGRO is expanded from...
+configure.ac:84: the top level])
+m4trace:configure.ac:84: -1- _m4_warn([obsolete], [The macro `AC_TRY_LINK' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2698: AC_TRY_LINK is expanded from...
+m4/allegro.m4:14: AM_PATH_ALLEGRO is expanded from...
+configure.ac:84: the top level])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^allegro_CFLAGS$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^allegro_LIBS$])
+m4trace:configure.ac:87: -1- AM_CONDITIONAL([USEALLEGRO], [true])
+m4trace:configure.ac:87: -1- m4_pattern_allow([^USEALLEGRO_TRUE$])
+m4trace:configure.ac:87: -1- m4_pattern_allow([^USEALLEGRO_FALSE$])
+m4trace:configure.ac:87: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_TRUE])
+m4trace:configure.ac:87: -1- _AM_SUBST_NOTMAKE([USEALLEGRO_FALSE])
+m4trace:configure.ac:136: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:136: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:136: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:136: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:136: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:136: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:136: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:136: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:136: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS

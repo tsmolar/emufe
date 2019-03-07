@@ -209,6 +209,7 @@ void fnt_ttf_loadfont(fnt_t *myfont ,char *filen) {
       printf("could not open font\n"); 
 #endif
    }
+//printf("EXIT\n");
 }
 
 void fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, int sd) {
@@ -233,9 +234,9 @@ void fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, i
    error = FT_Set_Pixel_Sizes(face, /* handle to face object */  
 			      cfont->scale_w,    /* pixel_width */
 			     cfont->scale_h );  /* pixel_height */
-   
    pen_x = x; pen_y = y+cfont->scale_h-1;
    pen_x = 0; pen_y = cfont->scale_h-1;
+
    if(fnt_render==RENDER_NATIVE) {
       // for SDL, you can use this
 #ifdef USESDL	
@@ -255,14 +256,14 @@ void fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, i
       else
 	rectfill(line1,0,0,640,cfont->scale_h*2,bg);
    }
-   
+
 //   printf ("x4\n");
 //   printf("rendering: %s\n",text);
    for ( n = 0; n < strlen(text); n++ ) {
       if(text[n] != 10 ) {
 	 error = FT_Load_Char( face, text[n], FT_LOAD_RENDER ); 
-	 if ( error ) continue; /* ignore errors */  
-	 
+	 if ( error ) continue; /* ignore errors */
+
 	 if(fnt_render==RENDER_SIMPLE) {
 	    if(sd>-1)
 	      fnt_ttf_draw_bitmap_simple( &slot->bitmap, line1, pen_x + slot->bitmap_left+1, pen_y - slot->bitmap_top+1, sd ); /* increment pen position */   
@@ -292,7 +293,7 @@ if(fnt_render==RENDER_NATIVE && bg>-1)
 //   printf("%s\n",text);
 }
 
-fnt_ttf_setrender(int r) {
+void fnt_ttf_setrender(int r) {
    fnt_render=r;
 }
 

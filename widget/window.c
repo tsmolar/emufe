@@ -109,17 +109,17 @@ void new_window(int x1, int y1, int x2, int y2) {
 
 int alert_button;
 
-ab1(Widget* w,int x,int y,int m){
+void ab1(Widget* w,int x,int y,int m){
 	alert_button=1;
 	close_window();
 }
 
-ab2(Widget* w,int x,int y,int m){
+void ab2(Widget* w,int x,int y,int m){
 	alert_button=2;
 	close_window();
 }
 
-ab3(Widget* w,int x,int y,int m){
+void ab3(Widget* w,int x,int y,int m){
 	alert_button=3;
 	close_window();
 }

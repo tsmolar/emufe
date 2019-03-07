@@ -56,12 +56,13 @@ style_rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int color,int ba) {
 #endif
 
    br=getr(color); bg=getg(color); bb=getb(color);
-   printf("NEW: I am called with trans:%d  red:%d\n",ba,br);
+//   printf("NEW: I am called with trans:%d  red:%d\n",ba,br);
    if(ba==255 || bmp!=screen) {
-      printf("NEW: Do it the old way!\n");
+//      printf("NEW: Do it the old way!\n");
+//      printf("rectfill(bmp, %d, %d, %d, %d, makecol(%d,%d,%d))\n",x1,y1,x2,y2,br,bg,bb);
       rectfill(bmp, x1, y1, x2, y2, makecol(br,bg,bb));
    } else {
-      printf("NEW: Do it the new way!\n");
+//      printf("NEW: Do it the new way!\n");
 #ifdef USESDL
 # ifdef SDL1
       if(SDL_LockSurface(screen) < 0) return;

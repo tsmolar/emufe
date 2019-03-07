@@ -284,7 +284,7 @@ printf("!!!CUST 2b: %s\n",emuopt.cfgfile);
 int p_customcfg() {
    // persistant, custom cfg, for emulators that alter ini frequently
    char icfgfile[120], ocfgfile[120],lbi[200],lbo[200], var[40],context[40];
-   int n;
+   int n, ret;
    FILE *fi, *fo;
 
    
@@ -356,14 +356,14 @@ int p_customcfg() {
 #ifdef DEBUG
       printf("e=xecing %s\n",lbi);
 #endif
-      system(lbi);
+      ret = system(lbi);
    }
 //   mkdir(emuopt.diskloc); // do a check
 }
 
 int dealwithzip(int keep) {
    char zipexe[50], zipcmd[160],tmpfl[80],tmpfl2[120],lb[120],ext[6];
-   int romcnt=0,i;
+   int romcnt=0,i, ret;
    FILE *fp;
    
 //   printf("Dealing with zip\n");
@@ -382,7 +382,7 @@ int dealwithzip(int keep) {
 #ifdef DEBUG
    printf("WIN32 ZIP cmd=%s\n",zipcmd);
 #endif
-   system(zipcmd);
+   ret=system(zipcmd);
    // read disk list
    fp=fopen(tmpfl,"rb");
    for(i=0;i<8;i++) arc[i].inserted=0;
@@ -417,12 +417,12 @@ int dealwithzip(int keep) {
    fclose(fp);
 //   env_print();
    // need to set to conf dir in some cases
-   chdir(emuopt.diskloc);
+   ret=chdir(emuopt.diskloc);
    for(i=0;i<romcnt;i++) {
       if(keep == OVERWRITE) {
 	 sprintf(tmpfl2,"rm -f %s", arc[i].name);
 	 printf("DELETING:: %s\n",tmpfl2);
-	 system(tmpfl2);
+	 ret = system(tmpfl2);
       }
       if(file_exists(arc[i].name)) {
 #ifdef DEBUG
@@ -441,7 +441,7 @@ int dealwithzip(int keep) {
 	 printf("ZIP exe=%s\n",zipexe);
 	 printf("ZIP cmd=%s\n",zipcmd);
 # endif
-	 system(zipcmd);
+	 ret = system(zipcmd);
 #endif
       }
    }
@@ -554,7 +554,7 @@ int cmd_insthdi(){
 
 int cmd_insthdd(){
    char localhd[80], globalhd[80], dirval[80];
-   int r;
+   int r, ret;
 
    printf("INSTALL HDD!!!!\n");
    cmd_gethdx(globalhd,"hdd", "global");
@@ -581,7 +581,7 @@ int cmd_insthdd(){
 	       sprintf(dirval,"cp -rp %s %s",globalhd,localhd);
 #endif
 	       printf("%s\n",dirval);
-	       system(dirval);
+	       ret = system(dirval);
 	       setup_hderr("        HD successfully installed!        ","",localhd);
 	       ////	    printf("directori exists\n");
 	    }
@@ -999,6 +999,7 @@ int env_load(const char *emuenv) {
 }
 
 int mod_cleantmp() {
+   int ret;
    if(emuopt.localcfg!='Y' && strcmp(emuopt.diskloc,"n/a")!=0) {
 #ifdef WIN32
       sprintf(emuopt.cmd_line,"del /Q %s\\*.*",emuopt.diskloc);
@@ -1006,7 +1007,7 @@ int mod_cleantmp() {
       sprintf(emuopt.cmd_line,"rm -f %s/*",emuopt.diskloc);
 #endif
       printf("e=xecing %s\n",emuopt.cmd_line);
-      system(emuopt.cmd_line);
+      ret = system(emuopt.cmd_line);
       fileio_rmdir(emuopt.cmd_line);
    }
 }
@@ -1453,6 +1454,7 @@ int bin2disk() {
    // 
    // New: dosdisk.xfd needs to be removed prior to running this
    char diskzip[20], util[20],fpath[120],cmd[200],tmpp[120];
+   int ret;
    hss_index(diskzip,emuopt.cmd_patt,1,':');
    hss_index(util,emuopt.cmd_patt,2,':');
    sprintf(tmpp,"%s%c%s%cetc%c%s",basedir,mysep,imenu.sysbase,mysep,mysep,diskzip);
@@ -1467,7 +1469,7 @@ int bin2disk() {
 #ifdef DEBUG
    printf("bin2disk command:%s\n",cmd);
 #endif
-   system(cmd);
+   ret = system(cmd);
 }
 
 int process_cmd(char *cmd) {
@@ -1643,6 +1645,8 @@ int emumodule_computer() {
 }
 
 int sysmodule_arcade() {
+   // similar to generic, but changes the basename, presumably to
+   // deal with MAME's setup
 #ifdef DEBUG
    printf("\n* SYSmodule: arcade\n");
    printf("    If SYSmodule is incorrect, emulator may not work as intended\n\n");
@@ -1705,7 +1709,7 @@ int sysmodule_computer() {
 }
 
 int module_exec() {
-   int ransys=0;
+   int ransys=0, ret;
    char cddir[80];
    
    emuopt.exec=0;
@@ -1723,11 +1727,12 @@ int module_exec() {
    printf("\n+----------------------------------\n");
    printf("| SYSTEM: %s\n",imenu.system);
    printf("| SYSBASE: %s\n",imenu.sysbase);
+   printf("| SYSTYPE: %d\n",imenu.systype);
    printf("| EMULATOR: %s\n",imenu.emulator);
    printf("| PROGRAM: %s\n",imenu.game);
    printf("| ROM: %s\n",emuopt.uqrom);
    printf("| OS: %s\n",emuopt.osname);
-   printf("| TYPE: %s\n",emuopt.bintype);
+//   printf("| BINTYPE: %s\n",emuopt.bintype);
    printf("+----------------------------------\n\n");
 #endif
    // Do we need to parse the system info out of emucd.env?   is it useful?
@@ -1743,18 +1748,31 @@ int module_exec() {
    }  
    
    strcpy(emuopt.diskloc,"n/a");      
-   if(strcmp(imenu.system,"arcade")==0) {
+   // New for 2019, no more hard-coding of system type,  put system 
+   // type in the etc/*.rc file for each emulator
+   if(imenu.systype==1) {
       sysmodule_arcade();
       ransys=1;
    }
-   // These should not be hard-coded like this!!! 
-   if(strcmp(imenu.system,"a800")==0 || strcmp(imenu.system,"ST")==0 || 
-      strcmp(imenu.system,"Amiga")==0 || strcmp(imenu.system,"c64")==0 ||
-      strcmp(imenu.emulator,"gens")==0 || strcmp(imenu.emulator,"linapple")==0 ||
-      strcmp(imenu.system,"apple2gs")==0) {
+
+   if(imenu.systype==2) {
       sysmodule_computer();
       ransys=1;
    }
+
+   // done: a800 ST Amiga c64 IIgs
+//   if(strcmp(imenu.system,"arcade")==0) {
+//      sysmodule_arcade();
+//      ransys=1;
+//   }
+//   // These should not be hard-coded like this!!! 
+//   if(strcmp(imenu.system,"a800")==0 || strcmp(imenu.system,"ST")==0 || 
+//      strcmp(imenu.system,"Amiga")==0 || strcmp(imenu.system,"c64")==0 ||
+//      strcmp(imenu.emulator,"gens")==0 || strcmp(imenu.emulator,"linapple")==0 ||
+//      strcmp(imenu.system,"apple2gs")==0) {
+//      sysmodule_computer();
+//      ransys=1;
+//   }
    if(ransys==0) {
       sysmodule_generic();
    }
@@ -1777,7 +1795,7 @@ int module_exec() {
 	 // I'm not sure what this accomplishes, cddir never gets set
 	 // except for a cwd, it's supposed to cd to itself?
 	 printf("CCHDIR:%s\n",cddir);
-	 chdir(cddir);
+	 ret=chdir(cddir);
       }
 
       if(emuopt.docd == 'Y' ) {
@@ -1785,7 +1803,7 @@ int module_exec() {
 	 getcwd(emuopt.prevdir, sizeof(emuopt.prevdir));
 	 printf("current dir is %s\n",emuopt.prevdir);
 	 printf("changing dirs to %s\n",emuopt.cddir);
-	 chdir(emuopt.cddir);
+	 ret=chdir(emuopt.cddir);
       }
 
       mod_exportvars();
@@ -1793,14 +1811,14 @@ int module_exec() {
       printf("CMDLINE:%s\n", emuopt.cmd_line);
       printf("+-----------------------------------------------------+\n\n"); 
       
-      system(emuopt.cmd_line);
+      ret = system(emuopt.cmd_line);
       mod_cleantmp();
       strcpy(emuopt.cmd_line,"");
       emuopt.exec=0;
       if(emuopt.docd == 'Y' ) {
 	 // CD to original directory, if needed
 	 printf("CD back to %s\n", emuopt.prevdir);
-	 chdir(emuopt.prevdir);
+	 ret=chdir(emuopt.prevdir);
 	 emuopt.docd = 'N';
       }      
 	   
