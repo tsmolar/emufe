@@ -1,3 +1,12 @@
+3.4.0
+ * No longer require an etc/<emulator>.rc file for standard emulator
+   configurations
+ * the usage of sysmodule_computer vs sysmodule_arcade vs sysmodule_generic
+   is no longer hard-coded.  It must be set in the <emulator>.rc file
+   or generic will be assumed
+ * Fix crashes in setup.c  It now only crashes some of the time instead
+   of all of the time :)
+
 3.3.0
  * reworked the theme color loading
  * Fix debug so that it spews very little when DEBUG_LEVEL = 0 
