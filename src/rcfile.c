@@ -77,7 +77,7 @@ int load_defaults() {
     imenu.col[1].bg.r=imenu.col[1].bg.g=imenu.col[1].bg.b=128;
     imenu.col[1].sh.r=imenu.col[1].sh.g=imenu.col[1].sh.b=0;
     imenu.col[3].fg.r=imenu.col[3].fg.g=imenu.col[3].fg.b=128;
-    // box settings -- new 3.0                                                 
+    // box settings -- new 3.0
     rc.pb_x=364;  rc.pb_y=96;  rc.pb_w=244;  rc.pb_h=152;
     rc.pb_x2=rc.pb_x+rc.pb_w;
     rc.pb_y2=rc.pb_y+rc.pb_h;
@@ -608,7 +608,7 @@ int load_rc(char *filen) {
 	    txtbx[B_DESC].font_v=txtbx[B_DESC].font_h;
 	    LOG(1, ("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_DESC].font,txtbx[B_DESC].fonttype,txtbx[B_DESC].font_w,txtbx[B_DESC].font_h));
 	 }
-	 
+
 
 	 if(strncmp(key, "MENUC1BG", 8)==0) {
 //	    textbgr=hextod(value[0],value[1]);
