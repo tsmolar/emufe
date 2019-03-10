@@ -63,6 +63,7 @@ typedef struct menuinfo_t {
    char menu[70]; // what's this for?
    char lastmenu[25];
    char title[44];
+//   char kbname[40];   // contains system_emulator or null for kb images
    int no_launch;
    int autosel;
    int profile;

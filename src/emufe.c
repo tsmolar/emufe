@@ -2003,18 +2003,13 @@ int main(int argc, char* argv[]) {
 			restore_screen(index,slc);
 //			title(320,40,imenu.title);
 			title(-1,-1,imenu.title);
+			// restore the keyboard image if possible
+			do_imgbox(B_KEYBOARD,picsdir,imenu.emulator);
 			cdclock=1; starttime=time(NULL);
 			imenu.no_launch=1;
 //			por=0;
 		     }
-//		     poll_keyboard();
-//		     while(keypressed()) {
-//			keyp=readkey() >> 8;
-//			if(keyp != 13) break;
-//		     }
-//		     keyp=0;
-		       
-//		     break;
+
 		  } else {
 		     printf("%s%s\n",dirname,menu[slc].rom);
 		     break;
@@ -2057,7 +2052,11 @@ int main(int argc, char* argv[]) {
 		  } else {
 		     LOG(3,("Warning, no .rc file, using default settings\n"));
 		     set_generic_rc();
+//		     sprintf(imenu.kbname,"%s",imenu.emulator);
 		  }
+		  // Try to load kb_emulator.pcx
+		  do_imgbox(B_KEYBOARD,picsdir,imenu.emulator);
+		  
 		  sprintf(imenu.menu,"%s%c%s%s",basedir,mysep,dirname,menuname);
 		  // HERE IS THE BUG
 //		  sprintf(imenu.lastmenu,"%s.menu",menu[slc].rom);

@@ -64,6 +64,7 @@ int load_defaults() {
     strcpy(rc.fontsize, "8x16");
     strcpy(gthemedir, "na");
     strcpy(tfontbmp, "na");
+//    strcpy(imenu.kbname, "na");
     rc.banr.sh.enable='N';
     rc.banr.bg.enable='N';
     cachefont=0;
@@ -180,6 +181,7 @@ int set_generic_rc() {
    sprintf(tmpstr,"%s.pcx", t_system);
    strcpy(defimg,tmpstr);   // DEFLTIMG
 
+//   sprintf(imenu.kbname,"%s_%s",imenu.emulator,t_system);
 //   dfixsep2(fontdir,"../../fonts",1);
 //   dfixsep2(picsdir,"./pics",1);  /* might have to stretch this out */
 //   strcpy(menuname,"nes.menu");  /* fixme */

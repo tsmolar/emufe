@@ -1473,7 +1473,7 @@ int bin2disk() {
 }
 
 int process_cmd(char *cmd) {
-   int nd,i;
+   int nd,i,rrt;
    char dsk[80],type[12],ext[6],tmpp[88];
    
    if(strcmp(cmd,"CMDstdisk")==0 || strcmp(cmd,"CMDstdisk")==0 || strcmp(cmd,"CMDstdisk")==0 || strcmp(cmd,"CMDstdisk")==0) {
@@ -1489,6 +1489,17 @@ int process_cmd(char *cmd) {
 //      run_setup("setup1");
       setup_go();
    }
+
+   if(strcmp(cmd,"CMDsetup2019")==0) {
+      printf("CMD Setup2019\n");      
+      //      run_setup("setup1");
+      sprintf(tmpp,"%s%csetup2019%csetup.sh",basedir,mysep,mysep);
+//      printf("2019: tmpp is %s\n",tmpp); 
+      settxtmode();
+      rrt = system(tmpp);
+      setgfxmode();
+   }
+
    if(strcmp(cmd,"CMDcleanconf")==0) {
       strcpy(tmpp,"");
       cmd_scanvar(tmpp,"%CFGFILE%");
