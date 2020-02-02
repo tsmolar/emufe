@@ -98,6 +98,7 @@ typedef struct imgbox_t {
    int masktype;   // for masking empty areas
    int ovpct;   // overlay pct  0=overlay off
    char ovname[90];  // name of overlay
+   char mask[90];   // name of mask bitmap (for rounded TV screens)
 } imgbox_t;
 
 #define B_BANR 0

@@ -24,15 +24,15 @@
 #define OVERWRITE 0
 
 typedef struct emuopts_t {
-   char cmd_patt[512];
+   char cmd_patt[768];
    char cmd_line[1536];
-   char bintype[10];
-   char fqrom[120];
-   char uqrom[25]; // unqualified ROM
-   char tmpdir[80];
-   char diskloc[80]; // Where disks were last copied/unzipped to
+   char bintype[20];
+   char fqrom[240];
+   char uqrom[35]; // unqualified ROM
+   char tmpdir[160];
+   char diskloc[160]; // Where disks were last copied/unzipped to
    char cplocal;
-   char cfgdir[80];
+   char cfgdir[160];
    char localcfg;
    char usecfg;
    char cfgfile[60];
@@ -1831,8 +1831,8 @@ int module_exec() {
 	 printf("CD back to %s\n", emuopt.prevdir);
 	 ret=chdir(emuopt.prevdir);
 	 emuopt.docd = 'N';
-      }      
-	   
+      }
+
    } else {
       if(strcmp(cddir,"")!=0) 
 	printf("CHDIR:%s\n",cddir);

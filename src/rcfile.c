@@ -23,9 +23,9 @@ int hss_index(char* rstr, char *ostr, int idx, char del) {
    // Alternative to strtok
    char *gidx;
    int t=0,i=0,si=0,ei=0,sl;
-   
+
    gidx=ostr;
-    
+
    do {
       if(gidx[t]==del || gidx[t]=='\n' || gidx[t]==0) {
 	 i++;
@@ -36,7 +36,7 @@ int hss_index(char* rstr, char *ostr, int idx, char del) {
       if(gidx[t]==0) break;
       t++;
    } while(1);
-   
+
    sl=ei-si;
    if(sl<1) strcpy(rstr,"");
    else {
@@ -86,11 +86,11 @@ int load_defaults() {
     rc.mb_x=32;  rc.mb_y=96;  rc.mb_w=316;  rc.mb_h=152;
     rc.mb_x2=rc.mb_x+rc.mb_w;
     rc.mb_y2=rc.mb_y+rc.mb_h;
-   
+
     rc.db_x=32;  rc.db_y=264;  rc.db_w=576;  rc.db_h=184;
     rc.db_x2=rc.db_x+rc.db_w;
     rc.db_y2=rc.db_y+rc.db_h;
-    // font                                                                    
+    // font
     rc.font_w=8; rc.font_h=16;
    for(i=0;i<12;i++) {
       imgbx[i].enabled=0;
@@ -100,6 +100,7 @@ int load_defaults() {
       imgbx[i].masktype=0;
        imgbx[i].ovpct=0;
       strcpy(imgbx[i].ovname,"na");
+      strcpy(imgbx[i].mask,"na");
    }
    // Reset Text boxes
    for(i=0;i<4;i++) {
@@ -115,7 +116,7 @@ int hextod(char b, char l) {
 
    /* Yes this is crappy code and I'm sure there is a much easier way,
     * I just needed to write it fast! */
-   
+
    int hival, loval;
    switch(b) {
       case 'A': hival=160; break;
@@ -162,10 +163,10 @@ int set_generic_rc() {
    *  THEME=../../etc/theme.rc
    */
    char tmpstr[300], t_system[20];
-   
+
    sprintf(tmpstr,"%s%c%s%cpics",basedir,mysep,dirname,mysep);
    strcpy(picsdir,tmpstr);   // PICSDIR
-   
+
    sprintf(tmpstr, "%s%cfonts", basedir, mysep);
    strcpy(fontdir,tmpstr);   // FONTDIR
 
@@ -203,7 +204,7 @@ int load_rc(char *filen) {
 	joy_enable=0;
    } else {
       envjoy = getenv("EMUFEjoy");
-      if ( envjoy != NULL && envjoy[0] == 'n') 
+      if ( envjoy != NULL && envjoy[0] == 'n')
 	joy_enable=0;
    }
 #ifdef DEBUG
@@ -213,7 +214,7 @@ int load_rc(char *filen) {
       printf("Error opening rc file %s",filen);
       exit(1);
    }
-   
+
    while(!feof(fp)) {
       fgets(line,255,fp);
       if( line[0] != '#' ) {
@@ -260,7 +261,7 @@ int load_rc(char *filen) {
 	      strcpy(emuhome,cdroot);
 	    else {
 	       env_get(emuhome,"EMUHOME");
-	       if(strcmp(emuhome,"") == 0)	       
+	       if(strcmp(emuhome,"") == 0)
 		 strcpy(emuhome,".");
 	    }
 //	    sprintf(gthemedir,"%s/%s",emuhome,value);
@@ -305,7 +306,6 @@ int load_rc(char *filen) {
 	    txtbx[B_MENU].font_v=txtbx[B_MENU].font_h+2;
 	    LOG(1, ("GLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_MENU].font,txtbx[B_MENU].fonttype,txtbx[B_MENU].font_w,txtbx[B_MENU].font_h));
 	 }
-	 
 	 // Setup Dialog Box
 	 if(strncmp(key, "SETUPFONT", 8)==0) {
 	    strcpy(txtbx[B_SETUP].font,value);
@@ -322,13 +322,13 @@ int load_rc(char *filen) {
 	    LOG(1, ("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_SETUP].font,txtbx[B_SETUP].fonttype,txtbx[B_SETUP].font_w,txtbx[B_SETUP].font_h));
 	 }
 
-	 
+
 	 if(strncmp(key, "RESOLUTION", 10)==0) {
 	   hss_index(tmpstr,value,0,'x');
 	   usex=atoi(tmpstr);
 	   hss_index(tmpstr,value,1,'x');
 	   usey=atoi(tmpstr);
-	}	
+	}
 	 if(strncmp(key, "MENUXY", 6)==0) {
 	    hss_index(tmpstr,value,0,',');
 	    rc.mb_x=atoi(tmpstr);
@@ -492,6 +492,9 @@ int load_rc(char *filen) {
 	    imgbx[B_SSHOT1].ovpct=50;
 	    strcpy(imgbx[B_SSHOT1].ovname,value);
 	 }
+	 if(strncmp(key, "B_SSHOT1_MK", 12)==0) {
+	    strcpy(imgbx[B_SSHOT1].mask,value);
+	 }
 	 if(strncmp(key, "B_SSHOT1_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)
 	      imgbx[B_SSHOT1].masktype=0;
@@ -529,6 +532,9 @@ int load_rc(char *filen) {
 	    imgbx[B_SSHOT2].ovpct=50;
 	    strcpy(imgbx[B_SSHOT2].ovname,value);
 	 }
+	 if(strncmp(key, "B_SSHOT2_MK", 12)==0) {
+	    strcpy(imgbx[B_SSHOT2].mask,value);
+	 }
 	 if(strncmp(key, "B_SSHOT2_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)
 	      imgbx[B_SSHOT2].masktype=0;
@@ -565,6 +571,9 @@ int load_rc(char *filen) {
 	 if(strncmp(key, "B_SSHOT3_OV", 12)==0) {
 	    imgbx[B_SSHOT3].ovpct=50;
 	    strcpy(imgbx[B_SSHOT3].ovname,value);
+	 }
+	 if(strncmp(key, "B_SSHOT3_MK", 12)==0) {
+	    strcpy(imgbx[B_SSHOT3].mask,value);
 	 }
 	 if(strncmp(key, "B_SSHOT3_MM", 12)==0) {
 	    if(strcmp(value,"none")==0)
@@ -704,7 +713,7 @@ int load_rc(char *filen) {
 	    imenu.col[1].sh.b=hextod(value[4],value[5]);
 //	    printf("shadow=%d %d %d\n",imenu.col[1].bg.r, imenu.col[1].bg.g, imenu.col[1].bg.b);  
 	 }
-	 if(strncmp(key, "FULLSCREEN", 10)==0) {	
+	 if(strncmp(key, "FULLSCREEN", 10)==0) {
 	    fullscr=value[0];
 	    if(imenu.mode>=1) {
 	       env_get(tmpstr,"EMUFEfull");
@@ -715,7 +724,7 @@ int load_rc(char *filen) {
 	       if ( envfull != NULL && (envfull[0] == 'n' || envfull[0] == 'y' )) 
 		 fullscr=envfull[0];
 	    }
-		 
+
 #ifdef DEBUG
 	    LOG(3, ("Fullscreen mode: %c",fullscr));
 #endif
@@ -748,9 +757,9 @@ int load_rc(char *filen) {
 //#endif
       }
    }
-   
+
    fclose(fp);
-   if(strncmp(gthemedir, "na", 2) != 0)  
+   if(strncmp(gthemedir, "na", 2) != 0)
      strcpy(fontdir, gthemedir);
    LOG(3, ("$$ fontdir is %s  g:%s\n",fontdir,gthemedir));
 }

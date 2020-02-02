@@ -30,6 +30,7 @@ BITMAP *selection;
 // shouldn't these be in imgbx_t?
 BITMAP *imgbx_bmp[12];
 BITMAP *imgbx_ovl[12];
+BITMAP *imgbx_mask[12];
 int in_gfxmode=0, jflag=0;
 
 //fnt_t* LoadedFont;
@@ -123,32 +124,32 @@ int st_txt_col(char etype) {
 //      fnfgcol=makecol16(128,64,80);
       fnfgcol=makecol16(imenu.col[3].fg.r,imenu.col[3].fg.g,imenu.col[3].fg.b);
       break;
-   }   
+   }
 }
 
 int restore_menuback() {
    int black, white, gray128;
-   
+
    scare_mouse();
    if(usembmap==0) {
-      black=makecol16(0,0,0); 
-      gray128=makecol16(128,128,128); 
+      black=makecol16(0,0,0);
+      gray128=makecol16(128,128,128);
       bbox(rc.mb_x+rx0, rc.mb_y+ry0, rc.mb_x2+rx0, rc.mb_y2+ry0, gray128, black);
    } else {
      blit(menumap, screen,0,0,rc.mb_x+rx0,rc.mb_y+ry0,rc.mb_w,rc.mb_h);
-   }      
+   }
    unscare_mouse();
 }
 
 int menu_uhlight(int index, int slct) {
 
    /* Unhilight the menu selection */
-   
+
    int offset, fontv;
 
    fnt_setactive(boxfont[B_MENU]);
    fontv=txtbx[B_MENU].font_v;
-   
+
    offset=(slct-index)+1;
 /*   set_font_fcolor(0,0,0); */
    st_txt_col(menu[slct].type);
@@ -178,12 +179,12 @@ int menu_uhlight(int index, int slct) {
 int menu_hlight(int index, int slct) {
 
    /* Hilight the menu selection */
-   
+
    int offset, fontv;
 
    fnt_setactive(boxfont[B_MENU]);
    fontv=txtbx[B_MENU].font_v;
-   
+
    offset=(slct-index)+1;
    set_font_fcolor(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b);
 /*   set_font_bcolor(0,0,0); */
@@ -191,20 +192,19 @@ int menu_hlight(int index, int slct) {
    scare_mouse();
 //   solid_string((rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name);
 //   fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b),makecol(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b),-1);
-//   
-   
+//
 //   rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,
 //	   (rc.mb_x+2)+rc.mb_w-4+rx0,(rc.mb_y)+2+(offset*fontv)+ry0,fnbgcol);
    rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,
 	   (rc.mb_x+2)+rc.mb_w-4+rx0,(rc.mb_y)+(fontv-14)+(offset*fontv)+ry0,fnbgcol);
-   
-   
+
+
    fnt_print_string(screen,(rc.mb_x+10)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,menu[slct].name,makecol(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b),-1,-1);
    rectfill(screen,(rc.mb_x+2)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_x+9)+rx0,rc.mb_y+(fontv-14)+(offset*fontv)+ry0, fnbgcol);
 
 //   rect(screen,(rc.mb_x)+rx0,(rc.mb_y-13)+(offset*fontv)+ry0,(rc.mb_x+60)+rx0,(rc.mb_y+2)+(offset*fontv)+ry0, fnbgcol);
-   
-   
+
+
    if(menu[slct].type=='f' || menu[slct].type=='d') {
       rectfill(screen,(rc.mb_x+3)+rx0,(rc.mb_y-8)+(offset*fontv)+ry0,(rc.mb_x+8)+rx0,(rc.mb_y-4)+(offset*fontv)+ry0, fnfgcol);
 //      printf("dmr::x=%d;w=%d\n",(rc.mb_x+3)+rx0,(rc.mb_x+8)+rx0);
@@ -232,20 +232,20 @@ int find_menu_e(char *rom) {
 	if(strncmp(rom, menu[i].rom, strlen(rom)) == 0) {
 	   r=i;
 	}
-     }   
+     }
    return r;
 }
-   
+
 int display_menu(int index) {
 /*   int red=makecol16(240,16,0); */
    int i,io, fontv;
-   
+
 //   fontv=rc.font_h;
    fontv=txtbx[B_MENU].font_v;
-   
+
 //   fnt_setactive(DefaultFont);
    scare_mouse();
-   
+
    fnt_setactive(boxfont[B_MENU]);
 
    for(i=index; i<index+(rc.mb_h/fontv);i++) {
@@ -289,13 +289,13 @@ void info_bar() {
 //   set_font_fcolor(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b);
    set_font_fcolor(255,255,255);
    solid_string(rc.db_x+88+rx0,rc.db_y+rc.db_h-17+ry0,"mouse/joystick button");  
-   solid_string(rc.db_x+296+rx0,rc.db_y+rc.db_h-17+ry0,"<ENTER>");  
+   solid_string(rc.db_x+296+rx0,rc.db_y+rc.db_h-17+ry0,"<ENTER>");
 }
 
-void rem_info_bar() 
+void rem_info_bar()
 {
    int white;
-   white=makecol16(descbgr,descbgg,descbgb); 
+   white=makecol16(descbgr,descbgg,descbgb);
 /*   rectfill(screen, 34, 431, 606, 446, white); */
    if(usedbmap==0)
      rectfill(screen, rc.db_x+2+rx0, rc.db_y+rc.db_h-17+ry0, rc.db_x+rc.db_w-2+rx0, rc.db_y+rc.db_h-2+ry0, white);
@@ -308,7 +308,7 @@ void write_option(int selected)
    // used by old-style setup, depricated
    FILE *fp;
    char optfile[60];
-   
+
 #ifdef LINUX
    strcpy(optfile,"/tmp/emufe.options");
 #endif
@@ -325,7 +325,7 @@ void write_option(int selected)
 
 void desc_wrapa(char* rstr, char *istr, int len) {
 
-// Word wrap for show_desc2,  this breaks and returns the left side of 
+// Word wrap for show_desc2,  this breaks and returns the left side of
 // a break
 
   int lastspc,i;
@@ -357,7 +357,7 @@ void desc_wrapb(char* rstr, char *istr, int len) {
       break;
     }
   }
- 
+
   for(i=lastspc+1;i<strlen(istr);i++)
    rstr[i-(lastspc+1)]=istr[i];
   rstr[i-(lastspc+1)]=0;
@@ -420,15 +420,15 @@ void show_desc2(char *desc) {
 	   break;
          if( strncmp(line,"Name|",5)==0 || strncmp(line,"Year|",5)==0 || strncmp(line,"Company|",8)==0 || strncmp(line,"Company:",8)==0 ||
 	     strncmp(line,"Name:",5)==0 || strncmp(line,"Released:",9)==0 || strncmp(line,"Publisher:",10)==0 || strncmp(line,"Developer:",10)==0 || strncmp(line,"Media:",6)==0) {
-	    if(strncmp(line,"Name|",5)==0) hss_index(title,line,1,'|'); 
-	    if(strncmp(line,"Name:",5)==0) hss_index(title,line,1,':'); 
-	    if(strncmp(line,"Year|",5)==0) hss_index(year,line,1,'|'); 
-	    if(strncmp(line,"Released:",9)==0) hss_index(year,line,1,':'); 
-            if(strncmp(line,"Company|",8)==0) hss_index(company,line,1,'|'); 
-            if(strncmp(line,"Company:",8)==0) hss_index(company,line,1,':'); 
-	    if(strncmp(line,"Publisher:",10)==0) hss_index(company,line,1,':'); 
-	    if(strncmp(line,"Developer:",10)==0) hss_index(developer,line,1,':'); 
-	    if(strncmp(line,"Media:",6)==0) hss_index(media,line,1,':'); 
+	    if(strncmp(line,"Name|",5)==0) hss_index(title,line,1,'|');
+	    if(strncmp(line,"Name:",5)==0) hss_index(title,line,1,':');
+	    if(strncmp(line,"Year|",5)==0) hss_index(year,line,1,'|');
+	    if(strncmp(line,"Released:",9)==0) hss_index(year,line,1,':');
+            if(strncmp(line,"Company|",8)==0) hss_index(company,line,1,'|');
+            if(strncmp(line,"Company:",8)==0) hss_index(company,line,1,':');
+	    if(strncmp(line,"Publisher:",10)==0) hss_index(company,line,1,':');
+	    if(strncmp(line,"Developer:",10)==0) hss_index(developer,line,1,':');
+	    if(strncmp(line,"Media:",6)==0) hss_index(media,line,1,':');
 	    lineno=3;
 	    dheader=1;
 	    // display canned information
@@ -450,7 +450,7 @@ void show_desc2(char *desc) {
              desc_wrapb(line,nxline,box_cw);
 	     strcpy(nxline,line);
 
-           }	    
+           }
 	 }
       } // while
       fclose(fp);
@@ -462,7 +462,7 @@ void show_desc2(char *desc) {
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*fnh)+1+ry0,"Released:",makecol(0,0,0),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(4*fnh)+1+ry0,"Media:",makecol(0,0,0),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(5*fnh)+1+ry0,"Developer:",makecol(0,0,0),-1,-1);
-	 
+
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(1*fnh)+ry0,title,makecol(255,255,255),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(2*fnh)+ry0,company,makecol(255,255,255),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(3*fnh)+ry0,year,makecol(255,255,255),-1,-1);
@@ -470,7 +470,7 @@ void show_desc2(char *desc) {
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(5*fnh)+ry0,developer,makecol(255,255,255),-1,-1);
 	 boxfont[B_DESC]->scale_w=fns;
 	 //	      fnt_print_string(screen,rc.db_x+4+((rc.db_w-(strlen(title)*8))/2)+rx0,(rc.db_y-14)+(lineno*fnh)+ry0,title,makecol(255,255,255),-1,-1);
-      }	 
+      }
 #ifdef USESDL
    //   gfx_sdlflip();
       s2a_flip(screen);
@@ -489,7 +489,7 @@ int AddPicExt(char *outpath, char *inpath) {
    //   char* extlist = "pcx,png,jpg,bmp,gif,PCX,PNG,JPG,BMP,GIF";
    char* extlist = "pcx,png,jpg,gif";
    char testpath[355],ext[8];
-   
+
    c = hss_count(extlist, ',');
    for(i=0;i<c;i++) {
       hss_index(ext, extlist, i,',');
@@ -567,7 +567,7 @@ int load_menu(char *lmenu) {
             do_imgbox(B_PICBOX,picsdir,rom);
             do_imgbox(B_KEYBOARD,picsdir,rom);
             do_imgbox_scale(B_BOXSCAN,picsdir,rom);
-// Note: We need a replacement for this! 
+// Note: We need a replacement for this!
 //	    disp_image(picname);
 	    break;
 	  case 'f':
@@ -642,17 +642,17 @@ int load_menu(char *lmenu) {
 
    LOG(3,("done\n"));
    LOG(3,(debugtxt,"menulength: %d\n",menulength));
-   
+
    return i-2;
 }
 
 int draw_screen() {
    int white,black,gray128,menubg,i;
 
-   black=makecol16(0,0,0); 
-   gray128=makecol16(128,128,128); 
-   menubg=makecol16(imenu.col[1].bg.r,imenu.col[1].bg.g,imenu.col[1].bg.b); 
-   white=makecol16(255,255,255); 
+   black=makecol16(0,0,0);
+   gray128=makecol16(128,128,128);
+   menubg=makecol16(imenu.col[1].bg.r,imenu.col[1].bg.g,imenu.col[1].bg.b);
+   white=makecol16(255,255,255);
 
    set_bg();
    draw_menubox(menubg,black);
@@ -688,7 +688,7 @@ void settxtmode() {
 #else
    // if using GFX_TEXT causes trouble, use GFX_AUTODETECT_WINDOWED to
    // put this app into a window
-      
+
       w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
 //      w=set_gfx_mode(GFX_TEXT,usex,usey,0,0);
 #endif
@@ -698,14 +698,14 @@ void settxtmode() {
 
 void setgfxmode() {
    int w=0;
-   
+
 #ifdef DEBUG
 //   sprintf(debugtxt,"setgfxmode() fullscr=%c  usex=%d  usey=%d, in_gfxmode:%d\n",fullscr,usex,usey,in_gfxmode);
 //   debug(3,debugtxt);
    LOG(3,("setgfxmode() fullscr=%c  usex=%d  usey=%d, in_gfxmode:%d\n",fullscr,usex,usey,in_gfxmode));
 #endif
    if(in_gfxmode==0) {
-      if(fullscr=='n') 
+      if(fullscr=='n')
 	w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
       if(fullscr=='y')
 	w=set_gfx_mode(GFX_AUTODETECT_FULLSCREEN,usex,usey,0,0);
@@ -741,12 +741,12 @@ void init() {
    set_color_depth(32);
 #endif
    set_keyboard_rate(400,40);
-   
+
    load_defaults();
    // probably need to adjust this
    sprintf(fullpath,"%s%c%s",basedir,mysep,rcfilename);
 //   printf("xdescbox: %s\n",txtbx[B_DESC].box);
-   if(imenu.mode>=1) {env_clear(); load_settings(); 
+   if(imenu.mode>=1) {env_clear(); load_settings();
       strcpy(tmpstr,"");
       env_get(tmpstr,"EMUFEres");
       if(strcmp(tmpstr,"")!=0) {
@@ -763,8 +763,8 @@ void init() {
       }
    }
    // Initial RC file load goes here
-   if(imenu.mode>1) 
-     load_rc(imenu.rc); 
+   if(imenu.mode>1)
+     load_rc(imenu.rc);
    else
      load_rc(fullpath);
    load_dfltimg(defimg);  /* Load Default Image */
@@ -792,7 +792,7 @@ void init() {
       LOG(3,("ttf.font.load: %s\n",fullpath));
       DefaultFont=fnt_loadfont(fullpath,TTF);
       LOG(3, ("ttf.font.load done\n"));
-      
+
       fnt_setactive(DefaultFont);
       ///  TTF sizing 
 //      DefaultFont->scale_w=16; DefaultFont->scale_h=16;
@@ -804,24 +804,24 @@ void init() {
       DefaultFont=fnt_loadfont(fullpath,BIOS_8X16);
       fnt_setactive(DefaultFont);
    }
-   
+
    // Load box fonts
    for(i=0;i<4;i++) {
       if(txtbx[i].fonttype>-1) {
 	 sprintf(fullpath,"%s%c%s",fontdir,mysep,txtbx[i].font);
-	 
+
 	 // Check to ensure that no TTFs are being loaded
 	 exl=strlen(txtbx[i].font)-3;
 	 for(exi=0;exi<3;exi++) {
 	    ext[exi]=txtbx[i].font[exi+exl];
 	 }
 	 ext[3]=0;
-	 
+
 	 if(strcmp(ext,"ttf")==0) {
 	    printf ("ERROR: TTF fonts can't be loaded at the box level currently.\n   To use TTF, set the global TTFFONT, and set fonttype for the box to 4\n");
 	 }
 	 // end ext check
-	 
+
 	 LOG(3,("VLOAD: %s  type: %d   ext:%s\n",fullpath,txtbx[i].fonttype,ext));
 	 LOG(3, ("box font.load\n"));
 	 boxfont[i]=NULL;
@@ -840,7 +840,6 @@ void init() {
 	 printf("Can't Find Font, using default\n");
       }
    }
-   
 # else
    sprintf(fullpath,"%s%c%s",fontdir,mysep,tfont);
 #  ifdef DEBUG
@@ -863,7 +862,7 @@ void init() {
 int title(int x1,int y1,char *s) {
    // draw title
    int width, length, fpx, fpy, shcol=-1, bgcol=-1;
-   
+
    blit(titlemap,screen,0,0,rc.bb_x+rx0,rc.bb_y+ry0,rc.bb_w,rc.bb_h);
 
    if(rc.banr.bg.enable=='Y')
@@ -879,7 +878,7 @@ int title(int x1,int y1,char *s) {
       } else {
          fpx=rx0+rc.bb_x+x1-(length*2);
 	 fpy=ry0+rc.bb_y+y1-24;
-      }      
+      }
       print_string_16x32(screen,fpx,fpy,s,
 			 makecol(rc.banr.fg.r,rc.banr.fg.g,rc.banr.fg.b),bgcol,
 			 shcol);
@@ -894,7 +893,7 @@ int title(int x1,int y1,char *s) {
       }
       fnt_print_string(screen,fpx,fpy,s,
 	 makecol(rc.banr.fg.r,rc.banr.fg.g,rc.banr.fg.b),-1,
-		       shcol);      
+		       shcol);
    }
 }
 
@@ -922,14 +921,14 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
    // note: There's a bug in this function, seems like longer paths
    // cause issues.   picname has a size of 350, but the path doesn't
    // have to be nearly that long to have an issue
-   
+
    // Use this if scaling is enabled
   PALETTE p;
   char picname[350],picnoext[346];
   int dsx,dsy,new_w,new_h,x2,y2;
   float fow,foh,fdw,fdh,xf,yf,uf;
   BITMAP *sc_bitmap;
-   
+
   get_palette(p);
 //   printf("IMGBOX #%d\n",i);
 //  for(i=0;i<12;i++) {
@@ -966,7 +965,7 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     //   or bitmap!
 	     x2=imgbx[i].x + imgbx[i].w;
 	     y2=imgbx[i].y + imgbx[i].h;
-	     
+
 #ifdef DEBUG
 //	     sprintf(debugtxt,"rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2);
 //	     debug(3,debugtxt);
@@ -974,6 +973,9 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 #endif
 	     // Figure out how to mask this (if masktype==0 then ignore)
 	     // bitmap
+//	     if(imgbx[i].masktype==1)  // BITMAP MASK
+//	       rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
+
 	     // black bars
 	     if(imgbx[i].masktype==2)
 	       rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
@@ -994,7 +996,7 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     //	   sc_bitmap=sa_scale_bm(bitmap,new_w,new_h);
 	     //	   blit(sc_bitmap,screen,0,0,dsx,dsy,sc_bitmap->w,sc_bitmap->h);
 	     //	   destroy_bitmap(sc_bitmap);
-	     
+
 	     destroy_bitmap(bitmap);
 	  } else {
 	   // no scaling
@@ -1003,13 +1005,21 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     blit(bitmap,screen,0,0,dsx,dsy,bitmap->w,bitmap->h);
 	     destroy_bitmap(bitmap);
 	  }
+	  // draw mask
+//	  printf ("MASK: %d\n",imgbx[i].masktype);
+	  if(imgbx[i].masktype==1) { // BITMAP MASK
+////	     sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
+	     masked_blit(imgbx_mask[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
+////	     sa_setalpha(imgbx_ovl[i], 255);
+	  }
+
 	  // draw overlay
 	  if(imgbx[i].ovpct>0) {
 	     sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
 	     masked_blit(imgbx_ovl[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
 	     sa_setalpha(imgbx_ovl[i], 255);
-	  }	  
-	  
+	  }
+
 #ifdef DEBUG
 //	  debug(3,"do_imgbox_scale():loaded bitmap\n");
 	  LOG(3,("do_imgbox_scale():loaded bitmap\n"));
@@ -1079,12 +1089,12 @@ void do_imgboxes(char *imgdir, char *iname) {
 
 void gradient(int x1, int y1, int x2, int y2) {
    int r,g,b,cy,rc;
-   
+
    g=0;
    for(cy=y1;cy<y2;cy++) {
       b=cy / 2;
       r=cy / 2;
-      rc=makecol16(r,g,b); 
+      rc=makecol16(r,g,b);
       hline(screen, x1, cy, x2, rc);
    }
 }
@@ -1094,10 +1104,10 @@ void set_bg() {
     * 
     * Either a default gradient or a 640x480 bitmap in any format
     * that allegro supports */
-   
+
    char fname[90];
-   PALETTE p; 
-   
+   PALETTE p;
+
 //   if(widescreen==1) strcpy(bgpic,bgwpic);
    if(strncmp(bgpic, "default", 7)==0) {
       gradient(2+rx0,2+ry0,minx-2,miny-2);
@@ -1107,7 +1117,7 @@ void set_bg() {
         sprintf(fname,"%s/%s",picsdir,bgpic);
       else
 	sprintf(fname,"%s/%s",gthemedir,bgpic);
-      
+
 #ifdef DEBUG
 //      sprintf(debugtxt,"set_bg: gthemedir:%s\n",gthemedir);
 //      debug(3,debugtxt);
@@ -1123,8 +1133,8 @@ void set_bg() {
 	 //	   blit(bitmap,screen,0,0,rx0,ry0,640,480);
 	 blit(bitmap,screen,0,0,rx0,ry0,usex,usey);
 	 destroy_bitmap(bitmap);
-      }      
-   }   
+      }
+   }
 }
 
 void comp_load(int x1, int y1, int x2, int y2, char *picname) {
@@ -1142,7 +1152,7 @@ void comp_load(int x1, int y1, int x2, int y2, char *picname) {
       masked_blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
 //      blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
       destroy_bitmap(bitmap);
-   }   
+   }
 }
 
 void draw_title(int fg, int bg) {
@@ -1152,7 +1162,7 @@ void draw_title(int fg, int bg) {
       comp_load(rc.bb_x,rc.bb_y,rc.bb_w,rc.bb_h,txtbx[B_BANR].box);
    }
    // blitting a second time crashes, I can't figure out why
-   if(!titlemap) {	
+   if(!titlemap) {
       titlemap=create_bitmap(rc.bb_w,rc.bb_h);
       blit(screen,titlemap,rc.bb_x+rx0,rc.bb_y+ry0,0,0,rc.bb_w,rc.bb_h);
    }
@@ -1196,9 +1206,28 @@ void draw_imgbx(int boxno) {
       else
 	printf("IMGBOX failed\n");
    }
-   
-   // new: load overlays
-   
+
+   // new: load mask for screenshots
+   if(imgbx[boxno].masktype == 1) {
+      // load in mask
+      destroy_bitmap(imgbx_mask[boxno]);
+      if(strncmp(gthemedir, "na", 2) == 0)
+	sprintf(pathname,"%s%c%s",picsdir,mysep,imgbx[boxno].mask);
+      else
+	sprintf(pathname,"%s%c%s",gthemedir,mysep,imgbx[boxno].mask);
+
+#ifdef DEBUG
+      LOG(3,("MASK: #%d: %s\n",boxno,pathname));
+#endif
+      imgbx_mask[boxno]=load_bitmap(pathname,p);
+      sa_setalphablendmode(imgbx_mask[boxno]);
+      //#ifdef SDL_BLENDMODE_BLEND
+      //      SDL_SetSurfaceBlendMode(imgbx_mask[boxno],SDL_BLENDMODE_BLEND);
+      //#endif
+   }
+
+
+   // Load Overlays
    if(imgbx[boxno].ovpct>0) {
       // making an assumption that if overlay is set, a filename has
       // been set, because that's how it currently loads.
@@ -1222,7 +1251,7 @@ void draw_imgbx(int boxno) {
 }
 
 void draw_menubox(int fg, int bg) {
-   
+
    if(strncmp(txtbx[B_MENU].box, "default", 7)==0) {
       bbox(rc.mb_x+rx0, rc.mb_y+ry0, rc.mb_x2+rx0, rc.mb_y2+ry0, fg, bg);
    }
@@ -1243,11 +1272,11 @@ void draw_menubox(int fg, int bg) {
    }
    if(strncmp(txtbx[B_MENU].box, "default", 7)!=0 && strcmp(txtbx[B_MENU].box, "trans")!=0) {
      comp_load(rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h,txtbx[B_MENU].box);
-            
+
 // Seems like if we try to blit from the screen to menumap a second time, it
 // crashes
-      
-      if(usembmap==0) {	   
+
+      if(usembmap==0) {
 	 menumap=create_bitmap(rc.mb_w,rc.mb_h);
 	 blit(screen, menumap,rc.mb_x+rx0,rc.mb_y+ry0,0,0,rc.mb_w,rc.mb_h);
 	 usembmap=1;
@@ -1303,13 +1332,13 @@ int find_entry(char stletter, int startpos) {
    /* This procedure finds a menu entry that begins with the key pressed */
    int i, r;
    char altletter;  /* For case insensitivity */
-   
+
    if ( stletter > 64 && stletter < 91 ) 
      altletter=stletter+32;
    else
      altletter=stletter;
-   
-/*   printf("startpos is %d\n",startpos); */
+
+/* printf("startpos is %d\n",startpos); */
    r=-1;
    for(i=startpos+1; i<menulength+1; i++) {
 /*	printf("test %s\n", names[i]);
@@ -1403,9 +1432,9 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
       cx=ActiveFont->scale_w; cy=ActiveFont->scale_h;
       ActiveFont->scale_w = ActiveFont->scale_w * 2;
       ActiveFont->scale_h = ActiveFont->scale_h * 2;
-      
+
       fnt_print_string(screen,x-16,y-4,str,fg,bg,sd);
-      
+
       ActiveFont->scale_w=cx; ActiveFont->scale_h=cy;
    } else {
       while(*str) {
@@ -1422,8 +1451,8 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
 	 }
       }
    }
-   
-   
+
+
 #ifdef USESDL
    if(b==screen) {
       if(ActiveFont->type<2)
@@ -1439,7 +1468,7 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
       //      printf("hokee: %d %d %d\n",x,y,sl);
    }
 #endif
-   
+
 } // print_string_16x32
 
 /* ****************************************
@@ -1452,19 +1481,18 @@ int main(int argc, char* argv[]) {
    int keyp, index, slc, menuitems, stln, por, tmpc;
    int my, mp, entidx, pslc, zpos, jlf, jrt, jup, jdn, jbu, menf;
    int aidx;
-   
+
    imenu.noexec=imenu.autosel=0;
    imenu.systype=SYS_GENERIC;
    usembmap=0; usedbmap=0;
    por=0;
    jlf=jrt=jup=jdn=0;
    jbu=1;
-   
+
 //   printf("DMM: SDL_BYTEORDER %d\n",SDL_BYTEORDER);
 //   printf("DMM: SDL_BIG_ENDIAN %d\n",SDL_BIG_ENDIAN);
 //   printf("DMM: SDL_LITTLE_ENDIAN %d\n",SDL_LITTLE_ENDIAN);
-   
-   
+
    strcpy(cdroot,"");
    if(getenv("CDROOT"))
      strcpy(cdroot,getenv("CDROOT"));
@@ -1569,22 +1597,22 @@ int main(int argc, char* argv[]) {
 /*   position_mouse(320,200); */
    show_mouse(screen);
    imenu.no_launch=0;
-   
+
    if(joy_enable==1)
      install_int(timercb,300);
    while(1) {
       // SDL only,  rest() is the SDL equiv
 //      SDL_WaitEvent(NULL);
-      if(cdclock!=1 && (jflag==0 && joy_enable==1))      
+      if(cdclock!=1 && (jflag==0 && joy_enable==1))
 	rest(0);
       my=mouse_y;
 
       /* START JOYSTICK SECTION */
 
-      if ( joy_enable == 1 ) 
-	{ 
+      if ( joy_enable == 1 )
+	{
 	   poll_joystick();
-	   
+
 	   /* Joystick Up */
 	   if(joy[0].stick[0].axis[1].d1 && jflag==0) {
 #ifdef USESDL
@@ -1595,7 +1623,7 @@ int main(int argc, char* argv[]) {
 	      jflag=1;
 	   }
 	   if(joy[0].stick[0].axis[1].d1==0) jup=0; 
-	     
+
 	   /* Joystick Down */
 	   if(joy[0].stick[0].axis[1].d2 && jflag==0) {
 #ifdef USESDL
@@ -1606,26 +1634,23 @@ int main(int argc, char* argv[]) {
 	      jflag=1;
 	   }
 	   if(!joy[0].stick[0].axis[1].d2) jdn=0; 
-	   
+
 	   /* Joystick Button A or B */
 	   if(joy[0].button[0].b && jflag==0) {
 	      simulate_keypress(KEY_ENTER << 8);
 	      jflag=1;
 	   }
-	   
+
 	   if(joy[0].button[1].b && jflag==0) {
 	      simulate_keypress(KEY_ENTER << 8);
 	      jflag=1;
 	   }
-	   
 	   if(!joy[0].button[0].b && !joy[0].button[1].b 
 	       && !joy[0].stick[0].axis[1].d2 
 	      && !joy[0].stick[0].axis[1].d1) jflag=0;
 	}
-      
       /* END JOYSTICK SECTION */
 
-      
       if (mouse_b & 1 && mouse_x > (rc.mb_x+rx0) && mouse_x < (rc.mb_x2+rx0) && my > (rc.mb_y+ry0) && my < (rc.mb_y2+ry0) && mp==0) {
 //	 entidx=(my-100)/16;
 	 entidx=(my-rc.mb_y+ry0-4)/16;
@@ -1646,11 +1671,8 @@ int main(int argc, char* argv[]) {
 		 if(mouse_needs_poll() )
 		   poll_mouse();   // Needed for sdl_allegro
 	      }
-	    
-//	    simulate_keypress(17165);
 	    simulate_keypress(KEY_ENTER << 8);
 	 }
-	 
       }
 
       if (mouse_b & 4 && mp==0) {
@@ -1658,7 +1680,7 @@ int main(int argc, char* argv[]) {
 	   simulate_keypress(KEY_ENTER << 8);
 	   mp=1;
       }
-      
+
       /* Wheel support up */
       if (mouse_z < zpos) {
 #ifdef USESDL
@@ -1678,10 +1700,9 @@ int main(int argc, char* argv[]) {
 #endif
 	 zpos=mouse_z;
       }
-      
+
       if(!mouse_b) { mp=0; }
 
-      
       /* Countdown clock */
       if (cdclock == 1) {
 	 endtime = time(NULL);
@@ -1696,7 +1717,7 @@ int main(int argc, char* argv[]) {
 	   }
       }
       /* End Countdown clock */
-      
+
       if(keypressed()) {
 	 keyp=readkey() >> 8; 
 //	 printf("key:%d--%d\n",keyp,KEY_DOWN);
@@ -1754,13 +1775,13 @@ int main(int argc, char* argv[]) {
 	    menu_uhlight(index,slc);
 	    slc=slc+8;
 	    index=index+8;
-	    if(slc > menuitems) 
-	      {		 
+	    if(slc > menuitems)
+	      {
 		 tmpc=(slc-menuitems);
 		 slc=slc-tmpc;
 		 index=index-tmpc;
 	      }
-	    
+
 	    restore_menuback();
 	    display_menu(index);
 
@@ -1771,7 +1792,7 @@ int main(int argc, char* argv[]) {
 #endif
 	    menu_hlight(index,slc);
 	 }
-	 
+
 	 if(keyp==KEY_UP) {
 	    /* Up arrow */
 	    imenu.no_launch=0;
@@ -1807,7 +1828,7 @@ int main(int argc, char* argv[]) {
 	    display_menu(index);
 	    menu_hlight(index,slc);
 	 }
-	 
+
 	 /* Page UP */
 	 if(keyp==KEY_PGUP) {
 	    imenu.no_launch=0;
@@ -1818,7 +1839,7 @@ int main(int argc, char* argv[]) {
 	    slc=slc-8;
 	    index=index-8;
 	    if(slc < 1) 
-	      {		 
+	      {
 		 slc=1;
 		 index=1;
 	      }
@@ -1828,7 +1849,7 @@ int main(int argc, char* argv[]) {
 	     * the right thing (ie nothing) when index gets reset to 1
 	     */
 	    if ( index < 1 )  index = 1; 
-		 
+
 	    restore_menuback();
 	    display_menu(index);
 
@@ -1857,8 +1878,8 @@ int main(int argc, char* argv[]) {
 	       }
 	    }
 	 }
-	 
-	 
+
+
 	 if(keyp==KEY_ENTER || keyp==KEY_ENTER_PAD || keyp==KEY_RIGHT) {
 	    cdclock=0;
 	    type=menu[slc].type;
@@ -1915,10 +1936,10 @@ int main(int argc, char* argv[]) {
 	       display_menu(index);
                menu_hlight(index,slc);
 	    }
-	    
+
 	    if( type=='u' && keyp != KEY_RIGHT ) {
 	       sprintf(usemenu,"index.menu");
-	       
+
 	       if(strlen(dirname)==0) {
 		  if(imenu.mode==0) {   // Old way
 		     printf("BACK\n");
@@ -1984,7 +2005,7 @@ int main(int argc, char* argv[]) {
 		  menu_hlight(index,slc);
 	       }
 	    }
-		 
+
 	    if( type=='i' ) {
 	       if(por==0) {
 		  display_info(slc);
@@ -2056,7 +2077,7 @@ int main(int argc, char* argv[]) {
 		  }
 		  // Try to load kb_emulator.pcx
 		  do_imgbox(B_KEYBOARD,picsdir,imenu.emulator);
-		  
+
 		  sprintf(imenu.menu,"%s%c%s%s",basedir,mysep,dirname,menuname);
 		  // HERE IS THE BUG
 //		  sprintf(imenu.lastmenu,"%s.menu",menu[slc].rom);
@@ -2135,10 +2156,10 @@ int main(int argc, char* argv[]) {
 	       display_menu(index);
 	       menu_hlight(index,slc);
 	    }
-	 } 	 
+	 }
       } /* End if keypressed */
    } /* while */
-   
+
   ef_shutdown();
 }
 
