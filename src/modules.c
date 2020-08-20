@@ -1040,7 +1040,7 @@ int setbootdisk() {
 
 int load_settings() {
    // C version of the shell script
-   char *homet, emuenv[160];
+   char *homet, emuenv[160], *envchk, mdev[80];
    
 //   // For disk-based configuration
 //#ifdef WIN32
@@ -1107,6 +1107,22 @@ int load_settings() {
    env_get(emuopt.tmpdir,"TMPDIR");
    // Check for wrong version
    // Check for wrong EMUHOME
+
+   // MIDI 
+   //  This may change in the future, but right now there needs to be
+   //  some setup done before midi will work for hatari.  (modprobe/aconnect)
+   //  if this gets simplified, then remove this
+   
+   envchk = getenv("HAVEMIDI");
+   if (! envchk) {
+      printf("MIDI not enabled, run the midi setup script\n");
+      env_set("MIDI=N");
+      env_print();
+   } else {
+      sprintf(mdev,"MIDIDEV=%s",envchk);
+      env_set(mdev);
+//      env_print();
+   }
 }
 
 int mod_loadcfg(const char *emucfg) {

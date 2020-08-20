@@ -725,6 +725,7 @@ void setgfxmode() {
    in_gfxmode=1;
 }
 
+// Initialize
 void init() {
    char tmpstr[20], tstr2[20], ext[5];
    int i,exi, exl;
@@ -852,7 +853,13 @@ void init() {
 #  endif
    // so font_load is messing up txtbx[B_DESC].box!!!
    LOG(3, ("bitmap.font.load (no freetype)\n"));
+printf("what are we loading???  %s \n", fullpath);
    font_load(fullpath);
+   // it doesn't seem like boxfont gets initialiazed, let's try this
+   for(i=0;i<4;i++) {
+      boxfont[i]=DefaultFont;
+   }   
+   // end new code
 # endif
 #endif
 
@@ -977,8 +984,8 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 //	       rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
 
 	     // black bars
-	     if(imgbx[i].masktype==2)
-	       rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
+	     if(imgbx[i].masktype==2 || imgbx[i].masktype==1)
+	       rectfill(screen,imgbx[i].x,imgbx[i].y,x2-1,y2-1,makecol16(0,0,0));
 	     // blit (need to fix dest w/h)
 	     // uncomment to center:
 	     dsx=((imgbx[i].w-new_w)/2)+imgbx[i].x+rx0 + imgbx[i].mgn;
@@ -1009,6 +1016,9 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 //	  printf ("MASK: %d\n",imgbx[i].masktype);
 	  if(imgbx[i].masktype==1) { // BITMAP MASK
 ////	     sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
+//	     x2=imgbx[i].x + imgbx[i].w;
+//	     y2=imgbx[i].y + imgbx[i].h;
+//	     rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
 	     masked_blit(imgbx_mask[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
 ////	     sa_setalpha(imgbx_ovl[i], 255);
 	  }
