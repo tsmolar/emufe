@@ -853,13 +853,12 @@ void init() {
 #  endif
    // so font_load is messing up txtbx[B_DESC].box!!!
    LOG(3, ("bitmap.font.load (no freetype)\n"));
-printf("what are we loading???  %s \n", fullpath);
    font_load(fullpath);
-   // it doesn't seem like boxfont gets initialiazed, let's try this
+
+   // Initialize boxfonts (custom fonts ignored)
    for(i=0;i<4;i++) {
       boxfont[i]=DefaultFont;
-   }   
-   // end new code
+   }
 # endif
 #endif
 
