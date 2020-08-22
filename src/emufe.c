@@ -1146,35 +1146,53 @@ void set_bg() {
    }
 }
 
-void comp_load(int x1, int y1, int x2, int y2, char *picname) {
+BITMAP *bm_comp_load(int x1, int y1, int x2, int y2, char *picname) {
+   // Because the comp_load method was having trouble on raspberry pi
+   // and this seems more efficient
+   char fname[120];
    PALETTE p;
-   char fname[90];
-   get_palette(p);
    if(strncmp(gthemedir, "na", 2) == 0)
      sprintf(fname,"%s/%s",picsdir,picname);
    else
      sprintf(fname,"%s/%s",gthemedir,picname);
-//   printf("\nfname is: %s\n", fname); 
-
-   bitmap=load_bitmap(fname,p);
-   if(bitmap) {
-      masked_blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
-//      blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
-      destroy_bitmap(bitmap);
-   }
+   
+   BITMAP *image = load_bitmap(fname,p);
+   if(image)
+     masked_blit(image, screen,0,0,x1+rx0,y1+ry0,x2,y2);
+   
+   return(image);
 }
+
+// depricated, use bm_comp_load instead
+//void comp_load(int x1, int y1, int x2, int y2, char *picname) {
+//   PALETTE p;
+//   char fname[90];
+//   get_palette(p);
+//   if(strncmp(gthemedir, "na", 2) == 0)
+//     sprintf(fname,"%s/%s",picsdir,picname);
+//   else
+//     sprintf(fname,"%s/%s",gthemedir,picname);
+////   printf("\nfname is: %s\n", fname); 
+
+//   bitmap=load_bitmap(fname,p);
+//   if(bitmap) {
+//      masked_blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
+////      blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
+//      destroy_bitmap(bitmap);
+//   }
+//}
 
 void draw_title(int fg, int bg) {
    if(strncmp(txtbx[B_BANR].box, "default", 7)==0) {
       bbox(rc.bb_x+rx0, rc.bb_y+ry0, rc.bb_x2+rx0, rc.bb_y2+ry0, fg, bg);
    } else {
-      comp_load(rc.bb_x,rc.bb_y,rc.bb_w,rc.bb_h,txtbx[B_BANR].box);
+      titlemap = bm_comp_load(rc.bb_x,rc.bb_y,rc.bb_w,rc.bb_h,txtbx[B_BANR].box);
    }
    // blitting a second time crashes, I can't figure out why
-   if(!titlemap) {
-      titlemap=create_bitmap(rc.bb_w,rc.bb_h);
-      blit(screen,titlemap,rc.bb_x+rx0,rc.bb_y+ry0,0,0,rc.bb_w,rc.bb_h);
-   }
+//   if(!titlemap) {
+//      titlemap=create_bitmap(rc.bb_w,rc.bb_h);
+//      blit(screen,titlemap,rc.bb_x+rx0,rc.bb_y+ry0,0,0,rc.bb_w,rc.bb_h);
+//   }
    title(-1,-1,"Emufe");
 }
 
@@ -1261,6 +1279,7 @@ void draw_imgbx(int boxno) {
 
 void draw_menubox(int fg, int bg) {
 
+//   printf("DRAW_MENUBOX: %s\n", txtbx[B_MENU].box);
    if(strncmp(txtbx[B_MENU].box, "default", 7)==0) {
       bbox(rc.mb_x+rx0, rc.mb_y+ry0, rc.mb_x2+rx0, rc.mb_y2+ry0, fg, bg);
    }
@@ -1280,16 +1299,10 @@ void draw_menubox(int fg, int bg) {
       usembmap=1;
    }
    if(strncmp(txtbx[B_MENU].box, "default", 7)!=0 && strcmp(txtbx[B_MENU].box, "trans")!=0) {
-     comp_load(rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h,txtbx[B_MENU].box);
+      menumap = bm_comp_load(rc.mb_x,rc.mb_y,rc.mb_w,rc.mb_h,txtbx[B_MENU].box);
 
-// Seems like if we try to blit from the screen to menumap a second time, it
-// crashes
-
-      if(usembmap==0) {
-	 menumap=create_bitmap(rc.mb_w,rc.mb_h);
-	 blit(screen, menumap,rc.mb_x+rx0,rc.mb_y+ry0,0,0,rc.mb_w,rc.mb_h);
+      if(usembmap==0)
 	 usembmap=1;
-      }
    }
 }
 
@@ -1300,9 +1313,9 @@ void draw_desc(int fg, int bg) {
    } else {
 //      printf("comp_load: %s\n",txtbx[B_DESC].box);
     if(usedbmap==0) {
-       comp_load(rc.db_x, rc.db_y, rc.db_w, rc.db_h, txtbx[B_DESC].box);
-       descmap=create_bitmap(rc.db_w,rc.db_h);
-       blit(screen, descmap,rc.db_x+rx0,rc.db_y+ry0,0,0,rc.db_w,rc.db_h);
+       descmap = bm_comp_load(rc.db_x, rc.db_y, rc.db_w, rc.db_h, txtbx[B_DESC].box);
+//       descmap=create_bitmap(rc.db_w,rc.db_h);
+//       blit(screen, descmap,rc.db_x+rx0,rc.db_y+ry0,0,0,rc.db_w,rc.db_h);
        usedbmap=1;
     } else
 	blit(descmap,screen, 0,0,rc.db_x+rx0,rc.db_y+ry0,rc.db_w,rc.db_h);
