@@ -38,12 +38,12 @@ int in_gfxmode=0, jflag=0;
 fnt_t* DefaultFont;
 fnt_t* boxfont[6];
 
-// Note, this might ultimately be used for the menu, but not now
-typedef struct menu_t {
-   char type;
-   char name[42];
-   char rom[28];
-} menu_t;
+//// Note, this might ultimately be used for the menu, but not now
+//typedef struct menu_t {
+//   char type;
+//   char name[42];
+//   char rom[28];
+//} menu_t;
 
 
 menuinfo_t imenu;
@@ -57,7 +57,7 @@ char *commands[30], *lmenus[30];
 char descdir[90], picbox[40], theme[200], gthemedir[96], fullscr;
 char tfontbmp[30],fullpath[350];
 char basedir[160], restr[20];
-char startdir[160], lastitem[160], *fname, debugtxt[300];
+char startdir[160], passdir[160], lastitem[160], *fname, debugtxt[300];
 int menulength, usembmap, usedbmap;
 /* FORCE picload */
 int cdclock=0;
@@ -77,7 +77,7 @@ menudisp=0;
 //gfx_sdlflip() {
 // # ifdef SDL1
 //   SDL_Flip(screen);
-//# else 
+//# else
 //   s2a_flip(screen);
 //# endif
 //}
@@ -171,7 +171,12 @@ int menu_uhlight(int index, int slct) {
    }
 #ifdef USESDL
 //   gfx_sdlflip();
+
+# ifdef AMDGFX
    s2a_flip(screen);
+# else
+   s2a_updaterect(screen, rc.mb_x+rx0, rc.mb_y-fontv+(offset*fontv)+ry0, rc.mb_w, fontv*2);
+# endif
 #endif
   unscare_mouse();
 } // menu_uhlight
@@ -217,7 +222,11 @@ int menu_hlight(int index, int slct) {
    }
 #ifdef USESDL
    //gfx_sdlflip();
+# ifdef AMDGFX
    s2a_flip(screen);
+# else
+   s2a_updaterect(screen, rc.mb_x+rx0, rc.mb_y-fontv+(offset*fontv)+ry0, rc.mb_w, fontv*2);
+# endif
 #endif
    unscare_mouse();
 } // menu_hlight()
@@ -272,11 +281,15 @@ int display_menu(int index) {
 
 #ifdef USESDL
 //   gfx_sdlflip();
+# ifdef AMDGFX
    s2a_flip(screen);
+# else
+   s2a_updaterect(screen, rc.mb_x+rx0, rc.mb_y+ry0, rc.mb_w, rc.mb_h);
+# endif
 #endif
    unscare_mouse();
 //   fnt_setactive(LoadedFont);
-}
+}  // display_menu()
 
 void info_bar() {
 /*   set_font_fcolor(232,232,0); */
@@ -285,8 +298,6 @@ void info_bar() {
    set_font_bcolor(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b);
    rectfill(screen, rc.db_x+2+rx0, rc.db_y+rc.db_h-17+ry0, rc.db_x+rc.db_w-2+rx0, rc.db_y+rc.db_h-2+ry0, fnbgcol);
    solid_string(rc.db_x+40+rx0,rc.db_y+rc.db_h-17+ry0,"Press mouse/joystick button or '<ENTER>' to select this option");  
-/*   set_font_fcolor(232,64,0); */
-//   set_font_fcolor(imenu.col[0].fg.r,imenu.col[0].fg.g,imenu.col[0].fg.b);
    set_font_fcolor(255,255,255);
    solid_string(rc.db_x+88+rx0,rc.db_y+rc.db_h-17+ry0,"mouse/joystick button");  
    solid_string(rc.db_x+296+rx0,rc.db_y+rc.db_h-17+ry0,"<ENTER>");
@@ -457,11 +468,11 @@ void show_desc2(char *desc) {
       if(dheader == 1) {
 	 fns=boxfont[B_DESC]->scale_w;
 	 boxfont[B_DESC]->scale_w=boxfont[B_DESC]->scale_h*1.1;
-	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(1*fnh)+1+ry0,"Title:",makecol(0,0,0),-1,-1);
-	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(2*fnh)+1+ry0,"Publisher:",makecol(0,0,0),-1,-1);
-	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*fnh)+1+ry0,"Released:",makecol(0,0,0),-1,-1);
-	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(4*fnh)+1+ry0,"Media:",makecol(0,0,0),-1,-1);
-	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(5*fnh)+1+ry0,"Developer:",makecol(0,0,0),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(1*fnh)+1+ry0,"Title:",makecol(240,230,160),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(2*fnh)+1+ry0,"Publisher:",makecol(240,230,160),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(3*fnh)+1+ry0,"Released:",makecol(240,230,160),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(4*fnh)+1+ry0,"Media:",makecol(240,230,160),-1,-1);
+	 fnt_print_string(screen,rc.db_x+4+rx0,(rc.db_y-14)+(5*fnh)+1+ry0,"Developer:",makecol(240,230,160),-1,-1);
 
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(1*fnh)+ry0,title,makecol(255,255,255),-1,-1);
 	 fnt_print_string(screen,rc.db_x+4+(9*fnw),(rc.db_y-14)+(2*fnh)+ry0,company,makecol(255,255,255),-1,-1);
@@ -473,7 +484,11 @@ void show_desc2(char *desc) {
       }
 #ifdef USESDL
    //   gfx_sdlflip();
+# ifdef AMDGFX
       s2a_flip(screen);
+# else
+      s2a_updaterect(screen, rc.db_x, rc.db_y, rc.db_w, rc.db_h);
+# endif
 #endif
    }
 }
@@ -515,7 +530,6 @@ void display_info(int slc)  {
 #ifdef DEBUG
    LOG(2,("\n>>picname is: %s\n", picname));
 #endif
-//   disp_image(picname);
    do_imgboxes(picsdir,menu[slc].rom);
    show_desc2(menu[slc].rom);
 //   info_bar();
@@ -529,10 +543,12 @@ int load_menu(char *lmenu) {
 //   char *name, *rom, waste[15];
    char *name, rom[30], waste[39];
    int i=1,sl;
+   int dsx, dsy, neww, newh;
 #ifdef DEBUG
    LOG(1,("Loading Menu...%s\n",lmenu));
    LOG(5,("Menu strlen: %d\n",strlen(menu)));
 #endif
+   strcpy(imenu.altromdir, "NULL");  // reset altromdir
    fp=fopen(lmenu, "r");
    while( type != 'e' ) {
       if(feof(fp)) break;
@@ -547,7 +563,9 @@ int load_menu(char *lmenu) {
       fgets(name, 39, fp);
       fgets(waste, 15, fp);
       fgets(rom, 25, fp);
+
       sl=strlen(rom);
+
       rom[sl-1]='\0';
       if( type != ' ' ) {
 	 switch (type) {
@@ -564,9 +582,19 @@ int load_menu(char *lmenu) {
 //	    debug(2,debugtxt);
 	    LOG(2,("\npicsdir is: %s  rom is %s\n", picsdir,rom));
 #endif
-            do_imgbox(B_PICBOX,picsdir,rom);
-            do_imgbox(B_KEYBOARD,picsdir,rom);
-            do_imgbox_scale(B_BOXSCAN,picsdir,rom);
+	    // Do this for now, might want include this in grid later 
+	    if(rc.mode == MODE_CLASSIC) {
+//printf("picsdir='%s'\n", picsdir);
+	       do_imgbox(B_PICBOX,picsdir,rom);
+	       do_imgbox_scale(B_KEYBOARD,picsdir,rom);
+	       do_imgbox_scale(B_BOXSCAN,picsdir,rom);
+
+	       // This will force an update for the boxscan image (So that VCS cart end images appear, for instance)
+
+	       s2a_updaterect(screen, imgbx[B_BOXSCAN].x+rx0, imgbx[B_BOXSCAN].y+ry0,
+			   imgbx[B_BOXSCAN].w, imgbx[B_BOXSCAN].h);
+	    }
+	    
 // Note: We need a replacement for this!
 //	    disp_image(picname);
 	    break;
@@ -579,12 +607,10 @@ int load_menu(char *lmenu) {
 	    LOG(3,("menu bitmap.font.load\n"));
 #endif
 	    // Kludge, don't load fonts from menu if using TTF
-	    if(ActiveFont->type != TTF)
+	    if(ActiveFont->type != TTF && rc.mode == MODE_CLASSIC) 
 	      font_load(fullpath);
 	    break;
 	  case 'S':
-//	    (char *)commands[i]=name;
-//	    (char *)lmenus[i]=rom;
 	    strcpy(commands[i],name);
 	    strcpy(lmenus[i],rom);
 	    break;
@@ -610,9 +636,10 @@ int load_menu(char *lmenu) {
 	    strcpy(commands[i],fname);
 	    strcpy(menu[i].name,name);
 	    strcpy(menu[i].rom,rom);
-	    //	      (char *)names[i]=name;
-	    //	      (char *)roms[i]=rom;
 	    i++;
+	    break;
+	  case 'v':
+	    grid_menu_parm(name, rom);
 	    break;
 	  default:
 	    menu[i].type=type;
@@ -636,7 +663,6 @@ int load_menu(char *lmenu) {
 #endif
       }
    }
-
    menulength=i-2;
    fclose(fp);
 
@@ -644,7 +670,7 @@ int load_menu(char *lmenu) {
    LOG(3,(debugtxt,"menulength: %d\n",menulength));
 
    return i-2;
-}
+} // load_menu()
 
 int draw_screen() {
    int white,black,gray128,menubg,i;
@@ -661,6 +687,11 @@ int draw_screen() {
    draw_desc(white,black);
    for(i=0;i<12;i++)
      draw_imgbx(i);
+   
+#ifdef USESDL
+   s2a_flip(screen);
+#endif
+   
 }
 
 void restore_screen(int index, int slc) {
@@ -707,8 +738,10 @@ void setgfxmode() {
    if(in_gfxmode==0) {
       if(fullscr=='n')
 	w=set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
-      if(fullscr=='y')
-	w=set_gfx_mode(GFX_AUTODETECT_FULLSCREEN,usex,usey,0,0);
+      if(fullscr=='y') {
+	 SA_RENDERFLAGS = SDL_RENDERER_ACCELERATED;
+	 w=set_gfx_mode(GFX_AUTODETECT_FULLSCREEN,usex,usey,0,0);
+      }
       if(fullscr!='n' && fullscr!='y')
 	w=set_gfx_mode(GFX_AUTODETECT,usex,usey,0,0);
 #ifdef USESDL
@@ -725,28 +758,15 @@ void setgfxmode() {
    in_gfxmode=1;
 }
 
-// Initialize
-void init() {
-   char tmpstr[20], tstr2[20], ext[5];
-   int i,exi, exl;
-
-   allegro_init();
-
-   install_mouse();
-   install_keyboard();
-   install_joystick(JOY_TYPE_AUTODETECT);
-#ifdef SDL1
-   // test to see if SDL1 can take 32
-   set_color_depth(16);
-#else
-   set_color_depth(32);
-#endif
-   set_keyboard_rate(400,40);
-
+void cfg_load() {
+   // Move configuration here, to help support the new menu modes
+   char tmpstr[20], tstr2[20];
+   
    load_defaults();
+
    // probably need to adjust this
    sprintf(fullpath,"%s%c%s",basedir,mysep,rcfilename);
-//   printf("xdescbox: %s\n",txtbx[B_DESC].box);
+   //   printf("xdescbox: %s\n",txtbx[B_DESC].box);
    if(imenu.mode>=1) {env_clear(); load_settings();
       strcpy(tmpstr,"");
       env_get(tmpstr,"EMUFEres");
@@ -768,13 +788,42 @@ void init() {
      load_rc(imenu.rc);
    else
      load_rc(fullpath);
+}
+
+
+// Initialize
+void common_init() {
+   // This initializes things used by both classic mode and grid mode
+   
+   allegro_init();
+
+   install_mouse();
+   install_keyboard();
+   install_joystick(JOY_TYPE_AUTODETECT);
+#ifdef SDL1
+   // test to see if SDL1 can take 32
+   set_color_depth(16);
+#else
+   set_color_depth(32);
+#endif
+   set_keyboard_rate(400,40);
+
    load_dfltimg(defimg);  /* Load Default Image */
 
    setgfxmode();
+} // common_init()
+
+void classic_init() {
+   // 
+   // initialize stuff used by old mode
+   char ext[5];
+   int i,exi, exl;
+   
    set_font_bcolor(0,0,0);
    set_font_fcolor(imenu.col[1].fg.r,imenu.col[1].fg.b,imenu.col[1].fg.g);
    set_font_fcolor(imenu.col[1].sh.r,imenu.col[1].sh.b,imenu.col[1].sh.g);
 
+   strcpy(passdir, "");  // used by grid.c to pass a directory back to classic loop
    // init font here
    fnt_init();
 #ifdef BLITFONT
@@ -792,6 +841,8 @@ void init() {
      sprintf(fullpath,"%s%c%s",fontdir,mysep,rc.ttfont);
       LOG(3,("ttf.font.load: %s\n",fullpath));
       DefaultFont=fnt_loadfont(fullpath,TTF);
+      DefaultFont->sox=rc.font_sox;
+      DefaultFont->soy=rc.font_soy;
       LOG(3, ("ttf.font.load done\n"));
 
       fnt_setactive(DefaultFont);
@@ -803,6 +854,8 @@ void init() {
       LOG(3, ("TTF fonts are not defined\n"));
       LOG(3, ("bitmap.font.load\n"));
       DefaultFont=fnt_loadfont(fullpath,BIOS_8X16);
+      DefaultFont->sox=rc.font_sox;
+      DefaultFont->soy=rc.font_soy;
       fnt_setactive(DefaultFont);
    }
 
@@ -835,6 +888,8 @@ void init() {
 
 	 boxfont[i]->scale_w=txtbx[i].font_w;
 	 boxfont[i]->scale_h=txtbx[i].font_h;
+	 boxfont[i]->sox=rc.font_sox;
+	 boxfont[i]->soy=rc.font_soy;
       } else {
 	 // else clause copying the font here?
 	 boxfont[i]=DefaultFont;
@@ -861,9 +916,21 @@ void init() {
    }
 # endif
 #endif
+} // end classic_init()
 
+
+init() {
+   // decide which init to use based on rc.mode
+   // rc.mode = MODE_GRID = use new
+   // rc.mode = MODE_CLASSIC = use classic init
+   // rc.mode = MODE_RIBBON = do we do this?
+
+   // lets try classic_init for everything
+   //   might have to alter joystick init
+   common_init();
+   classic_init();
+   grid_init();
 }
-
 
 int title(int x1,int y1,char *s) {
    // draw title
@@ -943,21 +1010,20 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
        sprintf(picnoext,"%s%c%s%s",imgdir,mysep,imgbx[i].pfx,iname);
        AddPicExt(picname,picnoext);
 #ifdef DEBUG
-//       sprintf(debugtxt,"do_imgbox_scale(): looking for picname:%s\n",picname);
-//       debug(3,debugtxt);
        LOG(3,("do_imgbox_scale(): looking for picname:%s\n",picname));
 #endif
+//  printf("box[%d]: trying to load %s\n", i, picname);
        bitmap=load_bitmap(picname,p);
-       if(imgbx_bmp[i] && i!=B_KEYBOARD) 
+       if(imgbx_bmp[i] && i!=B_KEYBOARD)
 	 masked_blit(imgbx_bmp[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
-       else 
+       else
 	 LOG(1, ("do_imgbox_scale(): I HAVE NO BG!\n"));
 
 
        if(bitmap) {
 
 	  if(bitmap->w != imgbx[i].w || bitmap->h != imgbx[i].h) {
-	     //        if(bitmap->w == 4 || bitmap->h == 5) {
+	     // if(bitmap->w == 4 || bitmap->h == 5) {
 	     // downscale
 	     // compute scale factor, need to use floats here
 	     // This will keep aspect and works for both down and upscaling
@@ -973,8 +1039,6 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     y2=imgbx[i].y + imgbx[i].h;
 
 #ifdef DEBUG
-//	     sprintf(debugtxt,"rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2);
-//	     debug(3,debugtxt);
 	     LOG(3,("rectfill x:%d y:%d w:%d h:%d\n",imgbx[i].x,imgbx[i].y,x2,y2));
 #endif
 	     // Figure out how to mask this (if masktype==0 then ignore)
@@ -989,19 +1053,13 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     // uncomment to center:
 	     dsx=((imgbx[i].w-new_w)/2)+imgbx[i].x+rx0 + imgbx[i].mgn;
 	     dsy=((imgbx[i].h-new_h)/2)+imgbx[i].y+ry0 + imgbx[i].mgn;
-	     //	   dsx=((imgbx[i].w-sc_bitmap->w)/2)+imgbx[i].x+rx0;
-	     //	   dsy=((imgbx[i].h-sc_bitmap->h)/2)+imgbx[i].y+ry0;
-	     //	   dsx=imgbx[i].x+rx0;
-	     //	   dsy=imgbx[i].y+ry0;
+
 
 	     // implement bottom/right  margins
 	     new_w=new_w - (imgbx[i].mgn*2);
 	     new_h=new_h - (imgbx[i].mgn*2);
 
 	     stretch_blit(bitmap,screen,0,0,bitmap->w,bitmap->h,dsx,dsy,new_w,new_h);
-	     //	   sc_bitmap=sa_scale_bm(bitmap,new_w,new_h);
-	     //	   blit(sc_bitmap,screen,0,0,dsx,dsy,sc_bitmap->w,sc_bitmap->h);
-	     //	   destroy_bitmap(sc_bitmap);
 
 	     destroy_bitmap(bitmap);
 	  } else {
@@ -1012,13 +1070,13 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	     destroy_bitmap(bitmap);
 	  }
 	  // draw mask
-//	  printf ("MASK: %d\n",imgbx[i].masktype);
+
 	  if(imgbx[i].masktype==1) { // BITMAP MASK
 ////	     sa_setalpha(imgbx_ovl[i], (25500/(10000/imgbx[i].ovpct)));
 //	     x2=imgbx[i].x + imgbx[i].w;
 //	     y2=imgbx[i].y + imgbx[i].h;
 //	     rectfill(screen,imgbx[i].x,imgbx[i].y,x2,y2,makecol16(0,0,0));
-	     masked_blit(imgbx_mask[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);	      
+	     masked_blit(imgbx_mask[i], screen,0,0,imgbx[i].x+rx0,imgbx[i].y+ry0,imgbx[i].w,imgbx[i].h);
 ////	     sa_setalpha(imgbx_ovl[i], 255);
 	  }
 
@@ -1034,7 +1092,6 @@ int do_imgbox_scale(int i, char *imgdir, char *iname) {
 	  LOG(3,("do_imgbox_scale():loaded bitmap\n"));
 #endif
        } // endif (if bitmap)
-
     } // endif
 } // do_imgbox_scale
 
@@ -1094,6 +1151,9 @@ void do_imgboxes(char *imgdir, char *iname) {
    //   do_imgbox(i, imgdir, iname);
    for(i=0;i<8;i++)
      do_imgbox_scale(i, imgdir, iname);
+#ifdef USESDL
+   s2a_flip(screen);
+#endif
 }
 
 void gradient(int x1, int y1, int x2, int y2) {
@@ -1163,24 +1223,6 @@ BITMAP *bm_comp_load(int x1, int y1, int x2, int y2, char *picname) {
    return(image);
 }
 
-// depricated, use bm_comp_load instead
-//void comp_load(int x1, int y1, int x2, int y2, char *picname) {
-//   PALETTE p;
-//   char fname[90];
-//   get_palette(p);
-//   if(strncmp(gthemedir, "na", 2) == 0)
-//     sprintf(fname,"%s/%s",picsdir,picname);
-//   else
-//     sprintf(fname,"%s/%s",gthemedir,picname);
-////   printf("\nfname is: %s\n", fname); 
-
-//   bitmap=load_bitmap(fname,p);
-//   if(bitmap) {
-//      masked_blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
-////      blit(bitmap, screen,0,0,x1+rx0,y1+ry0,x2,y2);
-//      destroy_bitmap(bitmap);
-//   }
-//}
 
 void draw_title(int fg, int bg) {
    if(strncmp(txtbx[B_BANR].box, "default", 7)==0) {
@@ -1227,6 +1269,7 @@ void draw_imgbx(int boxno) {
 	LOG(3,("IMGBOX #%d: %s\n",boxno,pathname));
 #endif
 	imgbx_bmp[boxno]=load_bitmap(pathname,p);
+//	printf("LOAD IMGBX_BMP:%d\n", boxno);
      }
       if(imgbx_bmp[boxno])
 	blit(imgbx_bmp[boxno], screen,0,0,imgbx[boxno].x+rx0,imgbx[boxno].y+ry0,imgbx[boxno].w,imgbx[boxno].h);
@@ -1247,7 +1290,9 @@ void draw_imgbx(int boxno) {
       LOG(3,("MASK: #%d: %s\n",boxno,pathname));
 #endif
       imgbx_mask[boxno]=load_bitmap(pathname,p);
+//      printf("IMGBX_MASK:%d\n",boxno);
       sa_setalphablendmode(imgbx_mask[boxno]);
+
       //#ifdef SDL_BLENDMODE_BLEND
       //      SDL_SetSurfaceBlendMode(imgbx_mask[boxno],SDL_BLENDMODE_BLEND);
       //#endif
@@ -1346,8 +1391,8 @@ void updir_safer(char *dirstr) {
    }
    strncpy(dirstr,c,sl);
    dirstr[sl+1]='\0';
-//   printf("start pos is %d, strlen is %d\n",sl,strlen(c));
-//   printf("new dir is %s\n",dirstr);
+//   printf("UPDIR_SAFER: start pos is %d, strlen is %d\n",sl,strlen(c));
+//   printf("UPDIR_SAFER: new dir is %s\n",dirstr);
 }
 
 int find_entry(char stletter, int startpos) {
@@ -1497,23 +1542,691 @@ int print_string_16x32(BITMAP *b, int x, int y, char *str, int fg, int bg, int s
  *  End special font section
  */
 
+void classic_loop() {
+   //   long w;
+   char type, newmenu[500], *ww, letsel;
+   char usemenu[25];
+   int keyp, index, slc, menuitems, por, tmpc;
+   int my, mp, entidx, pslc, zpos, jup, jdn, jbu, jlf, jrt, menf;
+   
+   jlf=jrt=jup=jdn=0;
+   jbu=1; por=0;
+
+// printf("xXx0: startdir:'%s'  basedir:'%s' len(startdir)=%d\n", startdir, basedir, strlen(startdir));
+   if(strlen(startdir)>0) {
+      strcpy(dirname, startdir);
+      sprintf(newmenu,"%s%c%sindex.menu",basedir,mysep, startdir);
+   } else {
+      dirname[0]=0;
+      sprintf(newmenu,"%s%c%s",basedir,mysep,menuname);
+//  printf("xXx1: newmenu:%s  basedir:%s  menuname:%s\n", newmenu, basedir, menuname);
+   }
+   
+   // value passed from grid.c (using startdir causes trouble)
+   if(strlen(passdir)>0) {
+      strcpy(dirname, passdir);
+      sprintf(newmenu,"%s%c%sindex.menu",basedir,mysep, passdir);
+      strcpy(passdir, "");
+   }
+   
+   zpos=mouse_z;
+   
+   slc=1; index=1; mp=0; 
+   draw_screen();
+
+   // Setup selection for new selection type
+   selection=create_bitmap(rc.mb_w,16);
+
+   rectfill(selection,0,0,rc.mb_w,16,makecol(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b));
+
+   //   rect(selection,0,0,rc.mb_w,16,makecol(255,255,255));
+   //   SDL_SetAlpha(selection, SDL_SRCALPHA, 128);
+   sa_setalpha(selection, 128);
+   
+   menuitems=load_menu(newmenu);
+
+   if(strlen(lastitem)>0) {
+      slc=index=find_menu_e(lastitem);
+   }
+
+   display_menu(index);
+   menu_hlight(index,slc);
+
+   clear_keybuf();
+   
+   /*   position_mouse(320,200); */
+   show_mouse(screen);
+   imenu.no_launch=0;
+   
+   if(joy_enable==1)
+     install_int(timercb,300);
+   
+   while(1) {
+      // SDL only,  rest() is the SDL equiv
+      //      SDL_WaitEvent(NULL);
+      if(cdclock!=1 && (jflag==0 && joy_enable==1))
+	rest(0);
+      my=mouse_y;
+      
+      /* START JOYSTICK SECTION */
+      
+      if ( joy_enable == 1 )
+	{
+	   if(jflag==0)
+	     poll_joystick();
+	   
+	   /* Joystick Up */
+	   if(joy[0].stick[0].axis[1].d1 && jflag==0) {
+#ifdef USESDL
+	      s2a_sim_keypress(KEY_UP);
+#else
+	      simulate_keypress(KEY_UP << 8);
+#endif
+	      jflag=1;
+	   }
+	   if(joy[0].stick[0].axis[1].d1==0) jup=0; 
+	   
+	   /* Joystick Down */
+	   if(joy[0].stick[0].axis[1].d2 && jflag==0) {
+#ifdef USESDL
+	      s2a_sim_keypress(KEY_DOWN);
+#else
+	      simulate_keypress(KEY_DOWN << 8);
+#endif
+	      jflag=1;
+	   }
+	   if(!joy[0].stick[0].axis[1].d2) jdn=0; 
+	   
+	   /* Joystick Left */
+	   if(joy[0].stick[0].axis[0].d1 && jflag==0) {
+#ifdef USESDL
+	      s2a_sim_keypress(KEY_BACKSPACE);
+#else
+	      simulate_keypress(KEY_BACKSPACE << 8);
+#endif
+	      jflag=1;
+	   }
+	   
+	   /* Joystick Right */
+	   if(joy[0].stick[0].axis[0].d2 && jflag==0) {
+#ifdef USESDL
+	      s2a_sim_keypress(KEY_ENTER);
+#else
+	      simulate_keypress(KEY_ENTER << 8);
+#endif
+	      jflag=1;
+	   }
+	   
+	   /* Joystick Button A or B */
+	   if(joy[0].button[0].b && jflag==0) {
+	      simulate_keypress(KEY_ENTER << 8);
+	      jflag=1;
+	   }
+	   
+	   if(joy[0].button[2].b && jflag==0) {
+	      simulate_keypress(KEY_ENTER << 8);
+	      jflag=1;
+	   } // PS4 (X) button
+	   
+	   if(joy[0].button[3].b && jflag==0) {
+	      simulate_keypress(KEY_BACKSPACE << 8);
+	      jflag=1;  
+	   } // PS4 (O) Button
+	   
+	   if(!joy[0].button[0].b && !joy[0].button[1].b 
+	      && !joy[0].button[2].b && !joy[0].button[3].b
+	      && !joy[0].stick[0].axis[1].d2 
+	      && !joy[0].stick[0].axis[1].d1
+	      && !joy[0].stick[0].axis[0].d2
+	      && !joy[0].stick[0].axis[0].d1) {
+	      SDL_Delay(10);
+	      jflag=0;
+	   }
+	}
+      /* END JOYSTICK SECTION */
+      
+      if (mouse_b & 1 && mouse_x > (rc.mb_x+rx0) && mouse_x < (rc.mb_x2+rx0) && my > (rc.mb_y+ry0) && my < (rc.mb_y2+ry0) && mp==0) {
+	 //	 entidx=(my-100)/16;
+	 entidx=(my-rc.mb_y+ry0-4)/16;
+	 if (entidx < (menuitems-index+1) )  {
+	    menu_uhlight(index,slc);
+	    pslc=slc;
+	    slc=entidx+index;
+	    menu_hlight(index,slc);
+	    /*	    printf("button pressed entry %d my:%d\n",entidx,my); */
+	    /* Mouse pressed */
+	    mp=1;
+	    /* If we click on the same thing twice, it's selected */
+	    if(pslc!=slc) por=0;
+	    /* This is kinda kludgy, but I don't want to rewrite a lot of
+	     * code right now */
+	    while (mouse_b & 1) {
+	       if(mouse_needs_poll() )
+		 poll_mouse();   // Needed for sdl_allegro
+	    }
+	    simulate_keypress(KEY_ENTER << 8);
+	 }
+      }
+      
+      if (mouse_b & 4 && mp==0) {
+	 /* Middle button simulates an enter key press */
+	 simulate_keypress(KEY_ENTER << 8);
+	 mp=1;
+      }
+      
+      /* Wheel support up */
+      if (mouse_z < zpos) {
+#ifdef USESDL
+	 s2a_sim_keypress(KEY_UP);
+#else
+	 simulate_keypress(KEY_UP << 8);
+#endif
+	 zpos=mouse_z;
+      }
+      
+      /* Wheel support down */
+      if (mouse_z > zpos) {
+#ifdef USESDL
+	 s2a_sim_keypress(KEY_DOWN);
+#else
+	 simulate_keypress(KEY_DOWN << 8);
+#endif
+	 zpos=mouse_z;
+      }
+      
+      if(!mouse_b) { mp=0; }
+      
+      /* Countdown clock */
+      if (cdclock == 1) {
+	 endtime = time(NULL);
+	 /* One Second Later */
+	 if(endtime > starttime + 0) {
+	    if(menu[slc].type == 'i'  || menu[slc].type == 's') {
+	       display_info(slc);
+	       por=1;
+	    }
+	    cdclock=0;  // will moving this out of the if fix the
+	    // bug?
+	 }
+      }
+      /* End Countdown clock */
+      
+      if(keypressed()) {
+	 keyp=readkey() >> 8; 
+	 
+	 if(keyp == KEY_BACKSPACE) {	 
+	    printf("=-=KEY_BACKSPACE\n");
+	 }
+	 
+	 //	 printf("key:%d--%d\n",keyp,KEY_DOWN);
+#ifdef DEBUG
+	 LOG(3,("keyp=%d\n",keyp,KEY_LEFT));
+#endif
+	 if(keyp==KEY_F2) {
+	    //	    run_setup("setup1");
+	    setup_go();
+	    //	    setup_test();
+	 }
+	 if(keyp==KEY_F11) {
+	    // Note, we probably need to destroy the previous window
+	    if(fullscr=='n') {
+	       set_gfx_mode(GFX_AUTODETECT_FULLSCREEN,usex,usey,0,0);
+	       fullscr='y';
+	    } else {
+	       set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
+	       fullscr='n';
+	    }
+	    restore_screen(index,slc);
+	 }
+	 if(keyp==KEY_DOWN) {
+	    /* Down Arrow */
+	    imenu.no_launch=0;
+	    cdclock=1; starttime=time(NULL);
+            if(por>0) rem_info_bar();
+	    por=0;
+	    menu_uhlight(index,slc);
+	    if(slc < menuitems)
+	      slc++;
+	    //	    if(slc>index+((rc.mb_h/rc.font_h)-1))
+	    if(slc>index+((rc.mb_h/txtbx[B_MENU].font_v)-1)) {
+	       index++;
+	       restore_menuback();
+	       display_menu(index);
+	    }
+#ifdef DEBUG
+	    LOG(3,("slc is %d index is %d\n",slc, index));
+	    LOG(3,("Type: %c",menu[slc].type));
+#endif
+	    menu_hlight(index,slc);
+	 }
+	 if(keyp==KEY_PGDN) {
+	    /* Page Down */
+	    imenu.no_launch=0;
+	    cdclock=1; starttime=time(NULL);
+            if(por>0) rem_info_bar();
+	    por=0;
+	    menu_uhlight(index,slc);
+	    slc=slc+8;
+	    index=index+8;
+	    if(slc > menuitems) {
+	       tmpc=(slc-menuitems);
+	       slc=slc-tmpc;
+	       index=index-tmpc;
+	    }
+	    
+	    restore_menuback();
+	    display_menu(index);
+	    
+#ifdef DEBUG
+	    LOG(3,("Type: %c",menu[slc].type));
+#endif
+	    menu_hlight(index,slc);
+	 }
+	 
+	 if(keyp==KEY_UP) {
+	    /* Up arrow */
+	    imenu.no_launch=0;
+	    cdclock=1; starttime=time(NULL);
+            if(por>0) rem_info_bar();
+	    por=0;
+	    menu_uhlight(index,slc);
+	    if(slc > 1)
+	      slc--;
+	    if(slc<index) {
+	       index--;
+	       restore_menuback();
+	       display_menu(index);
+	    }
+	    menu_hlight(index,slc);
+	 }
+	 /* HOME */
+	 if(keyp==KEY_HOME) {
+	    imenu.no_launch=0;
+	    menu_uhlight(index,slc);
+	    slc=index=1;
+	    restore_menuback();
+	    display_menu(index);
+	    menu_hlight(index,slc);
+	 }
+	 
+	 /* END */
+	 if(keyp==KEY_END) {
+	    imenu.no_launch=0;
+	    menu_uhlight(index,slc);
+	    slc=index=menulength;
+	    restore_menuback();
+	    display_menu(index);
+	    menu_hlight(index,slc);
+	 }
+	 
+	 /* Page UP */
+	 if(keyp==KEY_PGUP) {
+	    imenu.no_launch=0;
+	    cdclock=1; starttime=time(NULL);
+            if(por>0) rem_info_bar();
+	    por=0;
+	    menu_uhlight(index,slc);
+	    slc=slc-8;
+	    index=index-8;
+	    if(slc < 1) {
+	       slc=1;
+	       index=1;
+	    }
+	    /* This was added to prevent the crashing problem
+	     * which occured when index became negative.  I want
+	     * to keep an eye on this to make sure that slc is doing 
+	     * the right thing (ie nothing) when index gets reset to 1
+	     */
+	    if ( index < 1 )  index = 1; 
+	    
+	    restore_menuback();
+	    display_menu(index);
+	    
+#ifdef DEBUG
+	    LOG(3,("slc is %d index is %d\n",slc, index));
+	    LOG(3,("Type: %c",menu[slc].type));
+#endif
+	    menu_hlight(index,slc);
+	 }
+	 
+	 if(keyp==KEY_LEFT || keyp==KEY_BACKSPACE) {
+	    // hand left key as back, except at top level
+	    keyp=KEY_ESC;
+	    for(tmpc=0;tmpc<8;tmpc++){
+	       // if there is a back function in this menu
+	       // change to enter key and move menu to the
+	       // u back function
+	       if(menu[tmpc].type=='u') {
+		  keyp=KEY_ENTER;
+		  slc=tmpc;
+		  break;
+	       }
+	    }
+	 }
+	 
+	 
+	 if(keyp==KEY_ENTER || keyp==KEY_ENTER_PAD || keyp==KEY_RIGHT) {
+	    cdclock=0;
+	    type=menu[slc].type;
+#ifdef DEBUG
+	    LOG(3,("SLC was %d\n",slc));
+#endif
+	    if( type=='m' ) {
+#ifdef DEBUG
+	       LOG(3,("Loading File___%s\n",menu[slc].rom));
+#endif
+	       sprintf(newmenu, "%s/%s", dirname, menu[slc].rom);
+	       menuitems=load_menu(newmenu);
+	       index=1;slc=1;
+	       restore_menuback();
+               display_menu(index);
+               menu_hlight(index,slc);
+#ifdef USESDL
+	       s2a_flip(screen);  // update screen
+#endif
+	    }
+	    if( type=='d' ) {
+	       ww=menu[slc].rom;
+#ifdef DEBUG
+	       LOG(3,("Loading Directory___%s\n",menu[slc].rom));
+	       LOG(3,("dirname is %s\n",dirname));
+	       LOG(3,("romname is %s\n",ww));
+#endif
+	       /* strcat is very picky, I can only seem to get it to 
+		work if the first parameter is a static string, and the
+		second is dynamic or constant */
+	       
+	       sprintf(dirname,"%s%s%c",dirname,menu[slc].rom,mysep);
+	       sprintf(newmenu,"%s%c%sindex.menu",basedir,mysep,dirname);
+#ifdef DEBUG
+	       //	       sprintf(debugtxt,"dirname is now %s\n",newmenu);
+	       //	       debug(3,debugtxt);
+	       LOG(3,("dirname is now %s\n",newmenu));
+#endif
+	       menuitems=load_menu(newmenu);
+	       //	       printf("menuitems is %d\n",menuitems);
+	       index=1;slc=1;
+//printf("!!a  imenu.autosel=%d\n", imenu.autosel);
+//printf("!!a    dirname=%s\n", newmenu);
+	       if(menuitems==2 && imenu.autosel==1) {
+		  slc=2;
+		  simulate_keypress(KEY_ENTER << 8);
+	       }
+               restore_menuback();
+	       display_menu(index);
+               menu_hlight(index,slc);
+	    }
+	    
+	    if( type=='u' && keyp != KEY_RIGHT ) {
+	       sprintf(usemenu,"index.menu");
+	       
+	       if(strlen(dirname)==0) {
+		  if(imenu.mode==0) {   // Old way
+		     printf("BACK\n");
+		     break;
+		  }
+	       }
+	       if(strcmp(imenu.sysbase,dirname)==0 && imenu.mode>1) {
+		  imenu.mode--;
+//printf("!!c (-)  imenu.mode=%d  (emufe)\n", imenu.mode);
+//printf("!!2 (-)  imenu.rc=%s  (emufe)\n", imenu.rc);
+		  if(imenu.mode==1) {
+		     sprintf(imenu.rc, "%s%cemufe.rc", basedir, mysep);
+//printf("!!3 (-) new rc would be:%s\n", imenu.rc);
+		     if(fileio_file_exists(imenu.rc)) {
+			load_rc(imenu.rc);
+			if(rc.mode != MODE_CLASSIC) {
+//			   quit=1;
+			   break;
+			}
+		     } else {
+			printf("I can't load: %s\n", imenu.rc);
+		     }
+		  }
+	       } else {
+		  updir(dirname);
+		  if(strcmp(imenu.sysbase,dirname)==0 && imenu.mode>1) {
+		     strcpy(usemenu,imenu.lastmenu);
+//printf("!!-    usemenu='%s'\n", usemenu);
+		  }
+	       }
+	       
+	       sprintf(newmenu,"%s%c%s%s",basedir,mysep,dirname,usemenu);
+	       //		  strcat(newmenu, usemenu);
+#ifdef DEBUG
+	       LOG(3,("newmenu %s   dirname:%s\n",newmenu,dirname));
+#endif
+//printf("!!-  newmenu='%s'   dirname='%s'\n", newmenu, dirname);
+	       menuitems=load_menu(newmenu);
+	       
+	       index=1;slc=1;
+//printf("??b  imenu.autosel=%d\n", imenu.autosel);
+	       if(menuitems==2 && imenu.autosel==1) {
+		  simulate_keypress(KEY_ENTER << 8);
+	       }
+	       // printf("\nstill here\n");
+	       restore_menuback();
+               display_menu(index);
+               menu_hlight(index,slc);
+//printf("STARTDIR TRACKER: (emufe) '%s'\n", startdir);
+//printf("   ------------>: dirname '%s'\n", dirname);
+	    }
+	    
+	    if( type=='F' ) {
+	       strcpy(fname, commands[slc]);
+	       file_select_ex("Select a Directory", fname, NULL, 80, 520, 350);
+	       sprintf(commands[slc],"%s=%s",menu[slc].rom, fname);
+	       write_option(slc);
+	       sprintf(commands[slc],"%s",fname);
+	       snprintf(menu[slc].name, 39, "%s                               ", fname);
+	       restore_menuback();
+	       display_menu(index);
+	       menu_hlight(index,slc);
+	    }
+	    //	    if( type=='N' )
+	    //	      setup_go();
+	    if( type=='s' ) {
+	       if(por==0) {
+		  display_info(slc);
+		  por=1;
+	       } else {
+		  write_option(slc);
+		  sprintf(newmenu, "%s/%s", dirname, lmenus[slc]);
+		  menuitems=load_menu(newmenu);
+		  index=1;slc=1;
+		  restore_menuback();
+		  display_menu(index);
+		  menu_hlight(index,slc);
+	       }
+	    }
+	    
+	    if( type=='i' ) {
+	       if(por==0) {
+		  display_info(slc);
+		  por=1;
+	       } else {
+		  if(imenu.mode>0) {
+		     sprintf(imenu.game,"%s%s",dirname,menu[slc].rom);
+		     // launch code goes here
+		     if(imenu.no_launch!=1) {
+			//  Looks like this works for shutting down and restarting gfx mode
+			// had to move this post process_cmd:
+			//			SDL_QuitSubSystem(SDL_INIT_VIDEO); // shutdown gfx
+			module_exec();
+			//			SDL_InitSubSystem(SDL_INIT_VIDEO);// restart gfx
+			//			setgfxmode(); // restart gfx
+			restore_screen(index,slc);
+			title(-1,-1,imenu.title);
+			// restore the keyboard image if possible
+			// 
+			//			do_imgbox(B_KEYBOARD,picsdir,imenu.emulator);
+			do_imgbox_scale(B_KEYBOARD,picsdir,imenu.emulator);
+			cdclock=1; starttime=time(NULL);
+			imenu.no_launch=1;
+			//			por=0;
+		     }
+		     
+		  } else {
+		     printf("%s%s\n",dirname,menu[slc].rom);
+		     break;
+		  }
+	       }
+	    }
+	    if( type=='a' ) {
+	       if(imenu.mode>=1) {
+		  // might need to do a basename here.
+		  strcpy(imenu.sysbase,dirname);
+		  
+		  // New profile support 
+		  if ( menu[slc].rom[strlen(menu[slc].rom)-2] == '#' ) {
+		     imenu.profile=menu[slc].rom[strlen(menu[slc].rom)-1] -48;
+		     printf("found a profile: %d\n",imenu.profile);
+		     hss_index(imenu.emulator,menu[slc].rom,0,'#');
+		  } else  {
+		     imenu.profile=0;
+		     strcpy(imenu.emulator,menu[slc].rom);
+		  }
+		  //		  printf("imenu.sysbase: %s\n",imenu.sysbase);
+		  //		  printf("imenu.system: %s\n",imenu.system);
+		  //		  printf("imenu.emulator: %s\n",imenu.emulator);
+		  //		  sprintf(imenu.emulator,"%s%s",dirname,roms[slc]);
+		  imenu.mode++;
+//printf("!!b (+)  imenu.mode=%d   (emufe)\n", imenu.mode);
+		  // Expand this!!!
+		  //		  sprintf(imenu.menu,"%s%s.menu",dirname,roms[slc]);
+		  
+		  // per emulator rc file load happens here
+		  sprintf(imenu.rc,"%s%c%setc%c%s.rc",basedir,mysep,dirname,mysep,imenu.emulator);
+		  
+		  // New 2019, RC files not needed for simple
+		  // console systems
+		  // We might want to always run set_generic_rc
+		  // and overlay with rc file
+		  // 
+		  imenu.systype=SYS_GENERIC;  // set to default
+		  if(fileio_file_exists(imenu.rc)) {
+		     load_rc(imenu.rc);
+		  } else {
+		     LOG(3,("Warning, no .rc file, using default settings\n"));
+		     set_generic_rc();
+		     //		     sprintf(imenu.kbname,"%s",imenu.emulator);
+		  }
+		  
+		  // HERE IS THE BUG
+		  //		  sprintf(imenu.lastmenu,"%s.menu",menu[slc].rom);
+		  strcpy(imenu.lastmenu,menuname);
+		  
+                  if(rc.mode == MODE_GRID) {
+//printf("!! Switch to MODE_GRID with imenu.mode=%d\n", imenu.mode);
+		     strcpy(imenu.lastmenu,menuname);
+		     break;
+                  }
+		  // Try to load kb_emulator.pcx
+		  //		  do_imgbox(B_KEYBOARD,picsdir,imenu.emulator);
+		  do_imgbox_scale(B_KEYBOARD,picsdir,imenu.emulator);
+		  
+		  sprintf(imenu.menu,"%s%c%s%s",basedir,mysep,dirname,menuname);
+		  
+		  menuitems=load_menu(imenu.menu);
+		  index=1;slc=1;
+//printf("??c  imenu.autosel=%d\n", imenu.autosel);
+		  if(menuitems==2 && imenu.autosel==1) {
+		     slc=2;
+		     simulate_keypress(KEY_ENTER << 8);
+		  }
+		  restore_menuback();
+		  display_menu(index);
+		  menu_hlight(index,slc);
+#ifdef USESDL
+		  s2a_flip(screen);  // update screen
+#endif
+	       }
+	       // Old way
+	       if(imenu.mode==0) {
+		  printf("%s%s\n",dirname,menu[slc].rom);
+		  break;
+	       }
+	    }
+	 }
+	 if(keyp==KEY_F12) {
+	    if ( joy_enable == 1 ) 
+	      joy_enable=0;
+	    else
+	      joy_enable=1;
+	 }
+	 if(keyp==KEY_ESC) {
+	    printf("QUIT\n");
+	    if(imenu.mode>0 && imenu.noexec==1)
+	      mod_writebm(1);
+	    break;
+	 }
+	 
+	 //#ifdef USESDL
+         if((keyp >=KEY_0 && keyp <= KEY_9 ) || (keyp >= KEY_A && keyp <= KEY_Z)) {
+	    /* If you press a number or letter, it will be processed
+	     * here */
+	    if(keyp <= KEY_9 && keyp >= KEY_0) {
+	       letsel=keyp;
+	       /* number */
+	    }
+	    if(keyp <= KEY_Z && keyp >= KEY_A) {
+	       letsel=keyp-32;
+	       /* letter */
+	    }
+//#else
+//	    if(keyp > 0 && keyp < 37 ) {
+//	       /* If you press a number or letter, it will be processed
+//		* here */
+//	       if(keyp < 37 && keyp > 26) {
+//		  letsel=keyp + 21;
+//		  /* number */
+//	       }
+//	       if(keyp < 27 && keyp > 0) {
+//		  letsel=keyp + 64;
+//		  /* letter */
+//	       }
+//#endif
+	    menf=find_entry(letsel,slc);
+	    if(menf > 0) {
+	       /* redraw menu, this is the most dangerous part of 
+		* the code */
+	       cdclock=1; starttime=time(NULL);
+	       if(por>0) rem_info_bar();
+	       por=0;
+	       menu_uhlight(index,slc);
+	       if(menf>slc) {
+		  index=index+(menf-slc);
+	       } else {
+		  index=menf;
+	       }
+	       slc=menf;
+	       restore_menuback();
+	       display_menu(index);
+	       menu_hlight(index,slc);
+	    } // if (menf > 0) 
+	 } /* End if(key_p >= KEY_0) */
+      } /* end if(keypressed() */
+   } /* while */
+} /* end classic_loop(); */
+
+
 int main(int argc, char* argv[]) {
    long w;
-   char type, newmenu[500], *ww, picname[180], letsel, usemenu[25];
-   int keyp, index, slc, menuitems, stln, por, tmpc;
-   int my, mp, entidx, pslc, zpos, jlf, jrt, jup, jdn, jbu, menf;
-   int aidx;
-
+//   char type, newmenu[500], *ww, picname[180], letsel, usemenu[25];
+//   int keyp, index, slc, menuitems, stln, por, tmpc;
+//   int my, mp, entidx, pslc, zpos, jlf, jrt, jup, jdn, jbu, menf;
+   int aidx, currmode;
+   
    imenu.noexec=imenu.autosel=0;
    imenu.systype=SYS_GENERIC;
    usembmap=0; usedbmap=0;
-   por=0;
-   jlf=jrt=jup=jdn=0;
-   jbu=1;
-
-//   printf("DMM: SDL_BYTEORDER %d\n",SDL_BYTEORDER);
-//   printf("DMM: SDL_BIG_ENDIAN %d\n",SDL_BIG_ENDIAN);
-//   printf("DMM: SDL_LITTLE_ENDIAN %d\n",SDL_LITTLE_ENDIAN);
+//   por=0;
+//   jlf=jrt=jup=jdn=0;
+//   jbu=1;
+   
+   //   printf("DMM: SDL_BYTEORDER %d\n",SDL_BYTEORDER);
+   //   printf("DMM: SDL_BIG_ENDIAN %d\n",SDL_BIG_ENDIAN);
+   //   printf("DMM: SDL_LITTLE_ENDIAN %d\n",SDL_LITTLE_ENDIAN);
 
    strcpy(cdroot,"");
    if(getenv("CDROOT"))
@@ -1524,8 +2237,9 @@ int main(int argc, char* argv[]) {
    strcpy(startdir,"");
    strcpy(lastitem,"");
    imenu.mode=0;
+//printf("!!X imenu.mode start value=%d\n", imenu.mode);
    if(argc > 1 && strcmp(argv[1],"-n")==0 ) {
-//      printf("using NEW cmd line processing\n");
+      //      printf("using NEW cmd line processing\n");
       for(aidx=0;aidx<argc;aidx++) {
 	 if(strcmp("-i",argv[aidx])==0) imenu.mode=1;
 	 if(strcmp("-ac",argv[aidx])==0) imenu.autosel=1;
@@ -1553,12 +2267,12 @@ int main(int argc, char* argv[]) {
 	    strcat(startdir,"/");
 	    strcpy(dirname,imenu.sysbase); // for now
 	    emu_basename(lastitem,imenu.game);
-//	    printf ("setting dirname to %s\n",startdir);
+	    //	    printf ("setting dirname to %s\n",startdir);
 	 }
 	 if(strcmp("-c",argv[aidx])==0) {
 	    abs_dirname(cdroot,argv[0]);
 	    find_datadir(basedir,argv[0]);  //recheck this
-//	    printf("basedir is now %s\n",basedir);
+	    //	    printf("basedir is now %s\n",basedir);
 	 }
 	 if(strcmp("-test",argv[aidx])==0) {
 	    //system:emulator:sysbase:game
@@ -1572,617 +2286,66 @@ int main(int argc, char* argv[]) {
 	 }
       }
 #ifdef DEBUG
-//      sprintf(debugtxt,"rx0=%d   ry0=%d\n",rx0,ry0);
-//      debug(3,debugtxt);
       LOG(3,("rx0=%d   ry0=%d\n",rx0,ry0));
-//      sprintf(debugtxt,"Use CDROOT: %s\n",cdroot); 
-//      debug(1,debugtxt);
       LOG(1,("Use CDROOT: %s\n",cdroot)); 
 #endif
+      cfg_load();
       init();
    } else {
       if(argc > 1) strcpy(rcfilename,argv[1]);
+      cfg_load();
       init();
       /* new code
-    * only dirname[0]=0; is original */
+       * only dirname[0]=0; is original */
       if(argc > 2) strcpy(startdir,argv[2]);
       if(argc > 3) strcpy(lastitem,argv[3]);
    }
-      
-   if(strlen(startdir)>0) {
-      strcpy(dirname, startdir);
-      sprintf(newmenu,"%s%c%sindex.menu",basedir,mysep, startdir);
-   } else {
-      dirname[0]=0;
-      sprintf(newmenu,"%s%c%s",basedir,mysep,menuname);
-   }
-   zpos=mouse_z;
+//printf("!!Y imenu.mode after args value=%d\n", imenu.mode);   
+   rc.startmode = rc.mode;
    
-   slc=1; index=1; mp=0; 
-   draw_screen();
-   // Setup selection for new selection type
-   selection=create_bitmap(rc.mb_w,16);
-   rectfill(selection,0,0,rc.mb_w,16,makecol(imenu.col[0].bg.r,imenu.col[0].bg.g,imenu.col[0].bg.b));
-//   rect(selection,0,0,rc.mb_w,16,makecol(255,255,255));
-//   SDL_SetAlpha(selection, SDL_SRCALPHA, 128);
-   sa_setalpha(selection, 128);
+   // New Loop to allow switching between CLASSIC and GRID
+   while(1) {	
+      currmode = rc.mode;
 
-   menuitems=load_menu(newmenu);
-   if(strlen(lastitem)>0) {
-      slc=index=find_menu_e(lastitem);
+      if(currmode == MODE_CLASSIC) {
+	 printf("RUN CLASSIC LOOP\n");
+	classic_loop();
+      }
+      
+      if(currmode == MODE_GRID) {
+	 printf("RUN GRID LOOP\n");
+	grid_loop();
+      }
+      
+      if(currmode == rc.mode) {
+	 printf("No Mode Switch, just exit\n");
+	 break;
+      }
+      
+      if(rc.mode==MODE_GRID) {
+	 // maybe we should wrap the above in MODE_CLASSIC
+	 // need to switch to mode grid here and call appropriate things
+	 printf("attempting to switch to grid\n");
+//printf("!! switch to grid in main loop  imenu.mode=%d\n", imenu.mode);
+//printf("!! switch with startdir='%s'\n", startdir);
+	 // switch back here
+      }
+
+      if(rc.mode==MODE_CLASSIC) {
+	 // maybe we should wrap the above in MODE_CLASSIC
+	 // need to switch to mode grid here and call appropriate things
+	 printf("attempting to switch to classic\n");
+//printf("!! switch to classic in main loop  imenu.mode=%d\n", imenu.mode);
+//printf("!! switch with startdir='%s'\n", startdir);
+	 // switch back here
+	 grid_cleanup();
+	 draw_screen();
+      }
    }
-   display_menu(index);
-   menu_hlight(index,slc);
+   
+   ef_shutdown();
 
-   clear_keybuf();
+} // main()
 
-/*   position_mouse(320,200); */
-   show_mouse(screen);
-   imenu.no_launch=0;
-
-   if(joy_enable==1)
-     install_int(timercb,300);
-   while(1) {
-      // SDL only,  rest() is the SDL equiv
-//      SDL_WaitEvent(NULL);
-      if(cdclock!=1 && (jflag==0 && joy_enable==1))
-	rest(0);
-      my=mouse_y;
-
-      /* START JOYSTICK SECTION */
-
-      if ( joy_enable == 1 )
-	{
-	   poll_joystick();
-
-	   /* Joystick Up */
-	   if(joy[0].stick[0].axis[1].d1 && jflag==0) {
-#ifdef USESDL
-	      s2a_sim_keypress(KEY_UP);
-#else
-	      simulate_keypress(KEY_UP << 8);
-#endif
-	      jflag=1;
-	   }
-	   if(joy[0].stick[0].axis[1].d1==0) jup=0; 
-
-	   /* Joystick Down */
-	   if(joy[0].stick[0].axis[1].d2 && jflag==0) {
-#ifdef USESDL
-	      s2a_sim_keypress(KEY_DOWN);
-#else
-	      simulate_keypress(KEY_DOWN << 8);
-#endif
-	      jflag=1;
-	   }
-	   if(!joy[0].stick[0].axis[1].d2) jdn=0; 
-
-	   /* Joystick Button A or B */
-	   if(joy[0].button[0].b && jflag==0) {
-	      simulate_keypress(KEY_ENTER << 8);
-	      jflag=1;
-	   }
-
-	   if(joy[0].button[1].b && jflag==0) {
-	      simulate_keypress(KEY_ENTER << 8);
-	      jflag=1;
-	   }
-	   if(!joy[0].button[0].b && !joy[0].button[1].b 
-	       && !joy[0].stick[0].axis[1].d2 
-	      && !joy[0].stick[0].axis[1].d1) jflag=0;
-	}
-      /* END JOYSTICK SECTION */
-
-      if (mouse_b & 1 && mouse_x > (rc.mb_x+rx0) && mouse_x < (rc.mb_x2+rx0) && my > (rc.mb_y+ry0) && my < (rc.mb_y2+ry0) && mp==0) {
-//	 entidx=(my-100)/16;
-	 entidx=(my-rc.mb_y+ry0-4)/16;
-	 if (entidx < (menuitems-index+1) )  {
-	    menu_uhlight(index,slc);
-	    pslc=slc;
-	    slc=entidx+index;
-	    menu_hlight(index,slc);
-/*	    printf("button pressed entry %d my:%d\n",entidx,my); */
-	 /* Mouse pressed */
-	    mp=1;
-	    /* If we click on the same thing twice, it's selected */
-	    if(pslc!=slc) por=0;
-	    /* This is kinda kludgy, but I don't want to rewrite a lot of
-	     * code right now */
-	    while (mouse_b & 1) 
-	      {
-		 if(mouse_needs_poll() )
-		   poll_mouse();   // Needed for sdl_allegro
-	      }
-	    simulate_keypress(KEY_ENTER << 8);
-	 }
-      }
-
-      if (mouse_b & 4 && mp==0) {
-	 /* Middle button simulates an enter key press */
-	   simulate_keypress(KEY_ENTER << 8);
-	   mp=1;
-      }
-
-      /* Wheel support up */
-      if (mouse_z < zpos) {
-#ifdef USESDL
-	 s2a_sim_keypress(KEY_UP);
-#else
-	 simulate_keypress(KEY_UP << 8);
-#endif
-	 zpos=mouse_z;
-      }
-
-      /* Wheel support down */
-      if (mouse_z > zpos) {
-#ifdef USESDL
-	 s2a_sim_keypress(KEY_DOWN);
-#else
-	 simulate_keypress(KEY_DOWN << 8);
-#endif
-	 zpos=mouse_z;
-      }
-
-      if(!mouse_b) { mp=0; }
-
-      /* Countdown clock */
-      if (cdclock == 1) {
-	 endtime = time(NULL);
-	 /* One Second Later */
-	 if(endtime > starttime + 0) {
-	      if(menu[slc].type == 'i'  || menu[slc].type == 's') {
-		 display_info(slc);
-		 por=1;
-	      }
-	      cdclock=0;  // will moving this out of the if fix the
-	                  // bug?
-	   }
-      }
-      /* End Countdown clock */
-
-      if(keypressed()) {
-	 keyp=readkey() >> 8; 
-//	 printf("key:%d--%d\n",keyp,KEY_DOWN);
-#ifdef DEBUG
-//	 printf(debugtxt,"keyp=%d\n",keyp,KEY_DOWN);
-//	 debug(3,debugtxt);
-	 LOG(3,("keyp=%d\n",keyp,KEY_DOWN));
-#endif
-	 if(keyp==KEY_F2) {
-//	    run_setup("setup1");
-	    setup_go();
-//	    setup_test();
-	 }
-	 if(keyp==KEY_F11) {
-	    if(fullscr=='n') {
-	       set_gfx_mode(GFX_AUTODETECT_FULLSCREEN,usex,usey,0,0);
-	       fullscr='y';
-	    } else {
-	       set_gfx_mode(GFX_AUTODETECT_WINDOWED,usex,usey,0,0);
-	       fullscr='n';
-	    }
-	    restore_screen(index,slc);
-	 }
-	 if(keyp==KEY_DOWN) {
-	    /* Down Arrow */
-	    imenu.no_launch=0;
-	    cdclock=1; starttime=time(NULL);
-            if(por>0) rem_info_bar();
-	    por=0;
-	    menu_uhlight(index,slc);
-	    if(slc < menuitems)
-	      slc++;
-//	    if(slc>index+((rc.mb_h/rc.font_h)-1))
-	    if(slc>index+((rc.mb_h/txtbx[B_MENU].font_v)-1)) {
-	       index++;
-	       restore_menuback();
-	       display_menu(index);
-	    }
-#ifdef DEBUG
-//	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
-//	    debug(3,debugtxt);
-	    LOG(3,("slc is %d index is %d\n",slc, index));
-//	    sprintf(debugtxt,"Type: %c",menu[slc].type);
-//	    debug(3,debugtxt);
-	    LOG(3,("Type: %c",menu[slc].type));
-#endif
-	    menu_hlight(index,slc);
-	 }
-	 if(keyp==KEY_PGDN) {
-	    /* Page Down */
-	    imenu.no_launch=0;
-	    cdclock=1; starttime=time(NULL);
-            if(por>0) rem_info_bar();
-	    por=0;
-	    menu_uhlight(index,slc);
-	    slc=slc+8;
-	    index=index+8;
-	    if(slc > menuitems)
-	      {
-		 tmpc=(slc-menuitems);
-		 slc=slc-tmpc;
-		 index=index-tmpc;
-	      }
-
-	    restore_menuback();
-	    display_menu(index);
-
-#ifdef DEBUG
-//	    sprintf(debugtxt,"Type: %c",menu[slc].type);
-//	    debug(3,debugtxt);
-	    LOG(3,("Type: %c",menu[slc].type));
-#endif
-	    menu_hlight(index,slc);
-	 }
-
-	 if(keyp==KEY_UP) {
-	    /* Up arrow */
-	    imenu.no_launch=0;
-	    cdclock=1; starttime=time(NULL);
-            if(por>0) rem_info_bar();
-	    por=0;
-	    menu_uhlight(index,slc);
-	    if(slc > 1)
-	      slc--;
-	    if(slc<index) {
-	       index--;
-	       restore_menuback();
-	       display_menu(index);
-	    }
-	    menu_hlight(index,slc);
-	 }
-	 /* HOME */
-	 if(keyp==KEY_HOME) {
-	    imenu.no_launch=0;
-	    menu_uhlight(index,slc);
-	    slc=index=1;
-	    restore_menuback();
-	    display_menu(index);
-	    menu_hlight(index,slc);
-	 }
-
-	 /* END */
-	 if(keyp==KEY_END) {
-	    imenu.no_launch=0;
-	    menu_uhlight(index,slc);
-	    slc=index=menulength;
-	    restore_menuback();
-	    display_menu(index);
-	    menu_hlight(index,slc);
-	 }
-
-	 /* Page UP */
-	 if(keyp==KEY_PGUP) {
-	    imenu.no_launch=0;
-	    cdclock=1; starttime=time(NULL);
-            if(por>0) rem_info_bar();
-	    por=0;
-	    menu_uhlight(index,slc);
-	    slc=slc-8;
-	    index=index-8;
-	    if(slc < 1) 
-	      {
-		 slc=1;
-		 index=1;
-	      }
-	    /* This was added to prevent the crashing problem
-	     * which occured when index became negative.  I want
-	     * to keep an eye on this to make sure that slc is doing 
-	     * the right thing (ie nothing) when index gets reset to 1
-	     */
-	    if ( index < 1 )  index = 1; 
-
-	    restore_menuback();
-	    display_menu(index);
-
-#ifdef DEBUG
-//	    sprintf(debugtxt,"slc is %d index is %d\n",slc, index);
-//	    debug(3,debugtxt);
-	    LOG(3,("slc is %d index is %d\n",slc, index));
-//	    sprintf(debugtxt,"Type: %c",menu[slc].type);
-//	    debug(3,debugtxt);
-	    LOG(3,("Type: %c",menu[slc].type));
-#endif
-	    menu_hlight(index,slc);
-	 }
-
-	 if(keyp==KEY_LEFT) {
-	    // hand left key as back, except at top level
-	    keyp=KEY_ESC;
-	    for(tmpc=0;tmpc<8;tmpc++){
-	       // if there is a back function in this menu
-	       // change to enter key and move menu to the
-	       // u back function
-	       if(menu[tmpc].type=='u') {
-		  keyp=KEY_ENTER;
-		  slc=tmpc;
-		  break;
-	       }
-	    }
-	 }
-
-
-	 if(keyp==KEY_ENTER || keyp==KEY_ENTER_PAD || keyp==KEY_RIGHT) {
-	    cdclock=0;
-	    type=menu[slc].type;
-#ifdef DEBUG
-//	    sprintf(debugtxt,"SLC was %d\n",slc);
-//	    debug(3,debugtxt);
-	    LOG(3,("SLC was %d\n",slc));
-#endif
-	    if( type=='m' ) {
-#ifdef DEBUG
-//	       sprintf(debugtxt,"Loading File___%s\n",menu[slc].rom);
-//	       debug(3,debugtxt);
-	       LOG(3,("Loading File___%s\n",menu[slc].rom));
-#endif
-	       sprintf(newmenu, "%s/%s", dirname, menu[slc].rom);
-	       menuitems=load_menu(newmenu);
-	       index=1;slc=1;
-	       restore_menuback();
-               display_menu(index);
-               menu_hlight(index,slc);
-	    }
-	    if( type=='d' ) {
-	       ww=menu[slc].rom;
-#ifdef DEBUG
-//	       sprintf(debugtxt,"Loading Directory___%s\n",menu[slc].rom);
-//	       debug(3,debugtxt);
-	       LOG(3,("Loading Directory___%s\n",menu[slc].rom));
-//	       sprintf(debugtxt,"dirname is %s\n",dirname);
-//	       debug(3,debugtxt);
-	       LOG(3,("dirname is %s\n",dirname));
-//	       sprintf(debugtxt,"romname is %s\n",ww);
-//	       debug(3,debugtxt);
-	       LOG(3,("romname is %s\n",ww));
-#endif
-	       /* strcat is very picky, I can only seem to get it to 
-		work if the first parameter is a static string, and the
-		second is dynamic or constant */
-
-	       sprintf(dirname,"%s%s%c",dirname,menu[slc].rom,mysep);
-	       sprintf(newmenu,"%s%c%sindex.menu",basedir,mysep,dirname);
-#ifdef DEBUG
-//	       sprintf(debugtxt,"dirname is now %s\n",newmenu);
-//	       debug(3,debugtxt);
-	       LOG(3,("dirname is now %s\n",newmenu));
-#endif
-	       menuitems=load_menu(newmenu);
-//	       printf("menuitems is %d\n",menuitems);
-	       index=1;slc=1;
-	       if(menuitems==2 && imenu.autosel==1) {
-		  slc=2;
-		  simulate_keypress(KEY_ENTER << 8);
-	       }
-               restore_menuback();
-	       display_menu(index);
-               menu_hlight(index,slc);
-	    }
-
-	    if( type=='u' && keyp != KEY_RIGHT ) {
-	       sprintf(usemenu,"index.menu");
-
-	       if(strlen(dirname)==0) {
-		  if(imenu.mode==0) {   // Old way
-		     printf("BACK\n");
-		     break;
-		  }
-	       } 
-	       if(strcmp(imenu.sysbase,dirname)==0 && imenu.mode>1) {
-		  imenu.mode--;
-	       } else {
-		  updir(dirname);
-		  if(strcmp(imenu.sysbase,dirname)==0 && imenu.mode>1) {
-		     strcpy(usemenu,imenu.lastmenu);
-		  }
-	       }
-
-	       sprintf(newmenu,"%s%c%s%s",basedir,mysep,dirname,usemenu);
-//		  strcat(newmenu, usemenu);
-#ifdef DEBUG
-//	       sprintf(debugtxt,"newmenu %s   dirname:%s\n",newmenu,dirname);
-//	       debug(3,debugtxt);
-	       LOG(3,("newmenu %s   dirname:%s\n",newmenu,dirname));
-#endif
-		  menuitems=load_menu(newmenu);
-
-	       index=1;slc=1;
-	       if(menuitems==2 && imenu.autosel==1) {
-		  simulate_keypress(KEY_ENTER << 8);
-	       }
-	       // printf("\nstill here\n");
-	       restore_menuback();
-               display_menu(index);
-               menu_hlight(index,slc);
-	    }
-	    if( type=='F' )
-	      {
-		 strcpy(fname, commands[slc]);
-		 file_select_ex("Select a Directory", fname, NULL, 80, 520, 350);
-		 sprintf(commands[slc],"%s=%s",menu[slc].rom, fname);
-		 write_option(slc);
-		 sprintf(commands[slc],"%s",fname);
-		 snprintf(menu[slc].name, 39, "%s                               ", fname);
-		 restore_menuback();
-		 display_menu(index);
-		 menu_hlight(index,slc);
-	      }
-//	    if( type=='N' )
-//	      setup_go();
-	    if( type=='s' )
-	      {
-	       if(por==0) {
-		  display_info(slc);
-		  por=1;
-	       } else {
-		  write_option(slc);
-/*		  printf("wrote options\n"); */
-		  sprintf(newmenu, "%s/%s", dirname, lmenus[slc]);
-/*		  printf("loading menu %s\n",newmenu); */
-		  menuitems=load_menu(newmenu);
-/*		  printf("loaded menu %s\n",lmenus[slc]); */
-		  index=1;slc=1;
-		  restore_menuback();
-		  display_menu(index);
-		  menu_hlight(index,slc);
-	       }
-	    }
-
-	    if( type=='i' ) {
-	       if(por==0) {
-		  display_info(slc);
-		  por=1;
-	       } else {
-		  if(imenu.mode>0) {
-		     sprintf(imenu.game,"%s%s",dirname,menu[slc].rom);
-		     // launch code goes here
-		     if(imenu.no_launch!=1) {
-			//  Looks like this works for shutting down and restarting gfx mode
-			// had to move this post process_cmd:
-//			SDL_QuitSubSystem(SDL_INIT_VIDEO); // shutdown gfx
-			module_exec();
-//			SDL_InitSubSystem(SDL_INIT_VIDEO);// restart gfx
-//			setgfxmode(); // restart gfx
-			restore_screen(index,slc);
-//			title(320,40,imenu.title);
-			title(-1,-1,imenu.title);
-			// restore the keyboard image if possible
-			do_imgbox(B_KEYBOARD,picsdir,imenu.emulator);
-			cdclock=1; starttime=time(NULL);
-			imenu.no_launch=1;
-//			por=0;
-		     }
-
-		  } else {
-		     printf("%s%s\n",dirname,menu[slc].rom);
-		     break;
-		  }
-	       }
-	    }
-	    if( type=='a' ) {
-	       if(imenu.mode>=1) {
-		  // might need to do a basename here.
-		  strcpy(imenu.sysbase,dirname);
-
-		  // New profile support 
-		  if ( menu[slc].rom[strlen(menu[slc].rom)-2] == '#' ) {
-		     imenu.profile=menu[slc].rom[strlen(menu[slc].rom)-1] -48;
-		     printf("found a profile: %d\n",imenu.profile);
-		     hss_index(imenu.emulator,menu[slc].rom,0,'#');
-		  } else  {
-		     imenu.profile=0;
-		     strcpy(imenu.emulator,menu[slc].rom);
-		  }
-//		  printf("imenu.sysbase: %s\n",imenu.sysbase);
-//		  printf("imenu.system: %s\n",imenu.system);
-//		  printf("imenu.emulator: %s\n",imenu.emulator);
-//		  sprintf(imenu.emulator,"%s%s",dirname,roms[slc]);
-		  imenu.mode++;
-		  // Expand this!!!
-//		  sprintf(imenu.menu,"%s%s.menu",dirname,roms[slc]);
-
-		  // per emulator rc file load happens here
-		  sprintf(imenu.rc,"%s%c%setc%c%s.rc",basedir,mysep,dirname,mysep,imenu.emulator);
-
-		  // New 2019, RC files not needed for simple
-		  // console systems
-		  // We might want to always run set_generic_rc
-		  // and overlay with rc file
-
-		  imenu.systype=SYS_GENERIC;  // set to default
-		  if(fileio_file_exists(imenu.rc)) {
-		     load_rc(imenu.rc);
-		  } else {
-		     LOG(3,("Warning, no .rc file, using default settings\n"));
-		     set_generic_rc();
-//		     sprintf(imenu.kbname,"%s",imenu.emulator);
-		  }
-		  // Try to load kb_emulator.pcx
-		  do_imgbox(B_KEYBOARD,picsdir,imenu.emulator);
-
-		  sprintf(imenu.menu,"%s%c%s%s",basedir,mysep,dirname,menuname);
-		  // HERE IS THE BUG
-//		  sprintf(imenu.lastmenu,"%s.menu",menu[slc].rom);
-		  strcpy(imenu.lastmenu,menuname);
-
-		  menuitems=load_menu(imenu.menu);
-		  index=1;slc=1;
-		  if(menuitems==2 && imenu.autosel==1) {
-		     slc=2;
-		     simulate_keypress(KEY_ENTER << 8);
-		  }
-		  restore_menuback();
-		  display_menu(index);
-		  menu_hlight(index,slc);
-	       }
-	       // Old way
-	       if(imenu.mode==0) {
-		  printf("%s%s\n",dirname,menu[slc].rom);
-		  break;
-	       }
-	    }
-	 }
-	 if(keyp==KEY_F12) {
-	    if ( joy_enable == 1 ) 
-	      joy_enable=0;
-	    else
-	      joy_enable=1;
-	 }
-	 if(keyp==KEY_ESC) {
-	    printf("QUIT\n");
-	    if(imenu.mode>0 && imenu.noexec==1)
-	      mod_writebm(1);
-	    break;
-	 }
-
-#ifdef USESDL
-         if((keyp >=KEY_0 && keyp <= KEY_9 ) || (keyp >= KEY_A && keyp <= KEY_Z)) {
-	    /* If you press a number or letter, it will be processed
-	     * here */
-	    if(keyp <= KEY_9 && keyp >= KEY_0) {
-	       letsel=keyp;
-	       /* number */
-	    }
-	    if(keyp <= KEY_Z && keyp >= KEY_A) {
-	       letsel=keyp-32;
-	       /* letter */
-	    }
-#else
-         if(keyp > 0 && keyp < 37 ) {
-	    /* If you press a number or letter, it will be processed
-	     * here */
-	    if(keyp < 37 && keyp > 26) {
-	       letsel=keyp + 21;
-	       /* number */
-	    }
-	    if(keyp < 27 && keyp > 0) {
-	       letsel=keyp + 64;
-	       /* letter */
-	    }
-#endif
-	    menf=find_entry(letsel,slc);
-	    if(menf > 0) {
-	       /* redraw menu, this is the most dangerous part of 
-		* the code */
-	       cdclock=1; starttime=time(NULL);
-	       if(por>0) rem_info_bar();
-	       por=0;
-	       menu_uhlight(index,slc);
-	       if(menf>slc) {
-		  index=index+(menf-slc);
-	       } else {
-		  index=menf;
-	       }
-	       slc=menf;
-	       restore_menuback();
-	       display_menu(index);
-	       menu_hlight(index,slc);
-	    }
-	 }
-      } /* End if keypressed */
-   } /* while */
-
-  ef_shutdown();
-}
-
+   
 END_OF_MAIN();

@@ -17,6 +17,44 @@
    char mysep='/';
 #endif
 
+void trim (char *dest, char *src) {
+
+   // copied this from online, what could go wrong?
+   
+   if (!src || !dest)
+     return;
+   
+   int len = strlen (src);
+   
+   if (!len) {
+      *dest = '\0';
+      return;
+   }
+   
+   char *ptr = src + len - 1;
+   
+   // remove trailing whitespace
+   while (ptr > src) {
+      if (!isspace (*ptr))
+	break;
+      ptr--;
+   }
+   
+   ptr++;
+   
+   char *q;
+   // remove leading whitespace
+   for (q = src; (q < ptr && isspace (*q)); q++)
+     ;
+   
+   while (q < ptr)
+     *dest++ = *q++;
+   
+   *dest = '\0';
+}
+
+
+
 int dfp_index(char* rstr, char *ostr, int idx, char del) {
    // Alternative to strtok
    // For some reason, can't use hss_index in here.

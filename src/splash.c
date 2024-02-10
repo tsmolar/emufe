@@ -36,7 +36,7 @@ void find_bindir(char *ddir, char *bin) {
 void set_bg() {
 //    Set background 
    
-   char fname[90];
+   char fname[120];
    PALETTE p; 
    get_palette(p);
    sprintf(fname,"%s/pics/emusplash.pcx",basedir);

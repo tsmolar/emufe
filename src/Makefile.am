@@ -47,9 +47,10 @@
 #endif
 
 bin_PROGRAMS=emufe splash
-emufe_SOURCES=emufe.c rcfile.c dfilepath.c modules.c fileio.c setup.c
+emufe_SOURCES=emufe.c rcfile.c dfilepath.c modules.c fileio.c setup.c grid.c config.c
 emufe_LDADD=../widget/libfont.a ../widget/libwidget.a
 splash_SOURCES=splash.c dfilepath.c
+AM_CFLAGS=-DINITSET
 
 if USESDL
 #bl_SOURCES+=gfx.c
@@ -61,7 +62,9 @@ INCLUDES = -I../sdlallegro -I../widget
 endif
 
 if USESDL2
-AM_CFLAGS=-DUSESDL
+#AM_CFLAGS=-DUSESDL -DDEBUG
+AM_CFLAGS=-DUSESDL -DAMDGFX
+#AM_CFLAGS=-DUSESDL
 emufe_LDADD+=../sdlallegro/libsdlallegro.a ../widget/libfont.a
 splash_LDADD=../sdlallegro/libsdlallegro.a ../widget/libfont.a
 INCLUDES = -I../sdlallegro -I../widget
@@ -74,4 +77,8 @@ AM_CXXFLAGS=-DUSEALLEGRO -DUSEGFX $(allegro_CFLAGS)
 emufe_LDADD+=../widget/libfont.a ../widget/libwidget.a $(allegro_LIBS)
 splash_LDADD=../widget/libfont.a ../widget/libwidget.a $(allegro_LIBS)
 INCLUDES = -I../widget
+endif
+
+if FREETYPE
+AM_CFLAGS+=-DUSETTF
 endif

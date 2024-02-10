@@ -248,7 +248,7 @@ int customcfg() {
       else
 	sprintf(icfgfile,"%s%c%setc%c%s",basedir,mysep,imenu.sysbase,mysep,emuopt.cfgfile);
    } else {
-printf("!!!CUST 2b: %s\n",emuopt.cfgfile);
+//printf("!!!CUST 2b: %s\n",emuopt.cfgfile);
       strcpy(icfgfile,emuopt.cfgfile);
       strcpy(ocfgfile,"");
       cmd_scanvar(ocfgfile,"%CFGFILE%");
@@ -1397,6 +1397,7 @@ int mod_getsystem(char *msys, char *msysbase) {
 }
 
 int mod_searchbin(char *btype,char *fqfile, const char *filen) {
+   // emuopt.fqrom is usually being set by this function
    int i;
    char temps[50];
    
@@ -1409,7 +1410,6 @@ int mod_searchbin(char *btype,char *fqfile, const char *filen) {
 	 else
 	   sprintf(temps,"%s.%s",filen,cmdtbl[i].cmdopt);
 	 dfixsep2(fqfile,temps,1);
-	 //	 printf("trying: %s\n",emuopt.fqrom);
 	 if(file_exists(fqfile)) {
 	    strcpy(btype,cmdtbl[i].envpat);
 	    break;
@@ -1426,12 +1426,12 @@ int mod_exportvars() {
 //   printf("In mod_export()\n");
    for(i=0;i<cmdtidx;i++) {
       if(strcmp(cmdtbl[i].optname,"exp")==0) {
-//	 printf("found an exp!\n");
 	 if(env_cmp(cmdtbl[i].envpat) || strcmp(cmdtbl[i].envpat,"*")==0) {
 	    hss_index(var,cmdtbl[i].cmdopt,0,'=');
 	    hss_index(val1,cmdtbl[i].cmdopt,1,'=');
 	    strcpy(value,"");
 	    cmd_scanvar(value,val1);
+	    printf("#mod_exportvars: setting equiv of below:\nexport %s=%s\n", var, value);
 //	    printf("env_setxp: %s=%s\n",var,value);
 #ifndef WIN32
 	    // how do you do this in windows?
@@ -1506,8 +1506,8 @@ int process_cmd(char *cmd) {
       setup_go();
    }
 
+   // This is depricated by new setup, can remove the code
    if(strcmp(cmd,"CMDsetup2019")==0) {
-      printf("CMD Setup2019\n");      
       //      run_setup("setup1");
       sprintf(tmpp,"%s%csetup2019%csetup.sh",basedir,mysep,mysep);
 //      printf("2019: tmpp is %s\n",tmpp); 
@@ -1698,12 +1698,14 @@ int sysmodule_generic() {
    env_clear();
    mod_loadpergame();
    mod_loadsyscfg();
+
 //   sprintf(emuopt.fqrom,"%s%c%s.bin",basedir,mysep,imenu.game);
 //   if(file_exists(emuopt.fqrom))
 //     printf("IT exists\n");
 //   else     
 //     printf("No existo\n");
    mod_getbintype(emuopt.bintype);
+
 #ifdef DEBUG
    LOG(1, ("bintype: %s fqrom: %s\n",emuopt.bintype, emuopt.fqrom));
 #endif
@@ -1740,10 +1742,11 @@ int module_exec() {
    char cddir[80];
    
    emuopt.exec=0;
-   
+
 //  printf("OO:mod_getsystem(%s,%s)\n",imenu.system,imenu.sysbase);
    mod_getsystem(imenu.system,imenu.sysbase);
    emu_basename(emuopt.uqrom,imenu.game);
+
 #ifdef WIN32
    strcpy(emuopt.osname,"win32");
 #else
@@ -1768,13 +1771,15 @@ int module_exec() {
    // Check for certain systems, else execute generic
    
    // I don't know what happened to cmd processing, but let's try adding it here
+
    if(strncmp(imenu.game,"CMD",3)==0) {
       strcpy(emuopt.bintype,"cmd");
       strcpy(emuopt.uqrom,imenu.game);
       ransys=1;
    }  
    
-   strcpy(emuopt.diskloc,"n/a");      
+   strcpy(emuopt.diskloc,"n/a");
+
    // New for 2019, no more hard-coding of system type,  put system 
    // type in the etc/*.rc file for each emulator
    if(imenu.systype==1) {
@@ -1803,6 +1808,7 @@ int module_exec() {
    if(ransys==0) {
       sysmodule_generic();
    }
+
 //   build_cmd0();
    if(strcmp(emuopt.bintype,"cmd")==0) {
       printf("PROCESSCOMMAND: %s\n",emuopt.uqrom);

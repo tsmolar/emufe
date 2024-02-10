@@ -65,6 +65,11 @@ int load_defaults() {
     strcpy(gthemedir, "na");
     strcpy(tfontbmp, "na");
 //    strcpy(imenu.kbname, "na");
+
+    rc.mode=MODE_CLASSIC;
+    rc.gridres=0;
+    rc.startmode=rc.mode;
+   
     rc.banr.sh.enable='N';
     rc.banr.bg.enable='N';
     cachefont=0;
@@ -78,11 +83,12 @@ int load_defaults() {
     imenu.col[1].bg.r=imenu.col[1].bg.g=imenu.col[1].bg.b=128;
     imenu.col[1].sh.r=imenu.col[1].sh.g=imenu.col[1].sh.b=0;
     imenu.col[3].fg.r=imenu.col[3].fg.g=imenu.col[3].fg.b=128;
+    rc.font_sox=rc.font_soy=1;
     // box settings -- new 3.0
     rc.pb_x=364;  rc.pb_y=96;  rc.pb_w=244;  rc.pb_h=152;
     rc.pb_x2=rc.pb_x+rc.pb_w;
     rc.pb_y2=rc.pb_y+rc.pb_h;
-    
+
     rc.mb_x=32;  rc.mb_y=96;  rc.mb_w=316;  rc.mb_h=152;
     rc.mb_x2=rc.mb_x+rc.mb_w;
     rc.mb_y2=rc.mb_y+rc.mb_h;
@@ -110,6 +116,21 @@ int load_defaults() {
       txtbx[i].font_h=rc.font_h;
       txtbx[i].font_v=rc.font_h;
    }
+   // Grid Defaults
+   rc.g_grid_x=600;  rc.g_grid_y=88;  rc.g_grid_w=6;  rc.g_grid_h=4;
+   rc.grid_x=rc.g_grid_x;  rc.grid_y=rc.g_grid_y;
+   rc.grid_w=rc.g_grid_w;  rc.grid_h=rc.g_grid_h;
+   rc.g_img_w=300;  rc.g_img_h=300;  rc.g_icon_w=320;  rc.g_icon_h=320;
+   rc.img_w=rc.g_img_w;  rc.img_h=rc.g_img_h;
+   rc.icon_w=rc.g_icon_w;  rc.icon_h=rc.g_icon_h;
+   rc.hdr_x=1280; rc.hdr_y=21;
+   rc.gridfontsize=40;
+
+   // new icons
+   // ideal 1080p settings
+   rc.icon_power_x=24;  rc.icon_joy_x=96;  rc.icon_gear_x=2472;
+   rc.topicons_y=24;  rc.topicons_w=64;  rc.topicons_h=64;
+
 }
 
 int hextod(char b, char l) {
@@ -166,7 +187,8 @@ int set_generic_rc() {
 
    sprintf(tmpstr,"%s%c%s%cpics",basedir,mysep,dirname,mysep);
    strcpy(picsdir,tmpstr);   // PICSDIR
-
+//printf("-- sgr: Set picsdir to '%s'\n", picsdir);
+   
    sprintf(tmpstr, "%s%cfonts", basedir, mysep);
    strcpy(fontdir,tmpstr);   // FONTDIR
 
@@ -193,11 +215,13 @@ int set_generic_rc() {
 int load_rc(char *filen) {
    /* The rc file should be in the same directory as emufe */
    FILE *fp;
-   char line[256], *key, *v, *value, tmpstr[120];
+   char line[256], tmpstr[120];
+   char key[50], value[255];
    char h1, h2;
-   int m;
+   int m, i;
    char *envfull, *envjoy, emuhome[220];
 
+// printf("-- lrc:  started with file:'%s'\n", filen);
    if(imenu.mode>=1) {
       env_get(tmpstr,"EMUFEjoy");
       if ( tmpstr[0] == 'n') 
@@ -215,16 +239,28 @@ int load_rc(char *filen) {
       exit(1);
    }
 
+   rc.mode=rc.startmode;
+   
    while(!feof(fp)) {
       fgets(line,255,fp);
       if( line[0] != '#' ) {
 	 m=strlen(line);
 	 /* Strip LF */ 
 	 line[m-1]=0;
-	 v=(char *)strchr(line, '=');
-	 value=(char *)strchr(v, v[1]);
-	 v[0]=0;
-	 key=line;
+
+	 // The new way,  key and value need to be defined statically
+	 // or have memory allocated before hand
+	 // like "char key[55], value[200]
+	 // This will allow blank lines in the rc file, the old method won't
+	 hss_index(key,line,0,'=');
+	 hss_index(value,line,1,'=');
+
+// The old way, this requires key, value, and v to be initialized
+// dynamically  like   "char *v, *key, *value;"
+//	 v=(char *)strchr(line, '=');
+//	 dvalue=(char *)strchr(v, v[1]);
+//	 v[0]=0;
+//	 dkey=line;
 #ifdef DEBUG
 	 LOG(3, ("* Processing Directive: %s\n", key));
 #endif
@@ -251,6 +287,14 @@ int load_rc(char *filen) {
 	    if (value[0] == 'y' || value[0] == 'Y' )
 	      cachefont=1;
 	 }
+	 if(strcmp(key, "FNTSHDOFFSET")==0) {
+	    hss_index(tmpstr,value,0,',');
+	    rc.font_sox=atoi(tmpstr);
+	    hss_index(tmpstr,value,1,',');
+	    rc.font_soy=atoi(tmpstr);
+	 }
+
+
 	 if(strncmp(key, "GTHEMEDIR", 9)==0) {
 //	    emuhome=getenv("CDROOT");
 //	    if(!emuhome) {
@@ -266,7 +310,6 @@ int load_rc(char *filen) {
 	    }
 //	    sprintf(gthemedir,"%s/%s",emuhome,value);
 	    sprintf(gthemedir,"%s%c%s",emuhome,mysep,value);
-//	    printf("gthemedir=%s\n",gthemedir);
 	 }
 	 if(strncmp(key, "THEME", 5)==0) {
 //	    strcpy(theme,value);
@@ -277,7 +320,9 @@ int load_rc(char *filen) {
 	    LOG(5, ("ff2:%s\n",theme));
 #endif
 //	    abs_dirname(theme,value);
-	    load_rc(theme);
+	    if(fileio_file_exists(theme)) {
+	       load_rc(theme);
+	    }
 	 }
 	 if(strncmp(key, "BACKGROUND", 10)==0) {
 	    strcpy(bgpic,value);
@@ -293,7 +338,6 @@ int load_rc(char *filen) {
 	 }
 	 if(strncmp(key, "MENUFONT", 7)==0) {
 	    strcpy(txtbx[B_MENU].font,value);
-//	    printf("GLOADED font: %s\n", txtbx[B_MENU].font);
 	 }
 	 if(strncmp(key, "MENUFTYP", 7)==0) {
 	    txtbx[B_MENU].fonttype=atoi(value);
@@ -322,13 +366,91 @@ int load_rc(char *filen) {
 	    LOG(1, ("DLOADED font: %s  type:%d  size: %d X %d\n", txtbx[B_SETUP].font,txtbx[B_SETUP].fonttype,txtbx[B_SETUP].font_w,txtbx[B_SETUP].font_h));
 	 }
 
+         if(strncmp(key, "MENUMODE", 8)==0) {
+	    if(strncmp(value, "grid", 4)==0)
+	      rc.mode=MODE_GRID;
+	    if(strncmp(value, "ribbon", 6)==0)
+	      rc.mode=MODE_RIBBON;
+	    if(strncmp(value, "classic", 7)==0)
+	      rc.mode=MODE_CLASSIC;
+         }
 
 	 if(strncmp(key, "RESOLUTION", 10)==0) {
 	   hss_index(tmpstr,value,0,'x');
 	   usex=atoi(tmpstr);
 	   hss_index(tmpstr,value,1,'x');
 	   usey=atoi(tmpstr);
-	}
+	 }
+
+	 // New Grid Parameters
+	 if(strncmp(key, "GRIDRES", 7)==0) {
+	    // This is the vertical res the grid parameters
+	    // Are presented in, used to compute scaling
+	    rc.gridres=atoi(value);
+	 }
+	 if(strncmp(key, "GRIDIMG", 7)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    rc.g_img_w = rc.img_w = atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    rc.g_img_h = rc.img_h = atoi(tmpstr);
+	 }
+
+	 if(strncmp(key, "GRIDHDR", 7)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    rc.g_hdr_x = rc.hdr_x = atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    rc.g_hdr_y = rc.hdr_y = atoi(tmpstr);
+	   }
+	 
+	 if(strncmp(key, "GRIDICON", 8)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    rc.g_icon_w = rc.icon_w = atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    rc.g_icon_h = rc.icon_h = atoi(tmpstr);
+	 }
+
+	 if(strncmp(key, "GRIDXY", 6)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    rc.g_grid_x = rc.grid_x = atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    rc.g_grid_y = rc.grid_y = atoi(tmpstr);
+	 }
+
+	 if(strncmp(key, "GRIDWH", 6)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    rc.g_grid_w = rc.grid_w = atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    rc.g_grid_h = rc.grid_h = atoi(tmpstr);
+	 }
+
+	 if(strncmp(key, "GRIDFONTSIZE", 12)==0) {
+	    rc.gridfontsize=atoi(value);
+	 }
+	 // New grid Parameters 2024
+	 if(strncmp(key, "TOPICONWH", 9)==0) {
+	    hss_index(tmpstr,value,0,'x');
+	    rc.topicons_w = atoi(tmpstr);
+	    hss_index(tmpstr,value,1,'x');
+	    rc.topicons_h = atoi(tmpstr);
+	 }	 
+	 
+	 if(strncmp(key, "TOPICONY", 8)==0) {
+	    rc.topicons_y=atoi(value);
+	 }
+
+	 if(strncmp(key, "ICON_POWER_X", 12)==0) {
+	    rc.icon_power_x=atoi(value);
+	 }
+
+	 if(strncmp(key, "ICON_JOY_X", 10)==0) {
+	    rc.icon_joy_x=atoi(value);
+	 }
+	 
+	 if(strncmp(key, "ICON_GEAR_X", 11)==0) {
+	    rc.icon_gear_x=atoi(value);
+	 }
+	 // End Grid Parameters
+	 
 	 if(strncmp(key, "MENUXY", 6)==0) {
 	    hss_index(tmpstr,value,0,',');
 	    rc.mb_x=atoi(tmpstr);
@@ -404,6 +526,9 @@ int load_rc(char *filen) {
 	 if(strncmp(key, "B_BOXSCAN_BM", 12)==0) {
 	    strcpy(imgbx[B_BOXSCAN].imgname,value);
 	 }
+	 if(strcmp(key, "B_BOXSCAN_MK")==0) {
+	    strcpy(imgbx[B_BOXSCAN].mask,value);
+	 }
 	 if(strncmp(key, "B_BOXSCAN_MG", 12)==0) {
 	    // new, margins!
 	    imgbx[B_BOXSCAN].mgn=atoi(value);
@@ -457,13 +582,27 @@ int load_rc(char *filen) {
 	   imgbx[B_KEYBOARD].x2=imgbx[B_KEYBOARD].x+imgbx[B_KEYBOARD].w;
 	   imgbx[B_KEYBOARD].y2=imgbx[B_KEYBOARD].y+imgbx[B_KEYBOARD].h;
 	 }
-	 if(strncmp(key, "B_KEYBOARD_BG", 13)==0) {
+	 if(strcmp(key, "B_KEYBOARD_BG")==0) {
 	    imgbx[B_KEYBOARD].r=hextod(value[0],value[1]);
 	    imgbx[B_KEYBOARD].g=hextod(value[2],value[3]);
 	    imgbx[B_KEYBOARD].b=hextod(value[4],value[5]);
 	 }
-	 if(strncmp(key, "B_KEYBOARD_BM", 13)==0) {
+	 if(strcmp(key, "B_KEYBOARD_BM")==0) {
 	    strcpy(imgbx[B_KEYBOARD].imgname,value);
+	 }
+	 if(strcmp(key, "B_KEYBOARD_MK")==0) {
+	    strcpy(imgbx[B_KEYBOARD].mask,value);
+	 }
+	 if(strcmp(key, "B_KEYBOARD_MM")==0) {
+	    if(strcmp(value,"none")==0)
+	      imgbx[B_KEYBOARD].masktype=0;
+	    if(strcmp(value,"bitmap")==0)
+	      imgbx[B_KEYBOARD].masktype=1;
+	    if(strcmp(value,"bars")==0)
+	      imgbx[B_KEYBOARD].masktype=2;
+#ifdef DEBUG
+	    LOG(4, ("dbg: Masktype:%s %d\n",value,imgbx[B_KEYBOARD].masktype));
+#endif
 	 }
 
 	 if(strncmp(key, "B_SSHOT1_XY",12)==0) {
@@ -606,7 +745,6 @@ int load_rc(char *filen) {
 	 }
 	 if(strncmp(key, "DESCFONT", 7)==0) {
 	    strcpy(txtbx[B_DESC].font,value);
-//	    printf("GLOADED font: %s\n", txtbx[B_DESC].font);
 	 }
 	 if(strncmp(key, "DESCFTYP", 7)==0) {
 	    txtbx[B_DESC].fonttype=atoi(value);
@@ -640,13 +778,11 @@ int load_rc(char *filen) {
 	    imenu.col[1].fg.r=hextod(value[0],value[1]);
 	    imenu.col[1].fg.g=hextod(value[2],value[3]);
 	    imenu.col[1].fg.b=hextod(value[4],value[5]);
-/*	    printf("textbgg=%d %d %d\n",imenu.col[1].fg.r, imenu.col[1].fg.g, imenu.col[1].fg.b);  */
 	 }
 	 if(strncmp(key, "MENUHLFG", 8)==0) {
 	    imenu.col[0].fg.r=hextod(value[0],value[1]);
 	    imenu.col[0].fg.g=hextod(value[2],value[3]);
 	    imenu.col[0].fg.b=hextod(value[4],value[5]);
-/*	    printf("textbgg=%d %d %d\n",imenu.col[0].fg.r, imenu.col[0].fg.g, imenu.col[0].fg.b); */
 	 }
 	 if(strncmp(key, "MENUHLBG", 8)==0) {
 	    imenu.col[0].bg.r=hextod(value[0],value[1]);
@@ -668,20 +804,20 @@ int load_rc(char *filen) {
 	    descbgg=hextod(value[2],value[3]);
 	    descbgb=hextod(value[4],value[5]);
 	 }
-//	 printf("k: %s = %s \n",key,value);
+
 	 if(strncmp(key, "BANRFG", 6)==0) {
 	    rc.banr.fg.r=hextod(value[0],value[1]);
 	    rc.banr.fg.g=hextod(value[2],value[3]);
 	    rc.banr.fg.b=hextod(value[4],value[5]);
-//	    printf("rc.banr.fg.=%d %d %d\n",rc.banr.fg.r, rc.banr.fg.g, rc.banr.fg.b); 
 	 }
+	 
 	 if(strncmp(key, "BANRSH", 6)==0) {
 	    rc.banr.sh.r=hextod(value[0],value[1]);
 	    rc.banr.sh.g=hextod(value[2],value[3]);
 	    rc.banr.sh.b=hextod(value[4],value[5]);
 	    rc.banr.sh.enable='Y';
-//	    printf("rc.banr.sh.=%d %d %d\n",rc.banr.sh.r, rc.banr.sh.g, rc.banr.sh.b); 
 	 }
+	 
 	 if(strncmp(key, "BANRBG", 6)==0) {
 	    rc.banr.bg.r=hextod(value[0],value[1]);
 	    rc.banr.bg.g=hextod(value[2],value[3]);
@@ -762,4 +898,39 @@ int load_rc(char *filen) {
    if(strncmp(gthemedir, "na", 2) != 0)
      strcpy(fontdir, gthemedir);
    LOG(3, ("$$ fontdir is %s  g:%s\n",fontdir,gthemedir));
+   
+   if(rc.gridres != usey && rc.gridres > 0) {
+//      printf("XX gridres:%d\n", rc.gridres);
+//      printf("Resolution no match  res=%d  gridres=%d\n",usey, rc.gridres);
+//      printf("before:%d\n", rc.img_w);
+      rc.g_img_w = rc.img_w = scale_calc(rc.gridres, usey, rc.img_w);
+//      printf("after:%d\n", rc.img_w);
+      // this is getting scaled twice,
+      // either prevent that or put a scaled flag in rc.
+      rc.g_img_h = rc.img_h = scale_calc(rc.gridres, usey, rc.img_h);
+
+      rc.g_icon_w = rc.icon_w = scale_calc(rc.gridres, usey, rc.icon_w);
+
+      rc.g_icon_h = rc.icon_h = scale_calc(rc.gridres, usey, rc.icon_h);
+      rc.g_grid_x = rc.grid_x = scale_calc(rc.gridres, usey, rc.grid_x);
+      rc.g_grid_y = rc.grid_y = scale_calc(rc.gridres, usey, rc.grid_y);
+      rc.g_hdr_x = rc.hdr_x = scale_calc(rc.gridres, usey, rc.hdr_x);
+      rc.g_hdr_y = rc.hdr_y = scale_calc(rc.gridres, usey, rc.hdr_y);
+      rc.gridfontsize = scale_calc(rc.gridres, usey, rc.gridfontsize);
+      for(i=4;i<7;i++) {
+	 if(imgbx[i].enabled==1) {
+	    imgbx[i].x = scale_calc(rc.gridres, usey, imgbx[i].x);
+	    imgbx[i].y = scale_calc(rc.gridres, usey, imgbx[i].y);
+	    imgbx[i].w = scale_calc(rc.gridres, usey, imgbx[i].w);
+	    imgbx[i].h = scale_calc(rc.gridres, usey, imgbx[i].h);
+	 }
+      }
+      rc.icon_power_x = scale_calc(rc.gridres, usey, rc.icon_power_x);
+      rc.icon_joy_x = scale_calc(rc.gridres, usey, rc.icon_joy_x);
+      rc.icon_gear_x = scale_calc(rc.gridres, usey, rc.icon_gear_x);
+      rc.topicons_y = scale_calc(rc.gridres, usey, rc.topicons_y);
+      rc.topicons_w = scale_calc(rc.gridres, usey, rc.topicons_w);
+      rc.topicons_h = scale_calc(rc.gridres, usey, rc.topicons_h);
+      rc.gridres=0;
+   }
 }
