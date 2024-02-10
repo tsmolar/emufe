@@ -4,7 +4,9 @@
 #include<SDL.h>
 #include"sdl_allegro.h"
 
-#define SDL_ALLEGRO_VERS_C "0.7.00"
+#define SDL_ALLEGRO_VERS_C "0.7.11"
+// 0.7.11 - Allow SDL RenderFlags with SA_RENDERFLAGS
+// 0.7.10 - enable joystick hat polling
 
 SDL_PixelFormat *sdlpixfmt;
 SDL_Surface *screen;
@@ -14,20 +16,15 @@ SDL_Texture *TXscreen;
 SDL_Renderer *sdlRenderer;
 #endif
 int sa_depth;
+int Suc;
 char sdldriver[20];
 char sa_win_title[256]; 
-#ifdef ZAURUS
-int zcomp=0;
-#endif
-//#ifdef ZAURUS
-//int zcomp=0;
-//#endif
-//extern int num_joysticks;
+int SA_RENDERFLAGS=0;
 
 void sa_version_info() {
 #ifdef SDL1
    const SDL_version * v = SDL_Linked_Version();
-   
+
    printf("SDL compile-time version: %d.%d.%d\n",SDL_MAJOR_VERSION,SDL_MINOR_VERSION,SDL_PATCHLEVEL);
    printf("SDL run-time version: %d.%d.%d\n",v->major,v->minor,v->patch);
    printf("SDL/Allegro Library Version %s\n",SDL_ALLEGRO_VERS_C);
@@ -214,14 +211,15 @@ int allegro_init() {
    printf("this is now set to 0 by default because there is more overhead\n");
    printf("for old SDL style programs to do screen updates.\n");
 #endif
-#ifdef ZAURUS
-   // Aparently, only the bvdd SDL suffers this problem
-   if(strcmp(sdldriver,"bvdd")==0) {
-      zcomp=1;
-      printf("Enabling touchscreen compensation\n");
-   }
-#endif
-//   By default, update rects will be done automatically
+//#ifdef ZAURUS
+//   // Aparently, only the bvdd SDL suffers this problem
+//   if(strcmp(sdldriver,"bvdd")==0) {
+//      zcomp=1;
+//      printf("Enabling touchscreen compensation\n");
+//   }
+//#endif
+
+   //   By default, update rects will be done automatically
    atexit(SDL_Quit);
    return rv;
 }
@@ -260,8 +258,8 @@ void set_keyboard_rate(int delay, int repeat) {
 void simulate_keypress(int key) {
    SDL_Event event;
 //   SDL_KeyboardEvent keyevent;
-//   printf("GSK:%d\n",key); 
-    
+//   printf("GSK:%d\n",key);
+
    event.type=SDL_KEYDOWN;
    event.key.type=SDL_KEYDOWN;
    event.key.state=SDL_PRESSED;
@@ -281,9 +279,9 @@ void s2a_sim_keypress(Uint32 key) {
 #ifdef SDL2
    SDL_Event event;
    int rkey;
-   
+
    // Since I'm having issues with the up/down arrow mapping
-   switch(key) {	
+   switch(key) {
     case KEY_DOWN:
       rkey=273;
       break;
@@ -467,10 +465,7 @@ int poll_mouse() {
    SDL_PumpEvents();
    SDL_GetMouseState(&mouse_x,&mouse_y);
    int count, i;
-//#ifdef ZAURUS
-//   if(zcomp==1)
-//     mouse_y=mouse_y+33+(mouse_y/80);
-//#endif
+
    // These should be bitwise!
    if(SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(1))
      mouse_b=1;
@@ -608,17 +603,19 @@ int s2a_flip(SDL_Surface* mysurface) {
 #endif
 #ifdef SDL2
    SDL_Rect frect;
-   
+
    frect.x=0;
    frect.y=0;
    frect.w=screen->w;
    frect.h=screen->h;
-   
+
    SDL_UpdateTexture(TXscreen, NULL, mysurface->pixels, mysurface->pitch);
 //   SDL_RenderClear(sdlRenderer);
    SDL_RenderCopy(sdlRenderer,TXscreen,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
    SDLALOG(2, ("s2a_flip() -> Render Present!\n"));
+   Suc++;
+//   printf("updating rect! flip (%d)  (0,0 W,H)\n",Suc);
 #endif
    return(0);
 }
@@ -629,19 +626,23 @@ int s2a_updaterect(SDL_Surface* mysurface, Sint32 x, Sint32 y, Sint32 w, Sint32 
 #endif
 #ifdef SDL2
    SDL_Rect frect;
-   SDL_Texture *mytexture; 
- 
+//   SDL_Texture *mytexture;
+
    frect.x=x;
    frect.y=y;
    frect.w=w;
    frect.h=h;
-   
-   mytexture=SDL_CreateTextureFromSurface(sdlRenderer, mysurface);
-//   SDL_RenderClear(sdlRenderer);  
-   SDL_RenderCopy(sdlRenderer,mytexture,&frect,&frect);
+
+   SDL_UpdateTexture(TXscreen, NULL, mysurface->pixels, mysurface->pitch);
+//   mytexture=SDL_CreateTextureFromSurface(sdlRenderer, mysurface);
+//   SDL_RenderClear(sdlRenderer);
+//   SDL_RenderCopy(sdlRenderer,mytexture,&frect,&frect);
+   SDL_RenderCopy(sdlRenderer,TXscreen,&frect,&frect);
    SDL_RenderPresent(sdlRenderer);
+   Suc++;
+//   printf("updating rect! (%d)  (%d,%d %d,%d)\n",Suc,x,y,w,h);
    SDLALOG(2, ("s2a_updaterect() Render Present\n"));
-#endif 
+#endif
 
    return(0);
 }
@@ -663,7 +664,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
     case GFX_AUTODETECT:
       sdlflag=SDL_WINDOW_FULLSCREEN; break;
     case GFX_AUTODETECT_FULLSCREEN:
-      sdlflag=SDL_WINDOW_FULLSCREEN; break;
+      sdlflag=SDL_WINDOW_FULLSCREEN_DESKTOP; break;
 #else
     case GFX_AUTODETECT_WINDOWED:
       sdlflag=SDL_ANYFORMAT|SDL_DOUBLEBUF; break;
@@ -680,7 +681,9 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 
 #ifdef SDL2
    // need to define SDL_Window
-  //   SDL_InitSubSystem(SDL_INIT_VIDEO);	
+  SDL_DestroyRenderer(sdlRenderer);
+  SDL_DestroyWindow(sdlWindow);
+  //   SDL_InitSubSystem(SDL_INIT_VIDEO);
    if(sdlflag==SDL_WINDOW_FULLSCREEN_DESKTOP) {
       if (!(sdlWindow = SDL_CreateWindow(sa_win_title,SDL_WINDOWPOS_UNDEFINED,
 				SDL_WINDOWPOS_UNDEFINED,0,0,sdlflag)))
@@ -691,7 +694,16 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 	retval=1;
    }
 
-   sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+   // New SA_RENDERFLAGS is a global variable that is now passed here
+   // Values are 0 or the following values or'd together
+   //   SDL_RENDERER_SOFTWARE
+   //   SDL_RENDERER_ACCELERATED
+   //   SDL_RENDERER_PRESENTVSYNC  -  Warning this will enforce 60fps
+   //                                 and may slow your code
+   //   SDL_RENDERER_TARGETTEXTURE
+
+   //   sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+   sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SA_RENDERFLAGS);
    if(sdlRenderer == NULL) {
       /* Handle problem */
       fprintf(stderr, "%s\n", SDL_GetError());
@@ -704,7 +716,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    SDL_RenderPresent(sdlRenderer); // like SDL Flip?
    SDLALOG(2, ("set_gfx_mode() Render Present! \n"));
    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-   SDL_RenderSetLogicalSize(sdlRenderer, w, h);   
+   SDL_RenderSetLogicalSize(sdlRenderer, w, h);
    // screen = SDL_CreateRGBSurface(0, w, h, sa_depth, rmask, gmask, bmask, amask);
 
    screen = create_bitmap(w,h);
@@ -719,15 +731,15 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
    TXscreen = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ABGR8888,
 			        SDL_TEXTUREACCESS_STREAMING,
 				w, h);
-				
+
 #else
    if (sdlflag != -1) {
       if (!(screen = SDL_SetVideoMode(w, h, sa_depth, sdlflag)))
 	retval=1;
    } else {
       SDL_QuitSubSystem(SDL_INIT_VIDEO);
-      SDL_InitSubSystem(SDL_INIT_VIDEO);	
-   }   
+      SDL_InitSubSystem(SDL_INIT_VIDEO);
+   }
 #endif
 
    if(retval!=1) {
@@ -735,7 +747,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
       VIRTUAL_W=w; VIRTUAL_H=h;
 //      SDL_SetAlpha(screen,0,255);
    }
-   
+
    return(retval);
 }
 
@@ -744,7 +756,7 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 int set_gfx_mode0(int card, int w, int h, int v_w, int v_h) {
    Uint32 sdlflag,wasinit;
    int retval=0;
-   
+
    /* Start here */
    switch(card) {
     case GFX_AUTODETECT_WINDOWED:
@@ -776,7 +788,7 @@ int set_gfx_mode0(int card, int w, int h, int v_w, int v_h) {
       VIRTUAL_W=w; VIRTUAL_H=h;
 //      SDL_SetAlpha(screen,0,255);
    }
-   
+
    return(retval);
 }
 #endif
@@ -792,7 +804,7 @@ SDL_Surface *create_bitmap(int width, int height) {
    SDL_Surface *new_surface, *xyz;
    #ifdef SDL1
    Uint16 rmask,gmask,bmask,amask;
-   
+
    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
      rmask = 0xf000;
      gmask = 0x0f00;
@@ -804,18 +816,18 @@ SDL_Surface *create_bitmap(int width, int height) {
      bmask = 0x0f00;
      amask = 0xf000;
    #endif
-   
+
    xyz = SDL_CreateRGBSurface(SDL_SWSURFACE,width,height,sa_depth,rmask,gmask,bmask,amask);
 //   new_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,width,height,sa_depth,rmask,gmask,bmask,amask);
    new_surface = SDL_DisplayFormat(xyz);
-//     printf("created\n"); else printf("failed to convert surface\n") ;
+
    SDL_FreeSurface(xyz);
    SDL_SetAlpha(new_surface,0,255);
    #endif
-   
+
 #ifdef SDL2
    Uint32 rmask,gmask,bmask,amask;
-   
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
    rmask = 0xff000000;
    gmask = 0x00ff0000;
@@ -830,7 +842,7 @@ SDL_Surface *create_bitmap(int width, int height) {
 //   // The above doesn't seem to work right for SDL2, so forcing BIG_ENDIAN
 //   // even thought Intel/AMD is little
 //   rmask = 0x00ff0000; gmask = 0x0000ff00; bmask = 0x000000ff; amask = 0xff000000;   
-   
+
    SDLALOG(3, ("SDL2 w:%d h:%d d:%d\n", width, height, sa_depth));
    new_surface = SDL_CreateRGBSurface(0,width,height,sa_depth,rmask,gmask,bmask,amask);
    // might need theis for compatability
@@ -840,7 +852,7 @@ SDL_Surface *create_bitmap(int width, int height) {
    SDL_SetSurfaceAlphaMod(new_surface, 255);
    //  SDL_SetAlpha(new_surface,0,255);
 #endif
-   
+
 //   SDL_SetAlpha(new_surface,SDL_SRCALPHA,SDL_ALPHA_OPAQUE);
    return(new_surface);
 }
@@ -849,7 +861,7 @@ SDL_Surface *create_system_bitmap(int width, int height) {
    return create_bitmap(width,height);
 }
 
-void destroy_bitmap(SDL_Surface *bmp) 
+void destroy_bitmap(SDL_Surface *bmp)
 {
    SDL_FreeSurface(bmp);
 }
@@ -905,7 +917,7 @@ int blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy
 void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx, int dsy, int wdt, int hgt)  
 {
    // probably can reuse more of this
-//   #ifdef SDL1  
+//   #ifdef SDL1
    SDL_Rect srect, drect;
    Uint32 key;
 // Test removal
@@ -925,10 +937,10 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
    drect.y = dsy;
    drect.w = wdt;
    drect.h = hgt;
-   
+
    SDL_BlitSurface(src, &srect, dest, &drect);
 //   printf("call to masked blit\n");
-   if(SA_AUTOUPDATE==1) {	
+   if(SA_AUTOUPDATE==1) {
       if(dest == screen) {
 #ifdef SDL1
 	 SDL_UpdateRect(dest, dsx, dsy, wdt, hgt);
@@ -940,18 +952,18 @@ void masked_blit(SDL_Surface *src, SDL_Surface *dest, int srx, int sry, int dsx,
 	 SDL_RenderPresent(sdlRenderer);
 	 SDLALOG(2, ("masked_blit() RenderPresent\n"));
 #endif
-      }  
+      }
    }
 //     SDL_Flip(dest);
    //#endif
 }
 
 SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
-   
+
    // SDL 1.2 doesn't seem to scale bitmaps properly
    //         this could be moved into sdl_allegro
    //         and wrapped by stretch_blit()
-   
+
    SDL_Surface *newbm;
 #ifdef SDL1
    int nw,nh,px,py,pc,ox,oy;
@@ -964,7 +976,7 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    yf=foh/fdh;
 
 //  if(xf>1 || yf>1) {
-    if(xf>yf) 
+    if(xf>yf)
       uf=xf;
     else
       uf=yf;
@@ -975,7 +987,7 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    SDLALOG(4, ("sa_scale_bitmap() :original size: %f x %f\n",fow,foh));
    SDLALOG(4, ("sa_scale_bitmap() :scale to:  %dx%d\n",nw,nh));
    newbm=create_bitmap(nw,nh);
-   
+
    yf=0;
    for(py=0;py<nh;py++) {
      xf=0;
@@ -985,10 +997,10 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
 //       if(yf>nh) oy=nh;
        pc=getpixel(orgbm,ox,oy);
        SDL_GetRGB(pc,orgbm->format,&rrr,&ggg,&bbb);
-	
+
 	// I don't understand why upscaling (uf<1) reverses
 	// the red and blue pixels, but not always!
-	if(uf < 1) 
+	if(uf < 1)
 	  putpixel(newbm,px,py,makecol(bbb,ggg,rrr));
 	else
 	  putpixel(newbm,px,py,makecol(rrr,ggg,bbb));
@@ -1000,7 +1012,7 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
 #endif 
 #ifdef SDL2
    SDL_Rect src_r, dst_r;
-   
+
    src_r.x=0; src_r.y=0;
    src_r.w=orgbm->w;
    src_r.h=orgbm->h;
@@ -1011,7 +1023,7 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
    SDLALOG(3, ("sa_scale_bm: original size: %d x %d\n",src_r.w,src_r.h));
    SDLALOG(3, ("sa_scale_bm: scale to:  %d x %d\n",dst_r.w,dst_r.h));
    newbm=create_bitmap(dst_r.w,dst_r.h);
-   
+
    SDL_BlitScaled(orgbm, &src_r, newbm, &dst_r);
 
 #endif
@@ -1021,7 +1033,11 @@ SDL_Surface *sa_scale_bm(SDL_Surface *orgbm,int dw, int dh) {
 void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h) {
 
    SDL_Rect src_r, dst_r;
-
+#ifdef SDL2
+   // This fixes images that are black when scaled up.
+   SDL_Surface* image = SDL_ConvertSurface( src, dst->format, 0 );
+#endif
+   
    src_r.x = src_x;
    src_r.y = src_y;
    dst_r.x = dst_x;
@@ -1030,8 +1046,8 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
    dst_r.h = dst_h;
 
 #ifdef SDL1
-   BITMAP *newbm;   
-   
+   BITMAP *newbm;
+
    src_r.w = dst_w;
    src_r.h = dst_h;
 
@@ -1043,10 +1059,14 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
    src_r.w = src_w;
    src_r.h = src_h;
 
-   SDL_BlitScaled(src,&src_r, dst, &dst_r);
+//   sa_surface_info(src, "src");
+//   sa_surface_info(dst, "dst");
+//   sa_surface_info(image, "image");
+
+   SDL_BlitScaled(image,&src_r, dst, &dst_r);
+   SDL_FreeSurface(image);
 #endif
-   
-   if(SA_AUTOUPDATE==1) {	
+   if(SA_AUTOUPDATE==1) {
       if(dst == screen) {
 #ifdef SDL1
 	 SDL_UpdateRect(dst, dst_x, dst_y, dst_w, dst_h);
@@ -1058,7 +1078,7 @@ void stretch_blit(SDL_Surface *src, SDL_Surface *dst,int src_x, int src_y, int s
 	 SDL_RenderPresent(sdlRenderer);
 	 SDLALOG(3, ("stretch_blit() RenderPresent!\n"));
 #endif
-      }      
+      }
    }
 }
 
@@ -1068,14 +1088,14 @@ int show_video_bitmap(BITMAP *bitmap) {
    // Since SDL has built-in double buffering, this just calls a flip
    // If allegro-compatible double buffering is needed, this may beed to
    // be rewritten
-   
+
    // It may already be compatible,  the SDL docs aren't clear what happens
    // if you pass anything other than the screen surface to this:
 #ifdef SDL1
-   i=SDL_Flip(bitmap);   
+   i=SDL_Flip(bitmap);
 #endif
 #ifdef SDL2
-   i=s2a_flip(bitmap);   
+   i=s2a_flip(bitmap);
 #endif
    return(i);
 }

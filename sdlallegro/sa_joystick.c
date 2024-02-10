@@ -10,7 +10,7 @@ void install_joystick(int type)  {
    num_joysticks=SDL_NumJoysticks();
    for(i=0;i<num_joysticks;i++) {
       joy[i].handle=SDL_JoystickOpen(i);
-      if(joy[i].handle) {	
+      if(joy[i].handle) {
 	 joy[i].stick[0].num_axis=SDL_JoystickNumHats(joy[i].handle);
 //	 joy[i].stick[0].num_axis=SDL_JoystickNumAxes(joy[i].handle);
 	 joy[i].num_buttons=SDL_JoystickNumButtons(joy[i].handle);
@@ -26,7 +26,7 @@ void poll_joystick() {
    int axis;
    SDL_JoystickUpdate();
    int i,b,b2;
-   
+
    // poll sticks
    for(i=0;i<num_joysticks;i++) {
       // poll buttons
@@ -39,7 +39,16 @@ void poll_joystick() {
 //	   printf("stick %d button %d pressed\n",i,b2);
       }
       stick=SDL_JoystickGetHat(joy[i].handle, 0);
-       
+//if(stick == SDL_HAT_UP) printf("hat up!\n");
+//if(stick == SDL_HAT_DOWN) printf("hat down!\n");
+      if(stick == SDL_HAT_CENTERED) {
+	 joy[i].stick[0].axis[0].d1=0;
+	 joy[i].stick[0].axis[0].d2=0;
+	 joy[i].stick[0].axis[1].d1=0;
+	 joy[i].stick[0].axis[1].d2=0;
+      }
+
+
       axis=SDL_JoystickGetAxis(joy[i].handle, 0);
       joy[i].stick[0].axis[0].d1=joy[i].stick[0].axis[0].d2=0;
       if(axis>0) joy[i].stick[0].axis[0].d2=1;
@@ -51,22 +60,27 @@ void poll_joystick() {
       if(axis<0) joy[i].stick[0].axis[1].d1=1;
 //      printf("stick=%d\n",axis);
 
-//      if(stick | SDL_HAT_LEFT) joy[i].stick[0].axis[0].d1=1;
+      if(stick == SDL_HAT_LEFT) joy[i].stick[0].axis[0].d1=1;
 //      else joy[i].stick[0].axis[0].d1=0;
-//      if(stick | SDL_HAT_RIGHT) joy[i].stick[0].axis[0].d2=1;
+      if(stick == SDL_HAT_RIGHT) joy[i].stick[0].axis[0].d2=1;
 //      else joy[i].stick[0].axis[0].d2=0;
+      
+      if(stick == SDL_HAT_UP) joy[i].stick[0].axis[1].d1=1;
+      if(stick == SDL_HAT_DOWN) joy[i].stick[0].axis[1].d2=1;
 
-      if(joy[i].stick[0].axis[0].d1) printf("*left?\n");
-      if(joy[i].stick[0].axis[0].d1) printf("*left? %d\n",joy[i].stick[0].axis[0].d1);
-      if(joy[i].stick[0].axis[0].d2) printf("right?\n");
+      
+// DEBUG INFO      
+//      if(joy[i].stick[0].axis[0].d1) printf("*left?\n");
+//      if(joy[i].stick[0].axis[0].d1) printf("*left? %d\n",joy[i].stick[0].axis[0].d1);
+//      if(joy[i].stick[0].axis[0].d2) printf("right?\n");
       
 //      if(stick | SDL_HAT_UP) joy[i].stick[0].axis[1].d1=1;
 //      else joy[i].stick[0].axis[1].d1=0;
 //      if(stick | SDL_HAT_DOWN) joy[i].stick[0].axis[1].d2=1;
 //      else joy[i].stick[0].axis[1].d2=0;
       
-      if(joy[i].stick[0].axis[1].d1) printf("  up?\n");
-      if(joy[i].stick[0].axis[1].d2) printf("down?\n");
+//      if(joy[i].stick[0].axis[1].d1) printf("  up?\n");
+//      if(joy[i].stick[0].axis[1].d2) printf("down?\n");
    }
-   if(joy[0].stick[0].axis[1].d1) printf("*up? %d\n",joy[0].stick[0].axis[1].d1);
+//   if(joy[0].stick[0].axis[1].d1) printf("*up? %d\n",joy[0].stick[0].axis[1].d1);
 }

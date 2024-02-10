@@ -1,5 +1,5 @@
 #include "config.h"
-#define SDL_ALLEGRO_VERS_H "0.7.10"
+#define SDL_ALLEGRO_VERS_H "0.7.11"
 
 typedef SDL_Surface BITMAP;
 
@@ -107,7 +107,8 @@ int play_sample(const Mix_Chunk *spl, Uint8 vol, Uint8 pan, Uint16 freq, int loo
 SDL_Surface *screen;
 //int mouse_x, mouse_y, mouse_z,mouse_b;
 int SCREEN_W,SCREEN_H,VIRTUAL_W,VIRTUAL_H;
-int SA_AUTOUPDATE;
+int SA_AUTOUPDATE; 
+extern int SA_RENDERFLAGS;
 
 // Joystick
 typedef struct JOYSTICK_AXIS_INFO {
