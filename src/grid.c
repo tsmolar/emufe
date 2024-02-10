@@ -1095,7 +1095,7 @@ void grid_bg_box(const char *title) {
    SDL_RenderCopy(sdlRenderer, img_cache[B_KBJOY].texture, &src_r, &dst_r);
    SDL_RenderPresent(sdlRenderer);
 
-   grid_ttf_print(dst_r.x+32, dst_r.y+32, title);
+   grid_ttf_print(dst_r.x+32, dst_r.y+24, title);
    sprintf(picname, "Emulator: %s",imenu.emulator);
    dst_r.x = ((rc.icon_w * rc.grid_w)) /2 + rc.grid_x;
    grid_ttf_print(dst_r.x, dst_r.y+dst_r.h-64, picname);
@@ -1125,13 +1125,15 @@ void grid_keyboard_box() {
 	    strcpy(img_cache[B_KEYBOARD].imgname, imenu.emulator);
 	    SDL_FreeSurface(surf);
 	 }
-	 if (bgdst_r.h > 959) {
-	    dst_r.w = scale_calc(1440, usey, img_cache[B_KEYBOARD].w*2); 
-	    dst_r.h = scale_calc(1440, usey, img_cache[B_KEYBOARD].h*2);
-	 } else {
-	    dst_r.w = scale_calc(1440, usey, img_cache[B_KEYBOARD].w); 
-	    dst_r.h = scale_calc(1440, usey, img_cache[B_KEYBOARD].h);
-	 }
+//	 if (bgdst_r.h > 959) {
+//	    dst_r.w = scale_calc(1440, usey, img_cache[B_KEYBOARD].w*2); 
+//	    dst_r.h = scale_calc(1440, usey, img_cache[B_KEYBOARD].h*2);
+//	 } else {
+//	    dst_r.w = scale_calc(1440, usey, img_cache[B_KEYBOARD].w); 
+//	    dst_r.h = scale_calc(1440, usey, img_cache[B_KEYBOARD].h);
+//	 }
+	 dst_r.w = scale_calc(1440, usey, 900); 
+	 dst_r.h = scale_calc(1440, usey, 900);
 
 	 // center this in the grid area
 //	 dst_r.x = (bgdst_r.w - dst_r.w) / 2, dst_r.y = (bgdst_r.h - dst_r.h) / 2;
@@ -1148,6 +1150,7 @@ void grid_keyboard_box() {
       printf("No keyboard today\n");	
    }
 } // grid_keyboard_box()
+
 
 void grid_joystick_box() {
    
@@ -1200,6 +1203,58 @@ void grid_joystick_box() {
       printf("No joystick today\n");	
    }
 } // grid_joystick_box()
+
+void grid_media_box(int gameidx) {
+   
+   SDL_Rect src_r, dst_r;
+   char picname[350],picnoext[346];   
+   const int max_w=900, max_h=1100;
+   int xfac, yfac, ufac, use_w, use_h;
+   
+   if(imgbx[B_BOXSCAN].enabled==1) {
+//      sprintf(picnoext,"%s%c%s%s",picsdir,mysep,imgbx[B_BOXSCAN].pfx, imenu.emulator);
+      sprintf(picnoext,"%s%c%s%s",picsdir,mysep,imgbx[B_BOXSCAN].pfx, menu[gameidx].rom);
+      AddPicExt(picname,picnoext);
+
+      
+      if(strcmp(picname, "null")!=0) {
+	 surf = IMG_Load(picname);
+	 src_r.x=0; src_r.y=0; src_r.w=surf->w; src_r.h=surf->h;
+	 
+	 SDL_DestroyTexture(img_cache[B_BOXSCAN].texture);
+	 img_cache[B_BOXSCAN].w = surf->w;
+	 img_cache[B_BOXSCAN].h = surf->h;
+
+	 img_cache[B_BOXSCAN].texture = SDL_CreateTextureFromSurface(sdlRenderer, surf);
+	 strcpy(img_cache[B_BOXSCAN].imgname, imenu.emulator);
+	 SDL_FreeSurface(surf);
+
+	 // Scale box but keep aspect (assumes scale up)
+	 yfac=(max_w*100) / img_cache[B_BOXSCAN].w;
+	 xfac=(max_h*100) / img_cache[B_BOXSCAN].h;
+	 if(yfac < xfac)
+	   ufac=yfac;
+	 else
+	   ufac=xfac;
+
+	 use_w=(img_cache[B_BOXSCAN].w * ufac)/100;
+	 use_h=(img_cache[B_BOXSCAN].h * ufac)/100;
+	 // end scale
+
+	 dst_r.w = scale_calc(1440, usey, use_w); 
+	 dst_r.h = scale_calc(1440, usey, use_h);
+
+	 dst_r.x = rc.grid_x;
+	 dst_r.y = ((rc.icon_h * rc.grid_h) - dst_r.h) / 2 + rc.grid_y;
+
+	 SDL_RenderCopy(sdlRenderer, img_cache[B_BOXSCAN].texture, &src_r, &dst_r);
+	 
+	 SDL_RenderPresent(sdlRenderer);
+      }      
+   } else {
+      printf("No boxscan today\n");	
+   }
+} // grid_media_box()
 
 
 // taken from emufe.c
@@ -1534,6 +1589,7 @@ void grid_loop() {
    int quit = 0, noflush = 0, por = 0;
    int action=-1;
    char newmenu[500], usemenu[25], rcfile[30], letsel;
+   char w[70];
    SDL_Event event;
 
    // set the background image
@@ -1961,8 +2017,9 @@ void grid_loop() {
 	 break;
 
        case ACTION_F2:
-	 // change to desc_box
-	 grid_joystick_box();
+	 sprintf(w, "Game Information: %s", game[slc].stitle);
+	 grid_bg_box(w);
+	 grid_media_box(slc);
 	 break;
 
        case ACTION_F10:
