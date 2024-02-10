@@ -48,7 +48,7 @@ void font_load(char *filen) {
     }
 #endif
    fnt_setactive(DefaultFont);
-   printf("END font_load()\n");
+//   printf("END font_load()\n");
 }
 
 void display_char(int x, int y, unsigned char chr) {

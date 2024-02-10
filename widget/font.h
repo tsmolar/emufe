@@ -15,6 +15,7 @@ typedef struct fnt_t {
    char name[240];
    int width,height,type;
    int scale_w,scale_h;  // for TTF fonts now, other later
+   int sox, soy;  // shadow offset
    int size;
    int color[8]; // Array of colors, only used for blitfonts
    int lru; // least recently created color (round robin currently)

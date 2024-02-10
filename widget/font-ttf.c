@@ -122,6 +122,7 @@ void fnt_ttf_draw_bitmap_sdl( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y,
    
    pnr=png=pnb=255;
    SDL_GetRGB(color,screen->format,&pnr,&png,&pnb);
+//   SDL_GetRGB(color,b->format,&pnr,&png,&pnb);
 //   printf("color:  r:%d   g:%d   b:%d\n",pnr,png,pnb);
    
    for ( i = x, p = 0; i < x_max; i++, p++ ) {
@@ -136,44 +137,11 @@ void fnt_ttf_draw_bitmap_sdl( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y,
       }	
    }   
 //#ifdef USESDL
-////   if(b==screen)
+//   if(b==screen)
 //     SDL_UpdateRect(b,x,y,x_max-x,y_max-y);
 //#endif
 }
 #endif
-
-void fnt_ttf_draw_bitmap0( FT_Bitmap* fbitmap, BITMAP *b, FT_Int x, FT_Int y) {
-   
-   // Simple render
-   
-   FT_Int  i, j, p, q;
-   FT_Int  x_max = x + fbitmap->width;
-   FT_Int  y_max = y + fbitmap->rows;
-   int pix;
-   
-//   printf("render at x:%d,y:%d\n",x,y);
-//   rect(b,x,y,x_max,y_max,makecol(0,0,0));
-   for ( i = x, p = 0; i < x_max; i++, p++ ) {
-      for ( j = y, q = 0; j < y_max; j++, q++ ) {
-//	 if ( i >= WIDTH || j >= HEIGHT )
-//	   continue;
-	 pix = fbitmap->buffer[q * fbitmap->width + p];
-//	 if(pix>255) pix=255;
-	 if(pix>96)
-	   putpixel(b,i,j,makecol(pix,pix,pix));
-//	 printf("%d ",image[j][i]);
-      }	
-   }   
-#ifdef USESDL
-# ifdef SDL1
-   //   if(b==screen)
-   SDL_UpdateRect(b,x,y,x_max-x,y_max-y);
-# endif
-# ifdef SDL2
-   s2a_updaterect(b,x,y,x_max-x,y_max-y);
-# endif
-#endif
-}
 
 void fnt_ttf_init() {
    FT_Error error;
@@ -181,8 +149,8 @@ void fnt_ttf_init() {
    printf("in fnt_ttf_init()\n");
 #endif
 //   fnt_ttf_setrender(RENDER_SIMPLE);
-//   fnt_ttf_setrender(RENDER_BLEND);
-   fnt_ttf_setrender(RENDER_NATIVE);
+   fnt_ttf_setrender(RENDER_BLEND);
+//   fnt_ttf_setrender(RENDER_NATIVE);
    error = FT_Init_FreeType( &library ); 
    if ( error ) {
       printf("... an error occurred during freetype initialization ...\n"); 
@@ -264,20 +232,21 @@ void fnt_ttf_print_string(BITMAP *b, int x, int y, char *text, int fg, int bg, i
 	 error = FT_Load_Char( face, text[n], FT_LOAD_RENDER ); 
 	 if ( error ) continue; /* ignore errors */
 
+	 // LOOK HERE
 	 if(fnt_render==RENDER_SIMPLE) {
 	    if(sd>-1)
-	      fnt_ttf_draw_bitmap_simple( &slot->bitmap, line1, pen_x + slot->bitmap_left+1, pen_y - slot->bitmap_top+1, sd ); /* increment pen position */   
+	      fnt_ttf_draw_bitmap_simple( &slot->bitmap, line1, pen_x + slot->bitmap_left+cfont->sox, pen_y - slot->bitmap_top+cfont->soy, sd ); /* increment pen position */   
 	    fnt_ttf_draw_bitmap_simple( &slot->bitmap, line1, pen_x + slot->bitmap_left, pen_y - slot->bitmap_top, fg ); /* increment pen position */   
 	 }
 	 if(fnt_render==RENDER_BLEND) {
 	    if(sd>-1)
-	      fnt_ttf_draw_bitmap_blend( &slot->bitmap, line1, pen_x + slot->bitmap_left+1, pen_y - slot->bitmap_top+1, sd ); /* increment pen position */   
+	      fnt_ttf_draw_bitmap_blend( &slot->bitmap, line1, pen_x + slot->bitmap_left+cfont->sox, pen_y - slot->bitmap_top+cfont->soy, sd ); /* increment pen position */   
 	    fnt_ttf_draw_bitmap_blend( &slot->bitmap, line1, pen_x + slot->bitmap_left, pen_y - slot->bitmap_top, fg ); /* increment pen position */   
 	 }
 	 if(fnt_render==RENDER_NATIVE) {
 #ifdef USESDL
 	    if(sd>-1)
-	      fnt_ttf_draw_bitmap_sdl( &slot->bitmap, line1, pen_x + slot->bitmap_left+1, pen_y - slot->bitmap_top+1, sd ); /* increment pen position */   
+	      fnt_ttf_draw_bitmap_sdl( &slot->bitmap, line1, pen_x + slot->bitmap_left+cfont->sox, pen_y - slot->bitmap_top+cfont->soy, sd ); /* increment pen position */   
 	    fnt_ttf_draw_bitmap_sdl( &slot->bitmap, line1, pen_x + slot->bitmap_left, pen_y - slot->bitmap_top, fg ); /* increment pen position */   
 #endif
 	 }
@@ -362,4 +331,3 @@ int fnt_ttf_calcheight(char *text) {
    destroy_bitmap(line1);
    return(pen_y);
 }
-
