@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.50)
-AC_INIT(emufe, 3.2.0, asmolar@sf.net)
+AC_INIT(emufe, 4.2.0, asmolar@sf.net)
 AC_CONFIG_SRCDIR([src/emufe.c])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([config.h])
@@ -18,6 +18,15 @@ AC_CANONICAL_TARGET
 #[  --enable-zaurus  Enable Optimizations for Zaurus and other small devices
 #],[AC_DEFINE([ZAURUS],[1],[Define if using Zaurus])
 #   use_zaurus=yes])
+
+#AC_ARG_ENABLE(amdgfx,
+#[  --enable-amdgfx  Use slower but safer screen update routine
+#],[AC_DEFINE([AMDGFX],[1],[Define if using AMD Graphics])
+#   use_amdgfx=yes])
+
+#if test "x$use_amdgfx" = "xyes" ; then
+#  AM_CONDITIONAL(AMDGFX,false)
+#fi
 
 # Why this mess?   If ww is in the PATH, then it won't be able to
 # locate the datadir, so INSTPREFIX will be where to look
@@ -40,17 +49,39 @@ else
   AM_CONDITIONAL(HSNET,false)
 fi
 
-# Freetype
-AC_CHECK_FT2([2.1.0], [haveFT=yes], [haveFT=no])
-if test "$haveFT" = "yes"
-then
-  AM_CONDITIONAL(FREETYPE,true)
-  AC_DEFINE([USE_FREETYPE],[1],[Define if using FreeType])
-  CFLAGS="$CFLAGS $FT2_CFLAGS"
-  LIBS="$LIBS $FT2_LIBS"
-else
-  AM_CONDITIONAL(FREETYPE,false)
+
+# Checks for pkg-config
+AC_PATH_PROG([PKGCONF], [pkg-config], [], [$PATH:/usr/bin:/usr/local/bin:/opt/bin:/opt/homebrew/bin])
+
+# If pkg-config is available, use it to find needed libraries
+if test -n "${PKGCONF}"; then
+    # Freetype via pkg-config
+    AC_MSG_CHECKING([whether pkg-config could find freetype2])
+    if "${PKGCONF}" --exists freetype2; then
+        AC_MSG_RESULT([yes])
+        AC_DEFINE([USE_FREETYPE],[1],[Define if using FreeType])
+        FT2_CFLAGS=`"${PKGCONF}" --cflags freetype2`
+        FT2_LIBS=`"${PKGCONF}" --libs freetype2`
+        AM_CONDITIONAL(FREETYPE,true)
+	CFLAGS="$CFLAGS $FT2_CFLAGS"
+	LIBS="$LIBS $FT2_LIBS"
+    else
+        AC_MSG_RESULT([no])
+        AM_CONDITIONAL(FREETYPE,false)
+    fi
 fi
+
+## Freetype
+#AC_CHECK_FT2([2.1.0], [haveFT=yes], [haveFT=no])
+#if test "$haveFT" = "yes"
+#then
+#  AM_CONDITIONAL(FREETYPE,true)
+#  AC_DEFINE([USE_FREETYPE],[1],[Define if using FreeType])
+#  CFLAGS="$CFLAGS $FT2_CFLAGS"
+#  LIBS="$LIBS $FT2_LIBS"
+#else
+#  AM_CONDITIONAL(FREETYPE,false)
+#fi
 
 gfx_lib=null
 dnl Need one of SDL2, SDL or allegro, in order of presidence
@@ -70,6 +101,7 @@ if [[ "$gfx_lib" = sdl2 ]]; then
   LIBS="$LIBS $SDL_LIBS"
   AC_CHECK_LIB(SDL2_image,IMG_Load)
   AC_CHECK_LIB(SDL2_mixer,Mix_Linked_Version)
+  AC_CHECK_LIB(SDL2_ttf,TTF_Init)
 else
   AC_MSG_NOTICE([SDL1 check])
   AM_PATH_SDL(1.2.5,gfx_lib=sdl1,:)

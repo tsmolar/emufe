@@ -9,6 +9,9 @@
 /* Define to 1 if you have the `SDL2_mixer' library (-lSDL2_mixer). */
 #undef HAVE_LIBSDL2_MIXER
 
+/* Define to 1 if you have the `SDL2_ttf' library (-lSDL2_ttf). */
+#undef HAVE_LIBSDL2_TTF
+
 /* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
 #undef HAVE_LIBSDL_IMAGE
 

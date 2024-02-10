@@ -10,6 +10,9 @@
 /* Define to 1 if you have the `SDL2_mixer' library (-lSDL2_mixer). */
 #define HAVE_LIBSDL2_MIXER 1
 
+/* Define to 1 if you have the `SDL2_ttf' library (-lSDL2_ttf). */
+#define HAVE_LIBSDL2_TTF 1
+
 /* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
 /* #undef HAVE_LIBSDL_IMAGE */
 
@@ -80,7 +83,7 @@
 #define PACKAGE_NAME "emufe"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "emufe 3.2.0"
+#define PACKAGE_STRING "emufe 4.2.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "emufe"
@@ -89,13 +92,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.2.0"
+#define PACKAGE_VERSION "4.2.0"
 
 /* Define if using FreeType */
 #define USE_FREETYPE 1
 
 /* Version number of package */
-#define VERSION "3.2.0"
+#define VERSION "4.2.0"
 
 /* Define curl_free() as free() if our version of curl lacks curl_free. */
 /* #undef curl_free */
